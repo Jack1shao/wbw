@@ -148,7 +148,7 @@ def ansy_500wouzhi02(id1,starts):
 
 	return list3
 
-def ansy_500wouzhi0(id):
+def getyapan01(id):
 	id=665021
 	url0='http://odds.500.com/fenxi/yazhi-665021.shtml?ctype=2'
 	ouzhilist=[]
@@ -177,7 +177,7 @@ def ansy_500wouzhi0(id):
 		
 		if lenlist2%8==0:
 
-			while y+bz<=lenlist2 and y/8<=10:
+			while y+bz<=lenlist2 and y/bz<10:
 				list4=[]
 				for x in range(bz):
 					list4.append(list2[x+y])
@@ -194,7 +194,7 @@ def ansy_500wouzhi0(id):
 
 	print(list3)
 	
-	pass
+	return list3
 
 
 
