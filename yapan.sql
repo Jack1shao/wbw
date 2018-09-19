@@ -23,10 +23,10 @@ CREATE TABLE `yapan` (
   `idnm` int(11) NOT NULL,
   `xh` int(11) NOT NULL,
   `ypgs` varchar(255) DEFAULT NULL,
-  `jzs` decimal(5,2) DEFAULT NULL,
+  `jzs` decimal(6,4) DEFAULT NULL,
   `jp` varchar(255) DEFAULT NULL,
-  `jks` decimal(5,2) DEFAULT NULL,
-  `czs` decimal(5,2) DEFAULT NULL,
+  `jks` decimal(6,4) DEFAULT NULL,
+  `czs` decimal(6,4) DEFAULT NULL,
   `cp` varchar(255) DEFAULT NULL,
-  `cks` decimal(5,2) DEFAULT NULL
+  `cks` decimal(6,4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
