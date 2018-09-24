@@ -6,7 +6,20 @@ from selenium import webdriver
 from chardet import detect
 import time
 import pymysql
+import random
+from gzip import GzipFile
+import io
 
+def gzip(data):
+	buf = io.BytesIO(data)
+	f = gzip.GzipFile(fileobj=buf)
+	return f.read()
+
+def deflate(data):
+	try:
+		return zlib.decompress(data, 16+zlib.MAX_WBITS)
+	except zlib.error:
+		return zlib.decompress(data)
 
 #获取一个数据库连接
 def insertMysql(dateIn,SqlInsert):
@@ -41,9 +54,14 @@ def selectMysql(sql):
 
 
 def tempselect():
-	sql="select idnm from yapan"
+	sql="select idnm from scb"
 	print(selectMysql(sql))
 	return 0
+
+def bsid_from_db(idstart,idend):
+	sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
+	return selectMysql(sql)
+	
 
 
 def getbsxx(id1,soup):
@@ -56,11 +74,13 @@ def getbsxx(id1,soup):
 		bsxxlist.append(soupdz[2].text.strip())
 
 		str11=soupdz[1].text.strip()
-		bsxxlist.append(str11[0:5])#取年份
+		bsxxlist.append(str11[0:2])#取年份
 		ls=re.findall('.*?([\u4E00-\u9FA5]+)',str11)
 		bsxxlist.append(ls[0][0:-1])#去掉‘第’字。联赛
 		lun=re.findall('\d+',str11[6:])
-		bsxxlist.append(lun[0])#获取轮次
+		if len(lun)>0:bsxxlist.append(lun[0])#获取轮次
+		else:bsxxlist.append(' ')
+		
 		
 	else:print('错误10001')
 	
@@ -133,7 +153,7 @@ def getouzhi(id1):
 
 	put_ouzhi_in_db(ansy_500wouzhi(id1,soup.find_all(id='table_cont')))
 	#
-	a=getbcgscount(soup)
+	a=getbcgscount(soup)-1
 	for x in range(int(a/30)):
 		starts=30*(x+1)
 		url0='http://odds.500.com/fenxi1/ouzhi.php?id='+str(id1)+'&ctype=1&start='+str(starts)+'&r=1&style=0&guojia=0&chupan=1'
@@ -148,14 +168,31 @@ def getouzhi(id1):
 #
 def geturltext(url):
 
-	header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36'}
+	header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
+			'Accept-Encoding':'gzip,deflate'}
 	request = urllib.request.Request(url, headers=header)
-	reponse = urllib.request.urlopen(request)
-	decompressed_data = zlib.decompress(reponse.read() ,16+zlib.MAX_WBITS)#压缩包解压，#print(reponse.info())查看
-	#一定要关闭，不然会变为攻击
-	time.sleep(2)
-	reponse.close()
+	try:
+		reponse = urllib.request.urlopen(request)
+		#print('get reponse')
+	except urllib.error.URLError as e:
+    		print(e.reason)
+    		reponse.close()
 	
+	#先SLEEP 等待下载完成，再解压，bu
+	#encoding = reponse.info().get('Content-Encoding')
+	
+
+	# if encoding == 'gzip':
+	# 	decompressed_data = gzip(reponse.read())
+	# elif encoding == 'deflate':
+	# 	decompressed_data = deflate(reponse.read())
+	#decompressed_data = gzip.decompress(reponse.read() ,16+zlib.MAX_WBITS)#压缩包解压，#print(reponse.info())查看
+	zobj = zlib.decompressobj(zlib.MAX_WBITS|16)
+	decompressed_data = zobj.decompress(reponse.read())#压缩包解压，#print(reponse.info())查看
+	#一定要关闭，不然会变为攻击
+	
+	reponse.close()
+	time.sleep(2+random.randint(0,3))
 	codeing=detect(decompressed_data)#检测编码，	#print(codeing['encoding'])
 
 	if codeing['encoding']=='GB2312':
@@ -163,6 +200,7 @@ def geturltext(url):
 	else:
 		codes=codeing['encoding']
 	#转换编码
+	print('编码是',codes)
 	htmlfile = decompressed_data.decode(codes)
 	
 	return htmlfile
@@ -191,12 +229,18 @@ def put_yapei_in_db(dateIn):
 	return 1
 
 
+
+def getyapan(data1):
+	soup=BeautifulSoup(data1,'lxml')
+	return soup
 #由于该网站是通过滚轴；按30个数据加载的，所以要
 
 def getyapan01(id1):
 	
 	url0='http://odds.500.com/fenxi/yazhi-'+str(id1)+'.shtml?ctype=2'
 	ouzhilist=[]
+	data1=selum(url0)
+	#soup=getyapan(data1)
 	soup=BeautifulSoup(geturltext(url0),'lxml')
 	souplist=soup.find_all(id='table_cont')
 	yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)']
@@ -253,27 +297,44 @@ def souphtml(html1):
 	return 0
 #用静默浏览器，适用动态加载
 def selum(url):
-	#url='http://o/fenxi/ouzhi-664999.shtml'
-	#url='http://odd/fenxi1/ouzhi.php?id=665021&ctype=1&start=1&r=1&style=0&guojia=0&chupan=1'
+	
 	driver = webdriver.PhantomJS()
 	driver.get(url)
 	driver.implicitly_wait(3) 
-	souphtml=driver.find_element_by_id('table_cont').text
-	print(souphtml)
-	# data = driver.title
+	#souphtml=driver.find_element_by_id('table_cont').text
 	data=driver.page_source
-	#print(detect(data))
 	driver.close()
-	#print(data.encode("gb2312","ignore").decode("gb2312"))
-	return
+	return  data
 
 def getbsid(idstart,idend):
 	
+	jsq=0#计数器
+	list1=[]
+	if idstart>idend:return 0
+	idlist=bsid_from_db(idstart,idend)
+	for idnmrow in idlist:
+			for idnm0 in idnmrow:
+				list1.append(idnm0)
+	#print(list1)
 	for x in range(idstart,idend+1):
-		print('获取',x)
-		getouzhi(x)
-		getyapan01(x)
+		if x not in list1:
+			jsq=jsq+1
+			if jsq>50:#50条停一分钟
+				time.sleep(60)
+				jsq=0
+			print('开始获取',x,jsq)
+			#print("开始获取亚盘")
+					
+			#插入数据库
+			getouzhi(x)
+			getyapan01(x)
+			
 
 
 #getouzhi(665021)
-getbsid(665021,665022)
+#lszllist=['法甲','1718','664725','665104']
+#['德甲','1718','672920','673225']
+#['瑞典超','17','633991','634230']
+#['瑞典超','18','707696','707863']
+getbsid(633991,634230)
+#getyapan01(672920)
