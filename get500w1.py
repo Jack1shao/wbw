@@ -77,9 +77,10 @@ def getbsxx(id1,soup):
 		bsxxlist.append(str11[0:2])#取年份
 		ls=re.findall('.*?([\u4E00-\u9FA5]+)',str11)
 		bsxxlist.append(ls[0][0:-1])#去掉‘第’字。联赛
-		lun=re.findall('\d+',str11[6:])
+		print(str11[-3:],str11)
+		lun=re.findall('\d+',str11[-3:])
 		if len(lun)>0:bsxxlist.append(lun[0])#获取轮次
-		else:bsxxlist.append(' ')
+		else:bsxxlist.append('-1')
 		
 		
 	else:print('错误10001')
@@ -138,7 +139,7 @@ def getbcgscount(soup):
 	souphtml=soup.find_all(id='nowcnum')
 	
 	cnum=re.findall('\d+',souphtml[0].text)
-	a=int(cnum[0])
+	a=int(cnum[0])-2
 	return a
 
 
@@ -177,16 +178,7 @@ def geturltext(url):
 	except urllib.error.URLError as e:
     		print(e.reason)
     		reponse.close()
-	
-	#先SLEEP 等待下载完成，再解压，bu
-	#encoding = reponse.info().get('Content-Encoding')
-	
 
-	# if encoding == 'gzip':
-	# 	decompressed_data = gzip(reponse.read())
-	# elif encoding == 'deflate':
-	# 	decompressed_data = deflate(reponse.read())
-	#decompressed_data = gzip.decompress(reponse.read() ,16+zlib.MAX_WBITS)#压缩包解压，#print(reponse.info())查看
 	zobj = zlib.decompressobj(zlib.MAX_WBITS|16)
 	decompressed_data = zobj.decompress(reponse.read())#压缩包解压，#print(reponse.info())查看
 	#一定要关闭，不然会变为攻击
@@ -239,7 +231,7 @@ def getyapan01(id1):
 	
 	url0='http://odds.500.com/fenxi/yazhi-'+str(id1)+'.shtml?ctype=2'
 	ouzhilist=[]
-	data1=selum(url0)
+	#data1=selum(url0)
 	#soup=getyapan(data1)
 	soup=BeautifulSoup(geturltext(url0),'lxml')
 	souplist=soup.find_all(id='table_cont')
@@ -336,5 +328,7 @@ def getbsid(idstart,idend):
 #['德甲','1718','672920','673225']
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
-getbsid(633991,634230)
+#['日职','17','647803','648108']
+#['日乙','18','713219','713588']
+getbsid(647803,648108)
 #getyapan01(672920)
