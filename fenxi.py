@@ -75,13 +75,13 @@ def ouzhi_fenxi(dateList1):
 
 		if x[2]=='威廉希尔'  and jk1>0.99:
 			del ms[0]
-			ms.insert(0,'高企威廉希尔平赔付不变')
+			ms.insert(0,'高企威廉平赔付')
 			bz=1
 
 		if(x[2]=='威廉希尔' and  ck1<cf+0.010 and ck1>cf-0.070 and jk1>=1 and jk1!=ck1):
 			a=ms[0]
 			del ms[0]
-			ms.insert(0,'@高企威廉希尔平赔,分胜负'+a)#平赔高企
+			ms.insert(0,'@高企平赔'+a)#平赔高企
 			bz=1
 
 
@@ -168,9 +168,10 @@ def  fenxi1(jp,cp):
 		bsxxlist=getbsx_by_id(oz1[0])
 		#print(bsxxlist)
 		if len(bsxxlist)>0:
-			oz1.append(bsxxlist[0][1]+'vs'+bsxxlist[0][2]+'-'+bsxxlist[0][4])
+			oz1.append(bsxxlist[0][1]+'vs'+bsxxlist[0][2])
 			oz1.append(bsxxlist[0][6]-bsxxlist[0][7])
-
+			oz1.append(bsxxlist[0][3]+bsxxlist[0][4])
+		oz1.append(x[4]+'--'+x[7])
 		print(oz1)
 		jglist.append(oz1)
 
@@ -178,4 +179,4 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('半球','半球')
+fenxi1('半球','')

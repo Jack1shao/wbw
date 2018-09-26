@@ -235,7 +235,7 @@ def getyapan01(id1):
 	#soup=getyapan(data1)
 	soup=BeautifulSoup(geturltext(url0),'lxml')
 	souplist=soup.find_all(id='table_cont')
-	yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)']
+	yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)','(沙巴)']
 	y=0
 	bz=8
 	list3=[]
@@ -256,7 +256,7 @@ def getyapan01(id1):
 			if list1[x] not in yclist:
 				list2.append(list1[x])
 		lenlist2=len(list2)
-		
+		#print(list2)
 		if lenlist2%bz==0:
 
 			while y+bz<=lenlist2 and y/bz<10:
@@ -330,5 +330,8 @@ def getbsid(idstart,idend):
 #['瑞典超','18','707696','707863']
 #['日职','17','647803','648108']
 #['日乙','18','713219','713588']
-#getbsid(647803,648108)
-#getyapan01(672920)
+#['k1联','18','715319','715488']
+#['挪超','17','630624','630863']
+#['荷甲','17','663521','663826']
+getbsid(630624,630863)
+#getyapan01(715488)
