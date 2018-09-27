@@ -9,6 +9,7 @@ import pymysql
 import random
 from gzip import GzipFile
 import io
+import datetime
 
 def gzip(data):
 	buf = io.BytesIO(data)
@@ -320,11 +321,13 @@ def getbsid(idstart,idend):
 			#插入数据库
 			getouzhi(x)
 			getyapan01(x)
+	print(datetime.datetime.now())
+	return 0
 			
 
 
 #getouzhi(665021)
-#lszllist=['法甲','1718','664725','665104']
+#['法甲','1718','664725','665104']
 #['德甲','1718','672920','673225']
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
@@ -333,5 +336,10 @@ def getbsid(idstart,idend):
 #['k1联','18','715319','715488']
 #['挪超','17','630624','630863']
 #['荷甲','17','663521','663826']
-getbsid(630624,630863)
-#getyapan01(715488)
+#['德乙','17','673226','673531']
+#['丹超','17','665106','665287']
+#['俄超','17','666163','666402']
+#['芬超','18','719170','719343']
+
+getbsid(673226,673531)
+#getyapan01(673112)
