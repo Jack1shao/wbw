@@ -314,6 +314,7 @@ def getbsid(idstart,idend):
 			jsq=jsq+1
 			if jsq>50:#50条停一分钟
 				time.sleep(60)
+				print('wait a moment-60seconds')
 				jsq=0
 			print('开始获取',x,jsq)
 			#print("开始获取亚盘")
@@ -341,5 +342,5 @@ def getbsid(idstart,idend):
 #['俄超','17','666163','666402']
 #['芬超','18','719170','719343']
 
-getbsid(673226,673531)
+getbsid(666163,666402)
 #getyapan01(673112)
