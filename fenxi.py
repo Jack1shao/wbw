@@ -25,7 +25,7 @@ def  getyapan_by_id(idnm):
 	
 	return dateList1
 
-#3个数最大值
+"""#3个数最大值
 def get_max(list1):
 	#list1=[['jk3',0.98],['jk1',0.92],['jk0',0.96]]
 	list2=[]
@@ -36,10 +36,11 @@ def get_max(list1):
 			list2.append(x)
 	print(list2)
 	return list2
-
+"""
 #判断是否交叉盘
 def is_jcp(id1):
 	sql="select Y.idnm,Y.bstime,(SELECT c.jp from yapan c where c.idnm=y.idnm and c.ypgs='Bet365') FROM scb y where (y.lc,y.nd,y.ls) in (select a.lc,a.nd,a.ls from scb a where a.idnm="+str(id1)+")"
+	#print(id1)
 	list1=mysql_cmd.mysql_cmd1.selectMysql(sql)
 	#print(list1)
 	jp=''
@@ -71,7 +72,7 @@ def ouzhi_fenxi(dateList1):
 	if y==0:
 		print('没有欧指数据返回0')
 		return 0
-	ms=['','','','','','']
+	ms=['','','','','','','','','','']
 	bz=0
 	bb1=0
 	bocailist=['Bet365','Oddset','Iceland','威廉希尔','BINGOAL','Sweden','Betshop','Expekt','立博']
@@ -110,11 +111,12 @@ def ouzhi_fenxi(dateList1):
 		#赔付最远值
 		# listj=[['j3',abs(j3)],['j1',abs(j1)],['j0',abs(j0)]]
 		# maxj=get_max(listj)
-		#print(maxj)
+		print(x)
 		listbs=''
-		if jk3>=jk1 and jk3>=jk0:listbs='jk3最大值 '
+		if ck0>=ck1 and ck0>=ck3:listbs='ck0最大值 '
 		else:
-			if jk3>jf:listbs='jk3大于返还率 '
+			if ck0<cf:listbs='cko小于返还率 '
+		if ck1>=ck0 and ck1>=ck3:listbs='ck1最大值 '+listbs
 
 		
 		str1=''
@@ -213,15 +215,27 @@ def ouzhi_fenxi(dateList1):
 			del ms[4]
 			ms.insert(4,'Expekt '+str1)
 			bz=1
-		if x[2] in ['Iceland','Sweden','Oddset']:
-			ms.append(x[2]+listbs)
-		#if x[2]=='Sweden':ms.append(listbs)
+		if x[2]=='Oddset':
+			del ms[6]
+			ms.insert(6,'Oddset '+listbs+'--'+str1)
+			bz=1
+		if x[2]=='Sweden':
+			del ms[7]
+			ms.insert(7,'Sweden '+listbs+'--'+str1)
+			bz=1			
+			
+		if x[2] in ['Iceland']:
+			del ms[8]
+			ms.insert(8,'Iceland '+listbs+'--'+str1)
+			bz=1
+			
+		
 	
-	print(len(ms))
+	#print(len(ms))
 	
 	for x in range(9-len(ms)):
 		ms.append('')
-	print(len(ms))
+	#print(len(ms))
 	if bz==1 or bz==0:
 		list3.append(dateList1[0][0])
 		
@@ -230,14 +244,102 @@ def ouzhi_fenxi(dateList1):
 
 	return list3
 
+
+
+
+def ouzhi_fenxi02(dateList1):
+	list3=[]
+	for x_bc_row in dateList1:
+		# if x_bc_row[2]=='BINGOAL' and is_overone(['ck1'],x_bc_row):
+		# 	str1='BINGOAL ck1>1'
+			
+		# 	list3.append(x_bc_row[0])
+		# 	list3.append('BINGOAL ck1>1')
+		# 	break
+		if x_bc_row[2]=='BINGOAL' and is_overone(['ck0'],x_bc_row):
+			str1='BINGOAL ck0>1'
+			print(x_bc_row)
+			list3.append(x_bc_row[0])
+			list3.append('BINGOAL ck0>1')
+			break
+
+	return list3
+
+		
+
+#判断大于1的函数
+def is_overone(kllist1,datelist1):
+	# kllist1=['jk1','ck0']
+	kllist2=['ck3','ck1','ck0','jk3','jk1','jk0']
+	#datelist1=(664916, 2, '威廉希尔', ('1.62'), ('3.80'), ('5.50'), ('1.91'), ('3.50'), ('4.00'), ('58.11'), ('24.77'), ('17.12'), ('49.43'), ('26.97'), ('23.60'), ('94.14'), ('94.40'), ('0.82'), ('0.01'), ('1.25'), ('0.96'), ('0.93'), ('0.91'))
+	#构造数据标题，用于取下标
+	sjlb=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','cf','jf','ck3','ck1','ck0','jk3','jk1','jk0']
+	#返回值
+	value1=0
+	value2=1
+	istrue=1
+	if len(kllist1)==0:
+		print('判断的值为空，错误returnvelue0001')
+		return 0
+
+	for y in kllist1:
+		for i,x in enumerate(sjlb):
+				if x==y:
+					if float(datelist1[i])>0.999:
+						value1=1
+						
+					else:v=0
+				if x in kllist2 and x not in kllist1:
+					if float(datelist1[i])>0.999:
+						value2=0
+					
+		istrue=value1*istrue*value2
+
+	#
+	#print(istrue)
+	#清空数组
+	del sjlb[:]
+	del kllist1[:]
+
+	return istrue
+			
+		
+#判断是否最大值,startstep,endstep与之相比较的步长
+def is_maxvalue(klstr,startstep,endstep,datelist1):
+	datelist1=(664916, 2, '威廉希尔', ('1.62'), ('3.80'), ('5.50'), ('1.91'), ('3.50'), ('4.00'), ('58.11'), ('24.77'), ('17.12'), ('49.43'), ('26.97'), ('23.60'), ('94.14'), ('94.40'), ('1.82'), ('1.01'), ('1.25'), ('0.96'), ('0.93'), ('0.91'))
+	klstr='ck0'
+	startstep=-2
+	endstep=-1
+	sjlb=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','cf','jf','ck3','ck1','ck0','jk3','jk1','jk0']
+	value1=0
+	istrue=1
+	for i,x in enumerate(sjlb):
+		if x==klstr:
+			if datelist1[i]>=datelist1[i+startstep] and datelist1[i]>=datelist1[i+endstep]:
+				value1=1
+			else:value1=0
+		print(i,datelist1[i],datelist1[i+startstep],datelist1[i+endstep],value1)
+
+	istrue=istrue*value1
+	print(istrue)
+	#清空数组
+	del sjlb[:]
+	return istrue
+
 def  fenxi1(jp,cp):
 
-	if cp.strip()!='':
-		str1=" and cp='"+str(cp)+"'"
-	else:
-		str1=''
 
-	sql="select * from yapan  where ypgs='Bet365' and jp='"+str(jp)+"'" +str1
+	str2=" jp='"+str(jp)+"' "
+	str1=" cp='"+str(cp)+"' "
+
+	sql="select * from yapan  where ypgs='Bet365' "
+	if cp.strip()!='':
+		sql=sql+" and "+str1
+	if jp.strip()!='':
+		sql=sql+" and "+str2
+
+	print(sql,"00000123")
+
 	dateList1=mysql_cmd.mysql_cmd1.selectMysql(sql)
 	jglist=[]
 	#print(len(dateList1))
@@ -250,15 +352,20 @@ def  fenxi1(jp,cp):
 		#print(ouzhi_fenxi(ouzhilist))
 		# 
 		# #取比赛结果、进球差
-		oz1=ouzhi_fenxi(ouzhilist)
+		oz1=ouzhi_fenxi02(ouzhilist)
+		if len(oz1)==0:
+			#print(oz1)
+			continue
 		#print(oz1)
 		bsxxlist=getbsx_by_id(oz1[0])
 		#print(bsxxlist)
+		
 		if len(bsxxlist)>0:
 			oz1.append(bsxxlist[0][1]+'vs'+bsxxlist[0][2])
 			oz1.append(bsxxlist[0][6]-bsxxlist[0][7])
 			oz1.append(bsxxlist[0][3]+bsxxlist[0][4]+str(bsxxlist[0][5]))
 		oz1.append(x[4]+'--'+x[7])
+		#交叉盘
 		oz1.append(is_jcp(idnm))
 		print(oz1)
 		jglist.append(oz1)
@@ -271,3 +378,6 @@ fenxi1('半球','')
 #
 #is_jcp(673112)
 #get_max('')
+#
+#is_overone(['ck0'],'')
+#is_maxvalue('','','','')

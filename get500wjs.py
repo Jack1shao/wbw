@@ -7,7 +7,7 @@ from chardet import detect
 import time
 import pymysql
 import random
-from gzip import GzipFile
+#from gzip import GzipFile
 import io
 import datetime
 
@@ -43,11 +43,12 @@ def selectMysql(sql):
 	except  Exception as e :print("发生异常",e);return 0
 	return dateList
 
-
+"""
 def tempselect():
 	sql="select idnm from scb"
 	print(selectMysql(sql))
 	return 0
+"""
 
 def bsid_from_db(idstart,idend):
 	sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
@@ -80,7 +81,11 @@ def getbsxx(id1,soup):
 	#获取比分
 	soupbf=soup.find('p','odds_hd_bf')
 	jqs=re.findall('\d+',soupbf.text)
-	[bsxxlist.append(x) for x in jqs]
+	if len(jqs)==0:
+		bsxxlist.append('-100')
+		bsxxlist.append('-1000')
+	else:
+		[bsxxlist.append(x) for x in jqs]
 		
 	#获取比赛时间
 	souptime=soup.find('p','game_time')
@@ -142,8 +147,9 @@ def getouzhi(id1):
 	soup=gethtmlsoup(url0)
 	dateinbsxx=getbsxx(id1,soup)
 	put_bsxx_in_db(dateinbsxx)#插入比赛信息，scb
+	#print(dateinbsxx)
 
-	put_ouzhi_in_db(ansy_500wouzhi(id1,soup.find_all(id='table_cont')))
+	#put_ouzhi_in_db(ansy_500wouzhi(id1,soup.find_all(id='table_cont')))
 	#
 	a=getbcgscount(soup)-1
 	for x in range(int(a/30)):
@@ -175,7 +181,7 @@ def geturltext(url):
 	#一定要关闭，不然会变为攻击
 	
 	reponse.close()
-	time.sleep(2+random.randint(0,3))
+	time.sleep(1+random.randint(0,2))
 	codeing=detect(decompressed_data)#检测编码，	#print(codeing['encoding'])
 
 	if codeing['encoding']=='GB2312':
@@ -215,7 +221,7 @@ def put_yapei_in_db(dateIn):
 
 #由于该网站是通过滚轴；按30个数据加载的，所以要
 
-def getyapan01(id1):
+def getyapan02(id1):
 	
 	url0='http://odds.500.com/fenxi/yazhi-'+str(id1)+'.shtml?ctype=2'
 	ouzhilist=[]
@@ -256,9 +262,13 @@ def getyapan01(id1):
 			print('错误00002')
 			return 0
 	#print(list3)
-	put_yapei_in_db(list3)
-	return 0
+	
+	return list3
 
+
+def getyapan01(id1):
+	put_yapei_in_db(getyapan02(id1))
+	return 0
 
 
 def souphtml(html1):
@@ -311,6 +321,32 @@ def getbsid(idstart,idend):
 	return 0
 			
 
+#获取wbwzcdc
+def get_zcdc(url0):
+	url0='http://live.500.com/zqdc.php'
+	htmltext=geturltext(url0)
+	soup=BeautifulSoup(htmltext,'lxml')
+
+	list3=soup.find_all(id='table_match')
+	print(len(list3))
+
+	list31=list3[0].find_all('input')
+	print(len(list31))
+	yapanlist=['半球','半球/一球','一球','受半球','受半球/一球','受一球']
+	idlist=[]
+	for x in list31:
+		idnm=int(x.get('value'))
+		list11=getyapan02(idnm)
+
+		for x1 in list11:
+			if x1[2]=='Bet365' and x1[4] in yapanlist:
+				# print(idnm,x1[4],x1[2])
+				getbsid(idnm,idnm)
+	# print(idlist)
+	# for xid in idlist:
+	# 	getbsid(idnm,idnm)
+
+	return 0
 
 #getouzhi(665021)
 #['法甲','1718','664725','665104']
@@ -327,5 +363,6 @@ def getbsid(idstart,idend):
 #['俄超','17','666163','666402']
 #['芬超','18','719170','719343']
 
-getbsid(666163,666164)
+getbsid(663702,663702)
 #getyapan01(673112)
+get_zcdc('')
