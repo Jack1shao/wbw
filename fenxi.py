@@ -248,21 +248,24 @@ def ouzhi_fenxi(dateList1):
 
 
 def ouzhi_fenxi02(dateList1):
-	list3=[]
+	list3=[1,'','','','','']
+	bz=0
 	for x_bc_row in dateList1:
-		# if x_bc_row[2]=='BINGOAL' and is_overone(['ck1'],x_bc_row):
-		# 	str1='BINGOAL ck1>1'
-			
-		# 	list3.append(x_bc_row[0])
-		# 	list3.append('BINGOAL ck1>1')
-		# 	break
-		if x_bc_row[2]=='BINGOAL' and is_overone(['ck0'],x_bc_row):
-			str1='BINGOAL ck0>1'
-			print(x_bc_row)
-			list3.append(x_bc_row[0])
-			list3.append('BINGOAL ck0>1')
+		if x_bc_row[2]=='BINGOAL' and is_overone(['ck1'],x_bc_row):
+			del list3[1]
+			list3.insert(1,'BINGOAL ck1>1')
+			bz=1
 			break
+		if x_bc_row[2]=='BINGOAL' and is_overone(['ck0'],x_bc_row):
 
+			del list3[2]
+			list3.insert(2,'BINGOAL ck0>1')
+			bz=1
+			break
+	if bz==0:del list3[:]
+	else:
+		del list3[0]
+		list3.insert(0,dateList1[0][0])
 	return list3
 
 		
@@ -374,7 +377,7 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('半球','')
+fenxi1('球半','')
 #
 #is_jcp(673112)
 #get_max('')
