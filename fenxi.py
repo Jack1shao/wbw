@@ -255,13 +255,26 @@ def ouzhi_fenxi02(dateList1):
 			del list3[1]
 			list3.insert(1,'BINGOAL ck1>1')
 			bz=1
-			break
+			# break
 		if x_bc_row[2]=='BINGOAL' and is_overone(['ck0'],x_bc_row):
 
 			del list3[2]
 			list3.insert(2,'BINGOAL ck0>1')
 			bz=1
-			break
+			# break
+		if x_bc_row[2]=='Oddset' and is_overone(['ck0'],x_bc_row):
+
+			del list3[3]
+			list3.insert(3,'Oddset ck0>1')
+			bz=1
+			#break
+		if x_bc_row[2]=='Sweden' and is_overone(['ck0'],x_bc_row):
+
+			del list3[4]
+			list3.insert(4,'Sweden ck0>1')
+			bz=1
+			# break
+
 	if bz==0:del list3[:]
 	else:
 		del list3[0]
@@ -366,6 +379,7 @@ def  fenxi1(jp,cp):
 		if len(bsxxlist)>0:
 			oz1.append(bsxxlist[0][1]+'vs'+bsxxlist[0][2])
 			oz1.append(bsxxlist[0][6]-bsxxlist[0][7])
+			oz1.append(bsxxlist[0][6]+bsxxlist[0][7])
 			oz1.append(bsxxlist[0][3]+bsxxlist[0][4]+str(bsxxlist[0][5]))
 		oz1.append(x[4]+'--'+x[7])
 		#交叉盘
@@ -377,7 +391,7 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('球半','')
+fenxi1('半球','')
 #
 #is_jcp(673112)
 #get_max('')
