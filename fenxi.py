@@ -258,8 +258,8 @@ def ouzhi_fenxi02(dateList1):
 			# break
 		if x_bc_row[2]=='BINGOAL' and is_overone(['ck0'],x_bc_row):
 
-			del list3[2]
-			list3.insert(2,'BINGOAL ck0>1')
+			del list3[1]
+			list3.insert(1,'BINGOAL ck0>1')
 			bz=1
 			# break
 		if x_bc_row[2]=='Oddset' and is_overone(['ck0'],x_bc_row):
@@ -274,7 +274,23 @@ def ouzhi_fenxi02(dateList1):
 			list3.insert(4,'Sweden ck0>1')
 			bz=1
 			# break
+		if x_bc_row[2]=='Expekt' and is_overone(['ck0'],x_bc_row):
 
+			del list3[2]
+			list3.insert(2,'Expekt ck0>1')
+			bz=1
+			# break
+		if x_bc_row[2]=='Expekt' and is_overone(['ck3','jk0'],x_bc_row):
+
+			del list3[2]
+			list3.insert(2,'Expekt ck3.jk0>1')
+			bz=1
+		if x_bc_row[2]=='威廉希尔' and is_overone(['jk1'],x_bc_row):
+
+			del list3[5]
+			list3.insert(5,'威廉希尔 jk1>1')
+			bz=1
+			# break
 	if bz==0:del list3[:]
 	else:
 		del list3[0]
@@ -285,9 +301,9 @@ def ouzhi_fenxi02(dateList1):
 
 #判断大于1的函数
 def is_overone(kllist1,datelist1):
-	# kllist1=['jk1','ck0']
+	#kllist1=['ck3','jk0']
 	kllist2=['ck3','ck1','ck0','jk3','jk1','jk0']
-	#datelist1=(664916, 2, '威廉希尔', ('1.62'), ('3.80'), ('5.50'), ('1.91'), ('3.50'), ('4.00'), ('58.11'), ('24.77'), ('17.12'), ('49.43'), ('26.97'), ('23.60'), ('94.14'), ('94.40'), ('0.82'), ('0.01'), ('1.25'), ('0.96'), ('0.93'), ('0.91'))
+	# datelist1=(664916, 2, '威廉希尔', ('1.62'), ('3.80'), ('5.50'), ('1.91'), ('3.50'), ('4.00'), ('58.11'), ('24.77'), ('17.12'), ('49.43'), ('26.97'), ('23.60'), ('94.14'), ('94.40'), ('1.82'), ('0.01'), ('0.25'), ('0.96'), ('0.93'), ('0.91'))
 	#构造数据标题，用于取下标
 	sjlb=['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','cf','jf','ck3','ck1','ck0','jk3','jk1','jk0']
 	#返回值
@@ -297,25 +313,28 @@ def is_overone(kllist1,datelist1):
 	if len(kllist1)==0:
 		print('判断的值为空，错误returnvelue0001')
 		return 0
-
+	
 	for y in kllist1:
+		
 		for i,x in enumerate(sjlb):
 				if x==y:
-					if float(datelist1[i])>0.999:
+					if float(datelist1[i])>0.998:
 						value1=1
 						
-					else:v=0
+					else:value1=0
+
 				if x in kllist2 and x not in kllist1:
-					if float(datelist1[i])>0.999:
+					if float(datelist1[i])>0.998:
 						value2=0
 					
 		istrue=value1*istrue*value2
 
 	#
-	#print(istrue)
+	# print(istrue)
 	#清空数组
 	del sjlb[:]
 	del kllist1[:]
+	del kllist2[:]
 
 	return istrue
 			
@@ -391,10 +410,10 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('半球','')
+fenxi1('一球','')
 #
 #is_jcp(673112)
 #get_max('')
 #
-#is_overone(['ck0'],'')
+# is_overone(['ck3','jk0'],'')
 #is_maxvalue('','','','')
