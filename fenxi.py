@@ -40,9 +40,9 @@ def get_max(list1):
 #判断是否交叉盘
 def is_jcp(id1):
 	sql="select Y.idnm,Y.bstime,(SELECT c.jp from yapan c where c.idnm=y.idnm and c.ypgs='Bet365') FROM scb y where (y.lc,y.nd,y.ls) in (select a.lc,a.nd,a.ls from scb a where a.idnm="+str(id1)+")"
-	#print(id1)
+	print(id1)
 	list1=mysql_cmd.mysql_cmd1.selectMysql(sql)
-	#print(list1)
+	print(list1)
 	jp=''
 	bstime=''
 	bz=''
@@ -51,7 +51,7 @@ def is_jcp(id1):
 		if x[0]==id1:
 			jp=x[2]
 			bstime=x[1]
-	
+	print(bstime)
 	bst1 = datetime.datetime.strptime(bstime, "%Y-%m-%d %H:%M")
 	#10小时之内的比赛
 	tend=(bst1+datetime.timedelta(hours=10))
@@ -111,7 +111,7 @@ def ouzhi_fenxi(dateList1):
 		#赔付最远值
 		# listj=[['j3',abs(j3)],['j1',abs(j1)],['j0',abs(j0)]]
 		# maxj=get_max(listj)
-		print(x)
+		#print(x)
 		listbs=''
 		if ck0>=ck1 and ck0>=ck3:listbs='ck0最大值 '
 		else:
@@ -166,7 +166,11 @@ def ouzhi_fenxi(dateList1):
 
 			if ck1==jk1 and ((ck0==jk0 and ck3!=jk3) or (ck0!=jk0 and ck3==jk3)) :
 				del ms[3]
-				ms.insert(3,'bet365独变其中一个赔率')
+				if ck3!=jk3:
+					strdb='bet365独变 k3'
+				else:
+					strdb='bet365独变 k0'
+				ms.insert(3,strdb)
 				bz=1			
 
 			if (x[2]=='Bet365' and ((ck3>1 and jk3>jf+0.02) or (ck0>1 and jk0>jf+0.02))):
@@ -180,7 +184,7 @@ def ouzhi_fenxi(dateList1):
 					str2='jk3'
 				else:
 					str2='jk0'
-				ms.insert(3,'bet365高低刷 ')
+				ms.insert(3,'bet365高低刷 '+str2)
 				bz=1
 
 
@@ -387,7 +391,7 @@ def  fenxi1(jp,cp):
 		#print(ouzhi_fenxi(ouzhilist))
 		# 
 		# #取比赛结果、进球差
-		oz1=ouzhi_fenxi02(ouzhilist)
+		oz1=ouzhi_fenxi(ouzhilist)
 		if len(oz1)==0:
 			#print(oz1)
 			continue
@@ -410,9 +414,8 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('一球','')
-#
-#is_jcp(673112)
+fenxi1('两球/两球半','')
+#is_jcp(713492)
 #get_max('')
 #
 # is_overone(['ck3','jk0'],'')

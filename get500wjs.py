@@ -10,6 +10,7 @@ import random
 #from gzip import GzipFile
 import io
 import datetime
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 #获取一个数据库连接
@@ -149,10 +150,11 @@ def getouzhi(id1):
 	put_bsxx_in_db(dateinbsxx)#插入比赛信息，scb
 	#print(dateinbsxx)
 
-	#put_ouzhi_in_db(ansy_500wouzhi(id1,soup.find_all(id='table_cont')))
+	put_ouzhi_in_db(ansy_500wouzhi(id1,soup.find_all(id='table_cont')))
 	#
 	a=getbcgscount(soup)-1
 	for x in range(int(a/30)):
+		time.sleep(1+random.randint(0,2))
 		starts=30*(x+1)
 		url0='http://odds.500.com/fenxi1/ouzhi.php?id='+str(id1)+'&ctype=1&start='+str(starts)+'&r=1&style=0&guojia=0&chupan=1'
 		soup2=gethtmlsoup(url0)
@@ -166,8 +168,16 @@ def getouzhi(id1):
 #
 def geturltext(url):
 
-	header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
-			'Accept-Encoding':'gzip,deflate'}
+	# header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
+	# 		'Accept-Encoding':'gzip,deflate'}
+	header = {'Accept': '*/*',
+				'Accept-Language': 'en-US,en;q=0.8',
+				'Cache-Control': 'max-age=0',
+				'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
+				'Connection': 'keep-alive',
+				'Accept-Encoding':'gzip,deflate',
+				'Referer': 'http://www.baidu.com/'
+				}
 	request = urllib.request.Request(url, headers=header)
 	try:
 		reponse = urllib.request.urlopen(request)
@@ -181,7 +191,7 @@ def geturltext(url):
 	#一定要关闭，不然会变为攻击
 	
 	reponse.close()
-	time.sleep(1+random.randint(0,2))
+	#time.sleep(2+random.randint(0,6))
 	codeing=detect(decompressed_data)#检测编码，	#print(codeing['encoding'])
 
 	if codeing['encoding']=='GB2312':
@@ -227,7 +237,7 @@ def getyapan02(id1):
 	ouzhilist=[]
 	soup=BeautifulSoup(geturltext(url0),'lxml')
 	souplist=soup.find_all(id='table_cont')
-	yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)','(沙巴)']
+	yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)','(沙巴)','(乐天堂)','(大发)']
 	y=0
 	bz=8
 	list3=[]
@@ -249,8 +259,8 @@ def getyapan02(id1):
 				list2.append(list1[x])
 		lenlist2=len(list2)
 		#print(list2)
-		if lenlist2%bz==0:
-
+		# if lenlist2%bz==0:
+		if 1:
 			while y+bz<=lenlist2 and y/bz<10:
 				list4=[]
 				list4.append(str(id1))
@@ -285,14 +295,33 @@ def souphtml(html1):
 	return 0
 #用静默浏览器，适用动态加载
 def selum(url):
-	
-	driver = webdriver.PhantomJS()
+	print("get by selum")
+	dcap = dict(DesiredCapabilities.PHANTOMJS)
+	dcap["phantomjs.page.settings.userAgent"] = (r"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36")
+	driver = webdriver.PhantomJS(desired_capabilities=dcap)
 	driver.get(url)
-	driver.implicitly_wait(3) 
-	#souphtml=driver.find_element_by_id('table_cont').text
+
+
 	data=driver.page_source
+
+	codeing=detect(data.encode())
+	
+	if codeing['encoding']=='GB2312':
+		codes='gbk' #GB2312 转gbk
+	else:
+		codes=codeing['encoding']
+	#转换编码
+	print('编码是',codes)
+	htmlfile = data.encode().decode(codes)
+	print(htmlfile)
 	driver.close()
-	return  data
+	return  htmlfile #data.decode('utf-8','ignore')
+
+def getsouppp(url0):
+	soup=BeautifulSoup(selum(url0),'lxml')
+	# print(soup)
+	return soup
+
 
 def getbsid(idstart,idend):
 	
@@ -313,7 +342,7 @@ def getbsid(idstart,idend):
 				jsq=0
 			print('开始获取',x,jsq)
 			#print("开始获取亚盘")
-					
+			print(datetime.datetime.now())		
 			#插入数据库
 			getouzhi(x)
 			getyapan01(x)
@@ -332,12 +361,16 @@ def get_zcdc(url0):
 
 	list31=list3[0].find_all('input')
 	print(len(list31))
-	yapanlist=['半球','半球/一球','一球','受半球','受半球/一球','受一球']
+	yapanlist=['半球','半球/一球','一球','受半球','受半球/一球','受一球','平手/半球','受平手/半球']
 	idlist=[]
 	for x in list31:
 		idnm=int(x.get('value'))
+		print(idnm)
 		list11=getyapan02(idnm)
-
+		print(len(list11))
+		if len(list11)==0:
+			print('获取亚盘错误10001')
+			break
 		for x1 in list11:
 			if x1[2]=='Bet365' and x1[4] in yapanlist:
 				# print(idnm,x1[4],x1[2])
@@ -348,6 +381,29 @@ def get_zcdc(url0):
 
 	return 0
 
+
+def tsetget(idstart,idend):
+	url0='http://odds.500.com/fenxi1/ouzhi.php?id=659972&ctype=1&start=1&r=1&style=0&guojia=0&chupan=1'
+	for x in range(idstart,idend+1):
+		print(x)
+		selum(url0)
+	return 0
+
+def get31():
+	sql='SELECT A.idnm from scb a where not EXISTS (select 1 from ouzhi B WHERE A.idnm=B.IDNM AND B.XH=1)'
+	#url0='http://odds.500.com/fenxi1/ouzhi.php?id='+str(id1)+'&ctype=1&start='+str(starts)+'&r=1&style=0&guojia=0&chupan=1'
+	list11=selectMysql(sql)
+	for x in list11:
+		# print(x[0])
+		id1=x[0]
+		starts=0
+		url0='http://odds.500.com/fenxi1/ouzhi.php?id='+str(id1)+'&ctype=1&start='+str(starts)+'&r=1&style=0&guojia=0&chupan=1'
+		soup=gethtmlsoup(url0)
+		listouzhi=ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
+		put_ouzhi_in_db(listouzhi)
+		print(datetime.datetime.now())
+	return 0
+	
 #getouzhi(665021)
 #['法甲','1718','664725','665104']
 #['德甲','1718','672920','673225']
@@ -362,15 +418,23 @@ def get_zcdc(url0):
 #['丹超','17','665106','665287']
 #['俄超','17','666163','666402']
 #['芬超','18','719170','719343']
-#['德甲','18','737551','737612']
-#['英超','18','730907','730981']
 #['英超','17','663128','663507']
-#['法甲','18','729204','729292']
 #['西甲','17','687452','687831']
 #['意甲','17','690000','690378']
 #['德甲','16','596166','596471']
 #['巴甲','18','718526','718813']
 #['巴乙','17','659768','660147']
-getbsid(659768,660147)
-#getyapan01(673112)
+#['美职','18','714214','714604']
+
+#['德甲','18','737551','737856']
+#['英超','18','730907','731285']
+#['法甲','18','729204','729582']
+#['西甲','18','748619','748992']
+#['意甲','18','749789','750164']
+
+getbsid(749789,750164)
+#getyapan01(659972)
 #get_zcdc('')
+#tsetget(659768,660147)
+#selum('http://odds.500.com/fenxi1/ouzhi.php?id=659972&ctype=1&start=1&r=1&style=0&guojia=0&chupan=1')
+#get31()
