@@ -198,7 +198,7 @@ class htmlsoup(object):
 			llli.append(li)
 			if li=='平局':llli=[]
 			
-		print(llli)
+		#print(llli)
 		print(listbifa)
 
 		pass

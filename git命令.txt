@@ -1,0 +1,15 @@
+Administrator@WIN-K0DI316NEFH MINGW32 ~
+$ git config --global user.name "jack1shao"
+
+Administrator@WIN-K0DI316NEFH MINGW32 ~
+$ git config --global user.email "shaojk@163.com"
+
+Administrator@WIN-K0DI316NEFH MINGW32 ~
+$ git config --global push.default current
+
+
+
+#克隆到指定目录
+git clone git@github.com:Jack1shao/wbw.git
+$ git clone git@github.com:Jack1shao/wbw.git d:/py/500w
+
