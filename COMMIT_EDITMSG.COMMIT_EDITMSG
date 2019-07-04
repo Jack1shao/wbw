@@ -1,0 +1,20 @@
+cheshi
+
+# --------------
+# Please enter the commit message for your changes. Everything below
+# this paragraph is ignored, and an empty message aborts the commit.
+# Just close the window to accept your message.
+diff --git a/htmlsoupClass.py b/htmlsoupClass.py
+index 1821782..e27f633 100644
+--- a/htmlsoupClass.py
++++ b/htmlsoupClass.py
+@@ -199,6 +199,9 @@ class htmlsoup(object):
+ 			if li=='平局':llli=[]
+ 			
+ 		#print(llli)
++
++		#ddjkajsdlk
++		
+ 		print(listbifa)
+ 
+ 		pass

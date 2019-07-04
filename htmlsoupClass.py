@@ -199,6 +199,9 @@ class htmlsoup(object):
 			if li=='平局':llli=[]
 			
 		#print(llli)
+
+		#ddjkajsdlk
+		
 		print(listbifa)
 
 		pass
