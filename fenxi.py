@@ -115,7 +115,8 @@ def ouzhi_fenxi(dateList1):
 		listbs=''
 		if ck0>=ck1 and ck0>=ck3:listbs='ck0最大值 '
 		else:
-			if ck0<cf:listbs='cko小于返还率 '
+			if ck0<cf:listbs='ck0小于返还率 '
+		
 		if ck1>=ck0 and ck1>=ck3:listbs='ck1最大值 '+listbs
 
 		
@@ -211,13 +212,13 @@ def ouzhi_fenxi(dateList1):
 		# if x[2]=='BINGOAL' and (jk0>0.99 or jk3>0.99):
 		if x[2]=='BINGOAL':
 			del ms[5]
-			ms.insert(5,'BINGOAL赔付'+str1)
+			ms.insert(5,'BINGOAL'+listbs+'--'+str1)
 			bz=1
 
 		# if x[2]=='Expekt' and ((ck3<cf-0.1 and jk3>=1) or (ck0<cf-0.1 and jk0>=1)):
 		if x[2]=='Expekt' :
 			del ms[4]
-			ms.insert(4,'Expekt '+str1)
+			ms.insert(4,'Expekt '+listbs+'--'+str1)
 			bz=1
 		if x[2]=='Oddset':
 			del ms[6]
@@ -414,7 +415,7 @@ def  fenxi1(jp,cp):
 	#print(jglist)
 	return dateList1
 
-fenxi1('两球/两球半','')
+fenxi1('半球','')
 #is_jcp(713492)
 #get_max('')
 #

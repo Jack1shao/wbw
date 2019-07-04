@@ -25,8 +25,9 @@ def insertMysql(dateIn,SqlInsert):
 		print('插入成功');
 		conn.commit()
 		cur.close()#关闭游标
-		conn.close()#释放数据库资源
+		
 	except  Exception as e :print("insert 发生异常",e);return 0
+	finally:cur.close();conn.close()#释放数据库资源
 	return 1
 
 def selectMysql(sql):
@@ -43,6 +44,8 @@ def selectMysql(sql):
 		conn.close()#释放数据库资源
 	except  Exception as e :print("发生异常",e);return 0
 	return dateList
+
+
 
 """
 def tempselect():
@@ -61,6 +64,7 @@ def getbsxx(id1,soup):
 	bsxxlist=[]
 	bsxxlist.append(str(id1))
 	soupdz=soup.find_all('a','hd_name')
+	print(soupdz)
 
 	if len(soupdz)==3:
 		bsxxlist.append(soupdz[0].text.strip())
@@ -102,6 +106,7 @@ def getbsxx(id1,soup):
 def gethtmlsoup(url0):
 
 	soup=BeautifulSoup(geturltext(url0),'lxml')
+
 	return soup
 
 
@@ -160,7 +165,6 @@ def getouzhi(id1):
 		soup2=gethtmlsoup(url0)
 		put_ouzhi_in_db(ansy_500wouzhi(id1,soup2))
 
-	return 0
 
 
 
@@ -170,7 +174,7 @@ def geturltext(url):
 
 	# header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
 	# 		'Accept-Encoding':'gzip,deflate'}
-	header = {'Accept': '*/*',
+	header = {'Accept': "application/json, text/javascript, */*; q=0.01",
 				'Accept-Language': 'en-US,en;q=0.8',
 				'Cache-Control': 'max-age=0',
 				'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
@@ -178,9 +182,18 @@ def geturltext(url):
 				'Accept-Encoding':'gzip,deflate',
 				'Referer': 'http://www.baidu.com/'
 				}
-	request = urllib.request.Request(url, headers=header)
+	agentsList =[
+					"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.3.4000 Chrome/30.0.1599.101 Safari/537.36",
+					"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36",
+					"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+					"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.84 Safari/535.11 SE 2.X MetaSr 1.0"
+				]
+	#产生随机的User-agent
+	ag=random.choice(agentsList)
+	req = urllib.request.Request(url, headers=header)
+	req.add_header('User-Agent',ag)
 	try:
-		reponse = urllib.request.urlopen(request)
+		reponse = urllib.request.urlopen(req)
 		#print('get reponse')
 	except urllib.error.URLError as e:
     		print(e.reason)
@@ -295,15 +308,26 @@ def souphtml(html1):
 	return 0
 #用静默浏览器，适用动态加载
 def selum(url):
-	print("get by selum")
+	#print("get by selum")
 	dcap = dict(DesiredCapabilities.PHANTOMJS)
-	dcap["phantomjs.page.settings.userAgent"] = (r"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36")
+
+	agentsList =[
+						"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.3.4000 Chrome/30.0.1599.101 Safari/537.36",
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+						"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.84 Safari/535.11 SE 2.X MetaSr 1.0"
+				]
+	#产生随机的User-agent
+	ag=random.choice(agentsList)
+	dcap["phantomjs.page.settings.userAgent"] = ag
 	driver = webdriver.PhantomJS(desired_capabilities=dcap)
 	driver.get(url)
 
 
-	data=driver.page_source
+	htmlfile=None
 
+	data=driver.page_source
+	#print(data)
 	codeing=detect(data.encode())
 	
 	if codeing['encoding']=='GB2312':
@@ -312,8 +336,9 @@ def selum(url):
 		codes=codeing['encoding']
 	#转换编码
 	print('编码是',codes)
+
 	htmlfile = data.encode().decode(codes)
-	print(htmlfile)
+	#print(htmlfile)
 	driver.close()
 	return  htmlfile #data.decode('utf-8','ignore')
 
@@ -337,7 +362,7 @@ def getbsid(idstart,idend):
 		if x not in list1:
 			jsq=jsq+1
 			if jsq>50:#50条停一分钟
-				time.sleep(60)
+				#time.sleep(60)
 				print('wait a moment-60seconds')
 				jsq=0
 			print('开始获取',x,jsq)
@@ -405,37 +430,55 @@ def get31():
 	return 0
 	
 #getouzhi(665021)
-#['法甲','1718','664725','665104']
-#['德甲','1718','672920','673225']
+#print(selum("https://liansai.500.com/zuqiu-5165/"))
+
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
-#['日职','17','647803','648108']
-#['日乙','18','713219','713588']
-#['k1联','18','715319','715488']
+
 #['挪超','17','630624','630863']
 #['荷甲','17','663521','663826']
-#['德乙','17','673226','673531']
 #['丹超','17','665106','665287']
 #['俄超','17','666163','666402']
 #['芬超','18','719170','719343']
-#['英超','17','663128','663507']
+#['西甲','18','748619','748992']
 #['西甲','17','687452','687831']
-#['意甲','17','690000','690378']
-#['德甲','16','596166','596471']
+
 #['巴甲','18','718526','718813']
 #['巴乙','17','659768','660147']
 #['美职','18','714214','714604']
+#['美职','19','780198','780588']
+
+#['英超','18','730907','731285']
+#['英超','17','663128','663507']
+
+
+#['意甲','18','749789','750164']
+#['意甲','17','690000','690378']
+#['德乙','18','738015','738320']
+#['德乙','17','673226','673531']
+#['法乙','18','730388','730767']
+#['法乙','17','665289','665667']
+#['k1联','18','715319','715488']
+#['k1联','19','783817','784031']
+
+#['日职','17','647803','648108']
+#['日职','18','711444','711749']
+#['日职','19','779376','779644']
+#['日乙','18','713219','713588']
 
 #['德甲','18','737551','737856']
-#['英超','18','730907','731285']
+#['德甲','17','672920','673225']
+#['德甲','16','596166','596471']
+#['德甲','15','524841','525145']
+#['德甲','14','437133','437438']
+#['德甲','13','397709','398014']
 #['法甲','18','729204','729582']
-#['西甲','18','748619','748992']
-#['意甲','18','749789','750164']
-#
-#['德乙','18','738015','738320']
-#['法乙','18','730388','730767']
-
-getbsid(738015,738320)
+#['法甲','17','664725','665104']
+#['法甲','16','573789','574160']
+#['法甲','15','522881','523257']
+#['法甲','14','435091','435470']
+#['法甲','13','398015','398394']
+getbsid(780288,780288)
 
 #getyapan01(659972)
 #get_zcdc('')
