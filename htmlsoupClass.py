@@ -1,5 +1,6 @@
 
 ##网页解析
+from loggerClass import logger
 from gethtmlClass import getHtml
 from bs4 import BeautifulSoup
 import re
@@ -121,7 +122,7 @@ class htmlsoup(object):
 		souplist=[]
 		soup,id1=self._set_sc_url_soup(0)
 		tbsoup=soup.find_all(id='table_cont')
-		if len(tbsoup)==0:return datalist,0
+		if len(tbsoup)==0:logger().error('欧洲指数无数据0001');return datalist,0
 		datalist+=self._ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
 
 		a=self._getbcgscount(soup)-1
@@ -139,7 +140,7 @@ class htmlsoup(object):
 		list3=[]
 		soup,id1=self._set_yapan_soup()
 		souplist=soup.find_all(id='table_cont')
-		if len(souplist)==0:return list3,0
+		if len(souplist)==0:logger().error('亚盘无数据0001');return list3,0
 		yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)','(沙巴)','(乐天堂)','(大发)']
 		y=0
 		bz=8
@@ -181,31 +182,56 @@ class htmlsoup(object):
 
 	def getbifa(self):
 		print("获取  {}  必发数据".format(self.idnm))
+		listbifa=[]
+		list1=[]
+		listtab=[]
 		soup,id1=self._set_bifa_soup()
 		ss=soup.find_all('table')
-		print(len(ss))
-		listbifa=[]
-		for tb in ss[6:10]:
+				
+		if len(ss)<9:logger().error('必发无数据bifa0001');return [],0,[]
+		
+		
+		#打印表格中的每一格
+		for tb in ss[6:8]:
 			row=tb.find_all("tr")
 			for cell in row:
 				cc=cell.find_all('td')
 				for x in cc:
 					#print(x.text)
-					listbifa.append(x.text)
-					if x.text=='盈亏指数':listbifa=[]
-		llli=[]			
-		for li in iter(listbifa):
-			llli.append(li)
-			if li=='平局':llli=[]
+					#去百分号\千分位\空格
+					listtab.append(x.text.replace('%','').replace(',','').replace('-',''))
+					if x.text=='盈亏指数':listtab=[]
+				
+		a=0
+		for x in iter(listtab):
+			a+=1
+			list1.append(x)
+			if a==11:
+				a=0
+				listbifa.append(list1);
+				list1=[];
 			
-		#print(llli)
-
-		#ddjkajsdlk
+			if x=='数据提点':
+				list1.pop()
+				#listbifa.append(list1);
+				list1=[];
+				list1.append(x)
+			if x=='主':list1.pop();break;
 		
-		print(listbifa)
+		if	(len(listbifa)<3 or len(listbifa[0][6])<1):	logger().error('必发数据错误bifa0002');return [],0,[]
+		#数据提点	
+		listsjtd=list1
+		listsjtd.insert(0,str(id1))
+		#
+		b=1
+		for x in listbifa:
+			x.insert(0,str(id1))
+			x.insert(1,str(b))
+			b+=1
+			
+		
+		return listbifa,1,listsjtd
 
-		pass
 
-
-h=htmlsoup(780288)
+h=htmlsoup(731276)
 print(h.getbifa())

@@ -7,6 +7,7 @@ class logger(object):
 	日志记录器
 	"""
 	
+
 	#私有类	
 	class _singlelogger():
 		"""docstring for _singlelogger"""
@@ -26,11 +27,13 @@ class logger(object):
 			with open("./loggerclass.log","a") as log_file:
 				log_file.write("{0} {1} {2}\n".format(datetime.datetime.now(),level,self.val)) #写入格式字符
 		#写入类别
-		def error(self):
+		def error(self,sm):
+			self.val=sm
 			self._write_log("error")
 			self.p()
 		
-		def info(self):
+		def info(self,sm):
+			self.val=sm
 			self._write_log("info")
 			self.p()	
 		
