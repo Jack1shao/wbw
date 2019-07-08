@@ -12,30 +12,41 @@ class savedateClass(object):
 	#私有类
 	class _save_mysql(object):
 		"""docstring for save_mysql"""
-	
 
-		def getconn(self):
+		def insert(self,datein,SqlInsert):
 			try:
 				conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
 				cur=conn.cursor()#获取一个游标
-				print(cur)
-			except Exception as e:
-				#print("")
-				logger().error("date connect error")
-				cur.close();
-				conn.close()
-			return conn,cur,0
-
-		def closeconn(self,conn):
-			conn.close()
-			return 0
-
-		def insert(self,datein,sql):
+				
+				cur.executemany(SqlInsert,datein)
+				#print(dateIn)
+				print('插入成功');
+				conn.commit()
 			
-				pass
+				
+			except  Exception as e :
+				print("insert 发生异常",e);
+
+				return 0
+			finally:cur.close();conn.close()#释放数据库资源
+			return 1
 
 		def select(self,sql):
-				pass	
+			dateList=[]
+			#获取一个数据库连接
+			try:
+				dateList=[]
+				conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
+				cur=conn.cursor()#获取一个游标
+				cur.execute(sql)
+				dateList=cur.fetchall()
+				conn.commit()
+				
+			except  Exception as e :
+				print("发生异常",e);
+				return 0
+			finally:cur.close();conn.close()#释放数据库资源
+			return dateList	
 
 
 
@@ -55,5 +66,6 @@ class savedateClass(object):
 		pass
 
 
-h=savedateClass()
-h.getconn()
+"""h=savedateClass()
+conn=h.getconn()
+h.closeconn(conn)"""

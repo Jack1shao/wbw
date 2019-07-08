@@ -137,6 +137,7 @@ class htmlsoup(object):
 		return datalist,1
 
 	def getyapan(self):
+		print("获取  {}  亚盘".format(self.idnm))
 		list3=[]
 		soup,id1=self._set_yapan_soup()
 		souplist=soup.find_all(id='table_cont')
@@ -186,32 +187,38 @@ class htmlsoup(object):
 		list1=[]
 		listtab=[]
 		soup,id1=self._set_bifa_soup()
-		ss=soup.find_all('table')
-				
-		if len(ss)<9:logger().error('必发无数据bifa0001');return [],0,[]
+		ss=soup.find_all('table',attrs={'class':'pub_table pl_table_data bif-yab'})
 		
+		#print(ss)		
+		if len(ss)<2:logger().error('必发无数据bifa0001');return [],0,[]
 		
+		#print(ss[0:8])
 		#打印表格中的每一格
-		for tb in ss[6:8]:
+		for tb in ss[0:2]:
 			row=tb.find_all("tr")
 			for cell in row:
 				cc=cell.find_all('td')
 				for x in cc:
-					#print(x.text)
+					#zprint(x.text)
 					#去百分号\千分位\空格
 					listtab.append(x.text.replace('%','').replace(',','').replace('-',''))
 					if x.text=='盈亏指数':listtab=[]
 				
 		a=0
 		for x in iter(listtab):
+			if x=='客' or a>16 or x=='平': break
+
 			a+=1
-			list1.append(x)
+			#print(a)
+			if x=='':list1.append('0')
+			else:list1.append(x)
 			if a==11:
 				a=0
 				listbifa.append(list1);
 				list1=[];
 			
 			if x=='数据提点':
+				a=12
 				list1.pop()
 				#listbifa.append(list1);
 				list1=[];
@@ -220,8 +227,10 @@ class htmlsoup(object):
 		
 		if	(len(listbifa)<3 or len(listbifa[0][6])<1):	logger().error('必发数据错误bifa0002');return [],0,[]
 		#数据提点	
-		listsjtd=list1
-		listsjtd.insert(0,str(id1))
+		listsjtd=[]
+		list1.insert(0,str(id1))
+		listsjtd.append(list1[0:5])
+		#print(listsjtd)
 		#
 		b=1
 		for x in listbifa:
@@ -229,9 +238,9 @@ class htmlsoup(object):
 			x.insert(1,str(b))
 			b+=1
 			
-		
+		#print(listbifa,1,listsjtd)
 		return listbifa,1,listsjtd
 
 
-h=htmlsoup(731276)
-print(h.getbifa())
+"""h=htmlsoup(731276)
+print(h.getbifa())"""

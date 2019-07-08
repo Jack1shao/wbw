@@ -55,8 +55,7 @@ CREATE TABLE `sjtdbf` (
   `s1` varchar(255) DEFAULT NULL,
   `s2` varchar(255) DEFAULT NULL,
   `s3` varchar(255) DEFAULT NULL
-
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------
