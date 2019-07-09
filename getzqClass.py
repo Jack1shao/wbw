@@ -65,10 +65,12 @@ class getzqClass(object):
 			if x not in list1:
 				jsq=jsq+1
 				self.getbs(x)
+				print(datetime.datetime.now())
 
 
 		print(datetime.datetime.now())
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-h.getbsid(779448,779644)
+h.getbsid(435091,435470)
+
