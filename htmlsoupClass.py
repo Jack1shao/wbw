@@ -38,6 +38,7 @@ class htmlsoup(object):
 	#返回赛程表
 	def getsc(self):
 		#返回数据列表
+		print("获取  {}  赛程".format(self.idnm))
 		datalist=[]
 
 		soup,id1=self._set_sc_url_soup(0)
@@ -57,7 +58,7 @@ class htmlsoup(object):
 		#去掉‘第’字。联赛
 		ls=re.findall('.*?([\u4E00-\u9FA5]+)',str11)
 		bsxxlist.append(ls[0][0:-1])
-		print(str11[-3:],str11)
+		#print(str11[-3:],str11)
 
 		#获取轮次
 		lun=re.findall('\d+',str11[-3:])

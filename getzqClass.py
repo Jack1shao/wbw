@@ -72,5 +72,5 @@ class getzqClass(object):
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-h.getbsid(435091,435470)
+h.getbsid(800257,800357)
 
