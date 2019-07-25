@@ -2,6 +2,22 @@
 
 --足球数据清理
 
+#--半球研究
+#--20190724
+#
+
+SELECT o.*,y.*,s.*,s.zjq-s.kjq
+FROM	ouzhi o,yapan y,scb s
+WHERE
+	1=1 
+	and s.idnm=y.idnm
+	and y.idnm=o.idnm
+	#AND o.bcgs=
+	and o.bcgs='Iceland'
+	and y.jp='半球'  AND y.cp='半球'
+	and y.ypgs='Bet365'
+	#and o.idnm in (SELECT a.idnm from yapan a where a.jp='半球'  and a.ypgs='Bet365')
+
 --查看记录条数
 SELECT count(*) from scb a where  a.nd=18 and a.ls='意甲'
 

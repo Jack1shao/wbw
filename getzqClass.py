@@ -17,6 +17,22 @@ class getzqClass(object):
 		sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
 		sv=savedateClass().select(sql)
 		return  sv
+	#补齐必发信息
+	def bqbf(self,id1):
+		print('开始获取必发',id1)
+		hs=htmlsoup(id1)
+		bflist,bzbf,bflist_sjtd=hs.getbifa()
+		print('写入数据库....')
+		dates=savedateClass()
+		bfsql="insert into bifa values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+		bfsql_sjtd="insert into sjtdbf values (%s,%s,%s,%s,%s)"
+
+		if bzbf==1:
+			dates.insert(bflist,bfsql)#写入必发
+			dates.insert(bflist_sjtd,bfsql_sjtd)#写入必发-数据提点
+		else:print('no date ,return');return 0
+		return 1
+
 	#获取单场信息
 	def getbs(self,id1):
 		print('开始获取',id1)
@@ -50,7 +66,22 @@ class getzqClass(object):
 				dates.insert(bflist_sjtd,bfsql_sjtd)#写入必发-数据提点
 
 		return 1
-
+	#补齐必发
+	def bqbfmain(self,idstart,idend):
+		jsq=0#计数器
+		list1=[]
+		if idstart>idend:return 0
+		idlist=self._bsid_from_db(idstart,idend)
+		for idnmrow in idlist:
+				for idnm0 in idnmrow:
+					list1.append(idnm0)
+		for x in range(idstart,idend+1):
+			if x  in list1:
+				jsq=jsq+1
+				self.bqbf(x)
+				print(datetime.datetime.now())
+		return 0
+	#获取比赛数据
 	def getbsid(self ,idstart,idend):
 		
 		jsq=0#计数器
@@ -72,5 +103,53 @@ class getzqClass(object):
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-h.getbsid(800257,800357)
+#h.getbsid(800257,800357)
+h.bqbfmain(687452,687831)
+#['瑞典超','17','633991','634230']
+#['瑞典超','18','707696','707863']
+
+#['挪超','17','630624','630863']
+#['荷甲','17','663521','663826']
+#['丹超','17','665106','665287']
+#['俄超','17','666163','666402']
+#['芬超','18','719170','719343']
+#['西甲','18','748619','748992']
+#['西甲','17','687452','687831']
+
+#['巴甲','18','718526','718813']
+#['巴甲','19','800197','800357']
+#['巴乙','17','659768','660147']
+#['美职','18','714214','714604']
+#['美职','19','780198','780588']
+
+#['英超','18','730907','731285']
+#['英超','17','663128','663507']
+
+
+#['意甲','18','749789','750164']
+#['意甲','17','690000','690378']
+#['德乙','18','738015','738320']
+#['德乙','17','673226','673531']
+#['法乙','18','730388','730767']
+#['法乙','17','665289','665667']
+#['k1联','18','715319','715488']
+#['k1联','19','783817','784031']
+
+#['日职','17','647803','648108']
+#['日职','18','711444','711749']
+#['日职','19','779376','779644']
+#['日乙','18','713219','713588']
+
+#['德甲','18','737551','737856']
+#['德甲','17','672920','673225']
+#['德甲','16','596166','596471']
+#['德甲','15','524841','525145']
+#['德甲','14','437133','437438']
+#['德甲','13','397709','398014']
+#['法甲','18','729204','729582']
+#['法甲','17','664725','665104']
+#['法甲','16','573789','574160']
+#['法甲','15','522881','523257']
+#['法甲','14','435091','435470']
+#['法甲','13','398015','398394']
 

@@ -1,12 +1,12 @@
-[INFO  - 2019-07-03T11:33:57.205Z] GhostDriver - Main - running on port 57085
-[INFO  - 2019-07-03T11:33:58.333Z] Session [727a0a90-9d86-11e9-b114-fdd4add56012] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36","webSecurityEnabled":true}
-[INFO  - 2019-07-03T11:33:58.333Z] Session [727a0a90-9d86-11e9-b114-fdd4add56012] - page.customHeaders:  - {}
-[INFO  - 2019-07-03T11:33:58.333Z] Session [727a0a90-9d86-11e9-b114-fdd4add56012] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"},"phantomjs.page.settings.userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"}
-[INFO  - 2019-07-03T11:33:58.333Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 727a0a90-9d86-11e9-b114-fdd4add56012
-[ERROR - 2019-07-03T11:33:58.618Z] Session [727a0a90-9d86-11e9-b114-fdd4add56012] - page.onError - msg: TypeError: undefined is not a constructor (evaluating 'document.getElementById("audio_home").load()')
+[INFO  - 2019-07-24T10:15:54.746Z] GhostDriver - Main - running on port 65376
+[INFO  - 2019-07-24T10:15:58.169Z] Session [078bff50-adfc-11e9-9c58-abc646d1898c] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36","webSecurityEnabled":true}
+[INFO  - 2019-07-24T10:15:58.170Z] Session [078bff50-adfc-11e9-9c58-abc646d1898c] - page.customHeaders:  - {}
+[INFO  - 2019-07-24T10:15:58.170Z] Session [078bff50-adfc-11e9-9c58-abc646d1898c] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"},"phantomjs.page.settings.userAgent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36"}
+[INFO  - 2019-07-24T10:15:58.170Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 078bff50-adfc-11e9-9c58-abc646d1898c
+[ERROR - 2019-07-24T10:15:58.558Z] Session [078bff50-adfc-11e9-9c58-abc646d1898c] - page.onError - msg: TypeError: undefined is not a constructor (evaluating 'document.getElementById("audio_home").load()')
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2019-07-03T11:33:58.618Z] Session [727a0a90-9d86-11e9-b114-fdd4add56012] - page.onError - stack:
-  soundInit (http://live.win007.com/common.js?ver=9:249)
+[ERROR - 2019-07-24T10:15:58.559Z] Session [078bff50-adfc-11e9-9c58-abc646d1898c] - page.onError - stack:
+  soundInit (http://live.win007.com/common.js?ver=9:257)
 
   phantomjs://platform/console++.js:263 in error
