@@ -428,7 +428,7 @@ def get31():
 		put_ouzhi_in_db(listouzhi)
 		print(datetime.datetime.now())
 	return 0
-	
+
 #getouzhi(665021)
 #print(selum("https://liansai.500.com/zuqiu-5165/"))
 
@@ -479,10 +479,10 @@ def get31():
 #['法甲','15','522881','523257']
 #['法甲','14','435091','435470']
 #['法甲','13','398015','398394']
-getbsid(800197,800257)
+#getbsid(800197,800257)
 
 #getyapan01(659972)
-#get_zcdc('')
+get_zcdc('')
 #tsetget(659768,660147)
 #selum('http://odds.500.com/fenxi1/ouzhi.php?id=659972&ctype=1&start=1&r=1&style=0&guojia=0&chupan=1')
 #get31()

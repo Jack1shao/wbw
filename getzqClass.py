@@ -13,8 +13,8 @@ class getzqClass(object):
 		super(getzqClass, self).__init__()
 		self.arg = arg
 
-	def _bsid_from_db(self,idstart,idend):
-		sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
+	def _bsid_from_db(self,idstart,idend,sql):
+		#sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
 		sv=savedateClass().select(sql)
 		return  sv
 	#补齐必发信息
@@ -30,7 +30,10 @@ class getzqClass(object):
 		if bzbf==1:
 			dates.insert(bflist,bfsql)#写入必发
 			dates.insert(bflist_sjtd,bfsql_sjtd)#写入必发-数据提点
-		else:print('no date ,return');return 0
+		else:
+			print('no date ,写入必发空值')
+			dates.insert(bflist,bfsql)#写入必发空值
+			return 0
 		return 1
 
 	#获取单场信息
@@ -64,6 +67,9 @@ class getzqClass(object):
 			if bzbf==1:
 				dates.insert(bflist,bfsql)#写入必发
 				dates.insert(bflist_sjtd,bfsql_sjtd)#写入必发-数据提点
+			else:
+				print('no date ,写入必发空值')
+				dates.insert(bflist,bfsql)#写入必发空值
 
 		return 1
 	#补齐必发
@@ -71,23 +77,35 @@ class getzqClass(object):
 		jsq=0#计数器
 		list1=[]
 		if idstart>idend:return 0
-		idlist=self._bsid_from_db(idstart,idend)
+		#必发不存在的记录
+		#sql="select idnm from scb s where not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
+		#		+" and idnm between " +str(idstart)+" and " +str(idend)
+		ypgs='Bet365'
+		jp1='半球'
+		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
+		#print(sql)
+		idlist=self._bsid_from_db(idstart,idend,sql)
+
 		for idnmrow in idlist:
 				for idnm0 in idnmrow:
 					list1.append(idnm0)
+					self.bqbf(idnm0)
+				print(datetime.datetime.now())
 		for x in range(idstart,idend+1):
 			if x  in list1:
 				jsq=jsq+1
-				self.bqbf(x)
+				#self.bqbf(x)
 				print(datetime.datetime.now())
 		return 0
 	#获取比赛数据
 	def getbsid(self ,idstart,idend):
-		
+
+
 		jsq=0#计数器
 		list1=[]
 		if idstart>idend:return 0
-		idlist=self._bsid_from_db(idstart,idend)
+		sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
+		idlist=self._bsid_from_db(idstart,idend,sql)
 		for idnmrow in idlist:
 				for idnm0 in idnmrow:
 					list1.append(idnm0)
@@ -104,7 +122,7 @@ class getzqClass(object):
 h=getzqClass('')
 #h.getbs(779440)
 #h.getbsid(800257,800357)
-h.bqbfmain(687452,687831)
+h.bqbfmain(714214,714604)
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
 

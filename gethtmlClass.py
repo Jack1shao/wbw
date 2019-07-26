@@ -58,6 +58,20 @@ class getHtml(object):
 		htmlfile = decompressed_data.decode(codes)
 
 		return htmlfile
+	def getHtml_by_firefox(self,url):
+		driver = webdriver.Firefox( )
+		try:
+			driver.get(url)
+			tb1=driver.find_element_by_id("table_live")
+			t=tb1.text
+			#print (t)
+
+		except Exception as e:
+			raise
+
+		finally:
+			driver.close()
+		return t
 	#
 	def gethtml_by_selum(self,url):
 		#print("get by selum")
@@ -93,6 +107,6 @@ class getHtml(object):
 #测试类函数
 
 
-#h=getHtml("http://live.win007.com/index2in1.aspx?id=8")	
+#h=getHtml()	
 
-#print(t1)
+#print(h.getHtml_by_firefox("http://live.win007.com/index2in1.aspx?id=8"))

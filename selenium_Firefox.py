@@ -1,14 +1,27 @@
-from selenium.webdriver import Firefox
-from selenium.webdriver.firefox.options import Options
+#from selenium.webdriver import Firefox
+from selenium import webdriver
+#from selenium.webdriver.firefox.options import Options
 
 
 def main():
-	options = Options()
-	options.add_argument('-headless')
-	driver = Firefox(executable_path='./geckodriver', firefox_options=options)
-	driver.get("https://www.qiushibaike.com/8hr/page/1/")
-	print(driver.page_source)
-	driver.close()
+	#options = Options()
+	#options.add_argument('-headless')
+	url="https://live.500.com/zqdc.php"
+	driver = webdriver.Firefox( )
+	#driver.get("http://live.win007.com/index2in1.aspx?id=8")
+	try:
+		driver.get(url)
+		#print(driver.page_source)
+		tb1=driver.find_element_by_id("table_match")
+		tr=tb1.find_all('tr')
+		#t=tb1.page_source
+		print (tr)
+
+	except Exception as e:
+		raise
+
+	finally:
+		driver.close()
 
 
 if __name__ == '__main__':

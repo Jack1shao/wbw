@@ -123,7 +123,7 @@ class htmlsoup(object):
 		souplist=[]
 		soup,id1=self._set_sc_url_soup(0)
 		tbsoup=soup.find_all(id='table_cont')
-		if len(tbsoup)==0:logger().error('欧洲指数无数据0001');return datalist,0
+		if len(tbsoup)==0:logger().error(str(self.idnm)+'欧洲指数无数据0001');return datalist,0
 		datalist+=self._ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
 
 		a=self._getbcgscount(soup)-1
@@ -142,7 +142,7 @@ class htmlsoup(object):
 		list3=[]
 		soup,id1=self._set_yapan_soup()
 		souplist=soup.find_all(id='table_cont')
-		if len(souplist)==0:logger().error('亚盘无数据0001');return list3,0
+		if len(souplist)==0:logger().error(str(self.idnm)+'亚盘无数据0001');return list3,0
 		yclist=['主', '客', '同','升', '(优胜客)','(明升)','降','(壹貳博)','(沙巴)','(乐天堂)','(大发)']
 		y=0
 		bz=8
@@ -189,9 +189,16 @@ class htmlsoup(object):
 		listtab=[]
 		soup,id1=self._set_bifa_soup()
 		ss=soup.find_all('table',attrs={'class':'pub_table pl_table_data bif-yab'})
-		
-		#print(ss)		
-		if len(ss)<2:logger().error('必发无数据bifa0001');return [],0,[]
+		#无必发数据时放回空值
+		wbif=['0','0','0','0','0','0','0','0','0','0','0','0']
+		wbif.insert(0,str(id1))
+		wbf=[]
+		#构造3条必发记录
+		wbf.append(wbif)
+		wbf.append(wbif)
+		wbf.append(wbif)	
+
+		if len(ss)<2:logger().error(str(self.idnm)+'必发无数据bifa0001');return wbf,0,[]
 		
 		#print(ss[0:8])
 		#打印表格中的每一格
@@ -226,7 +233,7 @@ class htmlsoup(object):
 				list1.append(x)
 			if x=='主':list1.pop();break;
 		
-		if	(len(listbifa)<3 or len(listbifa[0][6])<1):	logger().error('必发数据错误bifa0002');return [],0,[]
+		if	(len(listbifa)<3 or len(listbifa[0][6])<1):	logger().error(str(self.idnm)+'必发数据错误bifa0002');return wbf,0,[]
 		#数据提点	
 		listsjtd=[]
 		list1.insert(0,str(id1))
@@ -243,5 +250,5 @@ class htmlsoup(object):
 		return listbifa,1,listsjtd
 
 
-"""h=htmlsoup(731276)
-print(h.getbifa())"""
+#h=htmlsoup(633994)
+#print(h.getbifa())
