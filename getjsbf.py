@@ -4,6 +4,8 @@ import re
 def gethtmlsoup(url):
 	#500w北单比方情况
 	url="https://live.500.com/zqdc.php"
+	
+	#url="https://live.500.com/2h1.php"
 	htmltext=getHtml().geturltext(url)
 	soup=BeautifulSoup(htmltext,'lxml')
 	return soup
@@ -15,8 +17,10 @@ def get500wzqdc(soup):
 	listtable=soup.find_all(id='table_match')
 	list31=listtable[0].find_all('tr')
 	bsxxlist=[]
+	#print(list31[1])
 	for x in list31:
 		#获取500w比赛id
+
 		id1=x.get('fid')
 		if id1==None: continue
 		idlist=[]
@@ -26,11 +30,16 @@ def get500wzqdc(soup):
 		tdlist=x.find_all('td')
 		#获取比赛时间
 		listsj=(tdlist[3].get_text().split(' '))
+		#比分
+		listbcbf=tdlist[8].get_text().split('-')
+		#print(listbcbf)
 		#list连接成一个
 		listgy.extend(listsj)
 		listgy.extend(idlist)
-		bsxxlist.append(listgy)
-	#print(bsxxlist)
+		if listbcbf[0]==' ':
+			bsxxlist.append(listgy)
+			
+	
 	return bsxxlist
 
 #获取球探当日的比赛信息
@@ -70,8 +79,25 @@ def getqtzqdc():
 	
 	#print(list5)	
 	return list5
+#球队名称对照
+def dmdzb(name1,name2,levle):
+	listdzb=[
+				['智利甲', '尤尼昂', '库里科', '08:00', '智利甲', '拉卡莱拉联合', '库里科联队', '08:00', '777040'],
+				['墨西联春', '圣路易斯竞技', '蒙特瑞', '06:00', '墨超', '圣路易斯竞技', '蒙特雷', '06:00', '823437']
+			]
+	
+	#名字相等
+	if name1==name2:return 1
+	#名字在对照表中
+	#print(name1,name2,levle)
+	for x in listdzb:
+		if  x[levle]==name1 and x[levle+4]==name2:return 1
+		
+	return 0
+
 
 def hb():
+	print("开始获取....")
 	listwbw=get500wzqdc(gethtmlsoup(''))
 
 	#整理500万数据
@@ -87,11 +113,21 @@ def hb():
 	listls=[]
 	for qt in listqt:
 		for wbw in listwbw1:
-			if qt[3]==wbw[3] and (qt[0]==wbw[0] or qt[1]==wbw[1] or qt[2]==wbw[2]):
-				#listddd=qt.extend(wbw)
-				print(qt,wbw)
+			bz=1
+			#队名和比赛时间相等
+			for x in range(0,4):
+				bz=bz*dmdzb(qt[x],wbw[x],x)
+				
+			if bz:listls.append(wbw)
 
-				listls.append(wbw)
+			#辅助对照
+			
+			if bz==0 and qt[3]==wbw[3] and (qt[0]==wbw[0] or qt[1]==wbw[1] or qt[2]==wbw[2]):
+				print("辅助对照")
+				l1=qt
+				l2=wbw
+				l1.extend(l2)
+				print(l1)
 			
 	print(listls)
 
@@ -101,6 +137,7 @@ def hb():
 
 	pass
 #url="https://live.500.com/zqdc.php"
-#getid(gethtmlsoup(url))
+#get500wzqdc(gethtmlsoup(' '))
 hb()
+#print(dmdzb('墨西联春','墨超',0))
 #getqtzqdc()
