@@ -39,10 +39,22 @@ class getzqClass(object):
 	#获取单场信息
 	def getbs(self,id1):
 		print('开始获取',id1)
-
+		dates=savedateClass()
 		hs=htmlsoup(id1)
 
 		scblist,bzsc=hs.getsc()
+		if bzsc==0:
+			print("无赛程")
+			scberrorsql="insert into scb_error values (%s,%s)"
+			liste=[]
+			listee=[]
+			liste.append(str(id1))
+			liste.append("无赛程")
+			listee.append(liste)
+
+			dates.insert(listee,scberrorsql)
+			return 0
+
 		ozlist,bzoz=hs.getouzhi()
 		yplist,bzyp=hs.getyapan()
 		bflist,bzbf,bflist_sjtd=hs.getbifa()
@@ -50,14 +62,14 @@ class getzqClass(object):
 		if bzsc*bzoz*bzyp==0: print('no date ,return');return 0
 
 		print('写入数据库....')
-		dates=savedateClass()
+		
 		scbsql="insert into scb values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 		ypsql="insert into yapan values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 		ozsql="insert into ouzhi values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 		
 		bfsql="insert into bifa values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 		bfsql_sjtd="insert into sjtdbf values (%s,%s,%s,%s,%s)"
-		
+		 
 		
 		t=dates.insert(scblist,scbsql)#写入赛程
 		if t==1:
@@ -81,7 +93,7 @@ class getzqClass(object):
 		#sql="select idnm from scb s where not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#		+" and idnm between " +str(idstart)+" and " +str(idend)
 		ypgs='Bet365'
-		jp1='半球'
+		jp1='受半球'
 		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#print(sql)
 		idlist=self._bsid_from_db(idstart,idend,sql)
@@ -104,7 +116,7 @@ class getzqClass(object):
 		jsq=0#计数器
 		list1=[]
 		if idstart>idend:return 0
-		sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
+		sql="select idnm from scb_error union all select idnm from scb where  idnm between "+str(idstart)+" and " +str(idend)
 		idlist=self._bsid_from_db(idstart,idend,sql)
 		for idnmrow in idlist:
 				for idnm0 in idnmrow:
@@ -121,8 +133,10 @@ class getzqClass(object):
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-#h.getbsid(800257,800357)
-h.bqbfmain(714214,714604)
+#h.getbsid(805215,805245)
+#h.bqbfmain(714214,714604)
+#['丹超','19','805215','805245']
+#['瑞典超','19','789008','789280']
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
 
@@ -155,7 +169,7 @@ h.bqbfmain(714214,714604)
 
 #['日职','17','647803','648108']
 #['日职','18','711444','711749']
-#['日职','19','779376','779644']
+#['日职','19','779376','779644'] 
 #['日乙','18','713219','713588']
 
 #['德甲','18','737551','737856']
@@ -170,4 +184,5 @@ h.bqbfmain(714214,714604)
 #['法甲','15','522881','523257']
 #['法甲','14','435091','435470']
 #['法甲','13','398015','398394']
+#[]
 
