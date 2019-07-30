@@ -65,7 +65,7 @@ def getqtzqdc():
 		if x[3]=="-":x.insert(2,'0')
 		#修复半场数据信息
 		if not re.findall('-',x[6]):x.insert(6,'-')
-		if x[9] in ['半球','受半球'] and x[2]=='0':list3.append(x);#print(x)
+		if x[9] in ['半球','受半球'] and x[2]=='0':list3.append(x)
 	#print(list3)
 	
 	list5=[]
@@ -86,9 +86,12 @@ def dmdzb(name1,name2,levle):
 				['墨西联春', '圣路易斯竞技', '蒙特瑞', '06:00', '墨超', '圣路易斯竞技', '蒙特雷', '06:00', '823437'],
 				['巴西甲', '阿拉戈亚诺体育队', '格雷米奥', '07:00', '巴西甲', 'CSA阿拉戈诺', '格雷米奥', '07:00', '800399'],
 				['巴西乙', '科里蒂巴', '保地花高SP', '07:00', '巴西乙', '科里蒂巴', '博塔弗戈SP', '07:00', '801187'],
-				['法乙', '洛里昂', ' ', '02:45', '法乙', '洛里昂', '巴黎FC', '02:45', '809443'],
-				['瑞典超', '赫尔辛堡', '奥雷布洛', '01:00', '瑞典超', '赫尔辛堡', '厄勒布鲁', '01:00', '789270']
-
+				['瑞典超', '赫尔辛堡', '奥雷布洛', '01:00', '瑞典超', '赫尔辛堡', '厄勒布鲁', '01:00', '789270'],
+				['韩K联', '蔚山现代', 'FC首尔', '18:30', 'K1联赛', '蔚山现代', 'FC首尔', '18:30', '784087'],
+				['欧罗巴杯', '林肯红魔', '阿拉特阿美尼亚', '23:45', '欧罗巴联赛', '林肯红魔', '亚拉腊亚美尼亚', '23:45', '847423'],
+				['墨西哥杯', '提华纳', '克雷塔罗', '10:00', '墨西哥杯', '蒂华纳', '克雷塔罗', '10:00', '849068'],
+				['欧冠杯', '特拉维夫马卡比', '克卢日', '01:00', '欧冠联赛', '特拉维夫马卡比', '克卢日', '01:00'],
+				['巴西乙', '庞特普雷塔', '米内罗美洲', '07:30', '巴西乙', '庞特普雷塔', '米涅罗美洲', '07:30']
 			]
 	
 	#名字相等
@@ -111,7 +114,7 @@ def hb():
 	for wbw in listwbw:
 		del wbw[3]
 		listwbw1.append(wbw[0:5])
-	print(listwbw1)
+	#print(listwbw1)
 	listqt=getqtzqdc()
 	print("球探数据")
 	print(listqt)
@@ -119,29 +122,36 @@ def hb():
 	listls=[]
 	for qt in listqt:
 		for wbw in listwbw1:
+			#if qt[3]!=wbw[3]:break#比赛时间相等
 			bz=1
 			#队名和比赛时间相等
 			for x in range(0,4):
 				bz=bz*dmdzb(qt[x],wbw[x],x)
-				
-			if bz:listls.append(wbw)
+			if bz:
+				listls.append(wbw)
+				break
 
 			#辅助对照
-			
+
 			if bz==0 and qt[3]==wbw[3] and (qt[0]==wbw[0] or qt[1]==wbw[1] or qt[2]==wbw[2]):
-				print("辅助对照")
-				l1=qt
-				l2=wbw
+				print("辅助对照：")
+				l1=[]
+				l2=[]
+				for x in range(0,4):
+					l2.append(wbw[x])
+					l1.append(qt[x])
 				l1.extend(l2)
 				print(l1)
-			
+				l1.clear()
+
+	print("比对结果：")		
 	print(listls)
 
 	#listjj=set(listwbw1).intersection(set(listqt))
 	#print(listjj)
 	#整理球探数据
 
-	pass
+	
 #url="https://live.500.com/zqdc.php"
 #get500wzqdc(gethtmlsoup(' '))
 hb()
