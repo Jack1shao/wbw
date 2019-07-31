@@ -133,7 +133,10 @@ class getzqClass(object):
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-#h.getbsid(805215,805245)
+list2=[778990,778998,779000]
+for x in list2:	h.getbsid(x,x)
+#h.getbsid(826637,826637)
+
 #h.bqbfmain(714214,714604)
 #['丹超','19','805215','805245']
 #['瑞典超','19','789008','789280']

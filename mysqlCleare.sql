@@ -2,6 +2,18 @@
 
 --足球数据清理
 
+
+#足球数据清理
+#20190731
+#删除赛程表不合理数据
+
+DELETE S.* FROM scb s WHERE S.zjq<0 ;
+		#删除赛程表中没有的球赛数据
+DELETE O.* FROM ouzhi O WHERE  NOT EXISTS (SELECT 1 FROM scb S WHERE S.IDNM =O.idnm);
+DELETE O.* FROM yapan O WHERE  NOT EXISTS (SELECT 1 FROM scb S WHERE S.IDNM =O.idnm);
+DELETE O.* FROM bifa O WHERE  NOT EXISTS (SELECT 1 FROM scb S WHERE S.IDNM =O.idnm);
+DELETE O.* FROM sjtdbf O WHERE  NOT EXISTS (SELECT 1 FROM scb S WHERE S.IDNM =O.idnm);
+
 #--半球研究
 #--20190724
 #
