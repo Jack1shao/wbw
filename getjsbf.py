@@ -1,4 +1,6 @@
 from gethtmlClass import getHtml
+from htmlsoupClass import htmlsoup
+from sjfenxi import sjfenxClass
 from bs4 import BeautifulSoup
 import re
 def gethtmlsoup(url):
@@ -94,7 +96,12 @@ def dmdzb(name1,name2,levle):
 				['巴西乙', '庞特普雷塔', '米内罗美洲', '07:30', '巴西乙', '庞特普雷塔', '米涅罗美洲', '07:30'],
 				['日职乙', '横滨FC', '山口雷法', '18:30', 'J2联赛', '横滨FC', '山口雷诺法', '18:30'],
 				['欧罗巴杯', '古拉瑞奇', '莫尔德', '02:45', '欧罗巴联赛', '库卡瑞奇', '莫尔德', '02:45'],
-				['自由杯', '波特诺山丘', '圣洛伦索', '06:15', '解放者杯', '波特诺山丘', '圣洛伦索', '06:15']
+				['自由杯', '波特诺山丘', '圣洛伦索', '06:15', '解放者杯', '波特诺山丘', '圣洛伦索', '06:15'],
+				['欧罗巴杯', '漫游者(中)', '比尔舒华夏普尔', '22:30', '欧罗巴联赛', '蒙得维的亚流浪者', '贝尔谢巴夏普尔', '22:30'],
+				['南球杯', '里加FC', '奥斯杰克', '00:30', '南俱杯', '里加', '奥西耶克', '00:30'],
+				['德乙', '桑德豪森', '奥斯纳布鲁克', '00:30', '德乙', '桑德豪森', '奥斯纳布吕克', '00:30'],
+				['法乙', '奥兰斯', '查布莱', '02:00', '法乙', '奥尔良', '尚布利', '02:00'],
+				['荷甲', '泽沃勒', '威廉二世', '02:00', '荷甲', '兹沃勒', '威廉二世', '02:00']
 
 			]
 	
@@ -105,6 +112,7 @@ def dmdzb(name1,name2,levle):
 	for x in listdzb:
 		for xx in range(0,4):
 			if  x[xx]==name1 and x[xx+4]==name2:return 1
+			if  x[xx]==name2 and x[xx+4]==name1:return 1
 		
 	return 0
 
@@ -155,9 +163,39 @@ def hb():
 	return listls
 
 
+def getdcsj(id1):
+	print(str(id1)+"获取比赛数据。。。")
+	hs=htmlsoup(id1)
+	#scblist,bzsc=hs.getsc()
+	ozlist,bzoz=hs.getouzhi()
+	#yplist,bzyp=hs.getyapan()
+	#bflist,bzbf,bflist_sjtd=hs.getbifa()
+
+	#if bzsc*bzoz*bzyp*bzbf==0:print("date error...");return 0
+
+	#return 1,scblist,ozlist,yplist,bflist,bflist_sjtd
+	return ozlist
+
+def fenxi(id1):
+	#bz,scblist,ozlist,yplist,bflist,bflist_sjtd=getdcsj(847409)
+	ozlist=getdcsj(847409)
+
+	fx=sjfenxClass()
+	#li=fx.bfsjfx(bflist)
+	
+	#li2=fx.bfsjtdfx(bflist_sjtd)
+	li2=fx.ozsjfx(ozlist)
+	print(li2)
+	#欧指数据分析
+	#iceland
+
+
+	pass
 #测试。。。。。。。。。	
 
 #get500wzqdc(gethtmlsoup(' '))
 #getqtzqdc()
 hb()
+#fenxi(hb())
+#fenxi(10)
 

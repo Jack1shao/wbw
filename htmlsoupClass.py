@@ -195,8 +195,7 @@ class htmlsoup(object):
 		wbf=[]
 		#构造3条必发记录
 		wbf.append(wbif)
-		wbf.append(wbif)
-		wbf.append(wbif)	
+
 
 		if len(ss)<2:logger().error(str(self.idnm)+'必发无数据bifa0001');return wbf,0,[]
 		
@@ -209,7 +208,8 @@ class htmlsoup(object):
 				for x in cc:
 					#zprint(x.text)
 					#去百分号\千分位\空格
-					listtab.append(x.text.replace('%','').replace(',','').replace('-',''))
+					#listtab.append(x.text.replace('%','').replace(',','').replace('-',''))
+					listtab.append(x.text.replace('%','').replace(',',''))
 					if x.text=='盈亏指数':listtab=[]
 				
 		a=0
@@ -250,5 +250,4 @@ class htmlsoup(object):
 		return listbifa,1,listsjtd
 
 
-#h=htmlsoup(633994)
-#print(h.getbifa())
+#h=htmlsoup(847413);print(h.getbifa())
