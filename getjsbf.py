@@ -2,6 +2,7 @@ from gethtmlClass import getHtml
 from htmlsoupClass import htmlsoup
 from sjfenxi import sjfenxClass
 from bs4 import BeautifulSoup
+from loggerClass import logger
 import re
 def gethtmlsoup(url):
 	#500w北单比方情况
@@ -101,7 +102,10 @@ def dmdzb(name1,name2,levle):
 				['南球杯', '里加FC', '奥斯杰克', '00:30', '南俱杯', '里加', '奥西耶克', '00:30'],
 				['德乙', '桑德豪森', '奥斯纳布鲁克', '00:30', '德乙', '桑德豪森', '奥斯纳布吕克', '00:30'],
 				['法乙', '奥兰斯', '查布莱', '02:00', '法乙', '奥尔良', '尚布利', '02:00'],
-				['荷甲', '泽沃勒', '威廉二世', '02:00', '荷甲', '兹沃勒', '威廉二世', '02:00']
+				['荷甲', '泽沃勒', '威廉二世', '02:00', '荷甲', '兹沃勒', '威廉二世', '02:00'],
+				['欧冠杯', '塞萨洛尼基', '阿贾克斯', '01:00', '欧冠联赛', 'PAOK塞萨洛尼基', '阿贾克斯', '01:00'],
+				['欧冠杯', '希腊人竞技', '卡拉巴克', '01:00', '欧冠联赛', '希腊人竞技', '卡拉巴赫', '01:00'],
+				['巴西乙', '米内罗美洲', '隆迪那', '08:30', '巴西乙', '米涅罗美洲', '隆德里纳', '08:30']
 
 			]
 	
@@ -191,11 +195,27 @@ def fenxi(id1):
 
 
 	pass
+
+
+#获取半球的id号
+def get_id_list(datlist):
+	idlist=[]
+	for li in datlist:
+		idlist.append(li[4])
+	return idlist
+	
+
+#写入文件
+def wr_into_log(datlist):
+	lg=logger()
+	lg.info(datlist)
+	
 #测试。。。。。。。。。	
 
 #get500wzqdc(gethtmlsoup(' '))
 #getqtzqdc()
-hb()
+li=(get_id_list(hb()))
+wr_into_log(li)
 #fenxi(hb())
 #fenxi(10)
 

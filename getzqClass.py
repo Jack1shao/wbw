@@ -133,8 +133,8 @@ class getzqClass(object):
 		return 0
 h=getzqClass('')
 #h.getbs(779440)
-list2=[778990,778998,779000]
-for x in list2:	h.getbsid(x,x)
+list2=['778998', '779000']
+for x in list2:	h.getbsid(int(x),int(x))
 #h.getbsid(826637,826637)
 
 #h.bqbfmain(714214,714604)
