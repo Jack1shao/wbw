@@ -2,7 +2,8 @@
 
 --足球数据清理
 
-
+# 获取联赛最大值idnm
+SELECT max(idnm) from scb where (nd,ls) in (SELECT nd,ls from scb where idnm=808055)
 #足球数据清理
 #20190731
 #删除赛程表不合理数据

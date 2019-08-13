@@ -242,6 +242,14 @@ class htmlsoup(object):
 		#
 		b=1
 		for x in listbifa:
+			for li in x:
+				#必发数据中北单没有数据时，写入0；
+				if li=='-':
+					l=x.index(li)
+					#print(x.index(li))
+					del x[l]
+					x.insert(l,'0')
+
 			x.insert(0,str(id1))
 			x.insert(1,str(b))
 			b+=1
@@ -250,4 +258,4 @@ class htmlsoup(object):
 		return listbifa,1,listsjtd
 
 
-#h=htmlsoup(847413);print(h.getbifa())
+#h=htmlsoup(729966);print(h.getbifa())

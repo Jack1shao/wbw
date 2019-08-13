@@ -109,40 +109,108 @@ class getzqClass(object):
 				#self.bqbf(x)
 				print(datetime.datetime.now())
 		return 0
-	#获取比赛数据
+	#获取比赛段的数据
 	def getbsid(self ,idstart,idend):
-
 
 		jsq=0#计数器
 		list1=[]
-		if idstart>idend:return 0
-		sql="select idnm from scb_error union all select idnm from scb where  idnm between "+str(idstart)+" and " +str(idend)
+
+		#容错机制
+		if idstart==None:return 0
+		if abs(idend-idstart)>500 : return 0
+		if idstart>idend:print("idstart>idend"); return 0
+
+		#获取数据库中已有的比赛id
+		sql="select idnm from scb_error where idnm between {0} and {1} union all select idnm from scb where  idnm between {0} and {1}".format(idstart,idend)
 		idlist=self._bsid_from_db(idstart,idend,sql)
 		for idnmrow in idlist:
-				for idnm0 in idnmrow:
-					list1.append(idnm0)
-		#print(list1)
+			for idnm0 in idnmrow:
+				list1.append(idnm0)
+		#获取还未进入数据库的比赛
 		for x in range(idstart,idend+1):
 			if x not in list1:
 				jsq=jsq+1
 				self.getbs(x)
 				print(datetime.datetime.now())
-
+		#补齐之前比赛的数据
+		self.getbs_othor(idstart)
 
 		print(datetime.datetime.now())
 		return 0
+	#补齐之前比赛的数据
+	def getbs_othor(self,idend):
+		#获取该联赛最小idnm
+		
+		idstart=0	
+		minidnm_sql="SELECT min(idnm) from scb where (nd,ls) in (SELECT nd,ls from scb where idnm={})".format(idend)
+		sv=savedateClass().select(minidnm_sql)
+		print("本联赛最小idnm :",sv[0][0])
+		if sv[0][0]!=None and  int(sv[0][0])+1<idend:
+			idstart=int(sv[0][0])
+		
+		if idstart>0:
+			print("补齐之前比赛的数据{}-{}".format(idstart,idend))
+			self.getbsid(idstart,idend)
+		return 0
+
+
+	
 h=getzqClass('')
 #h.getbs(779440)
-list2=['778998', '779000']
-for x in list2:	h.getbsid(int(x),int(x))
-#h.getbsid(826637,826637)
+in_list=[]
+between_list=[
+				['法甲','19','808039','808055'],
+				['法乙','19','809429','809483'],
+				['英超','19','806501','806519'],
+				['西甲','19','830801','0'],
+				['意甲','19','853818','0'],
+				['德乙','19','825597','825627'],
+				['德甲','19','824571','0'],
+				['芬超','19','0','0'],
+				['丹超','18','729966','730147'],
+				['荷甲','18','731287','731591'],
+				['k1联','19','783817','784031'],
+				['日职','19','779376','779644'], 
+				['美职','19','780198','780588'],
+				['日乙','19','778452','779044'],
+				['丹超','19','805215','805245'],
+				['巴甲','19','800197','800357']
+			]
+
+if len(in_list)!=0:
+	print(in_list)
+	for x in in_list:
+		h.getbsid(int(x),int(x))
+if len(between_list)!=0:
+	for x in between_list:
+		if int(x[2])*int(x[3])==0 :continue
+		print(int(x[2]),int(x[3]))
+		h.getbsid(int(x[2]),int(x[3]))
 
 #h.bqbfmain(714214,714604)
+#['k1联','19','783817','784031']
+#['日职','19','779376','779644'] 
+#['美职','19','780198','780588']
+#['日乙','19','778452','779044']
 #['丹超','19','805215','805245']
+#['巴甲','19','800197','800357']
 #['瑞典超','19','789008','789280']
+
+#['芬超','19','0','0']
+#['西甲','19','0','0']
+#['意甲','19','0','0']
+#['德乙','19','0','0']
+#['德甲','19','824571','0']
+#['法甲','19','808039','808055']
+#['法乙','19','809429','809483']
+#['英超','19','806501','806519']
+
+#['丹超','18','729966','730147']
+#['荷甲','18','731287','731591']
+
+
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
-
 #['挪超','17','630624','630863']
 #['荷甲','17','663521','663826']
 #['丹超','17','665106','665287']
@@ -150,17 +218,11 @@ for x in list2:	h.getbsid(int(x),int(x))
 #['芬超','18','719170','719343']
 #['西甲','18','748619','748992']
 #['西甲','17','687452','687831']
-
 #['巴甲','18','718526','718813']
-#['巴甲','19','800197','800357']
 #['巴乙','17','659768','660147']
 #['美职','18','714214','714604']
-#['美职','19','780198','780588']
-
 #['英超','18','730907','731285']
 #['英超','17','663128','663507']
-
-
 #['意甲','18','749789','750164']
 #['意甲','17','690000','690378']
 #['德乙','18','738015','738320']
@@ -168,13 +230,9 @@ for x in list2:	h.getbsid(int(x),int(x))
 #['法乙','18','730388','730767']
 #['法乙','17','665289','665667']
 #['k1联','18','715319','715488']
-#['k1联','19','783817','784031']
-
 #['日职','17','647803','648108']
 #['日职','18','711444','711749']
-#['日职','19','779376','779644'] 
 #['日乙','18','713219','713588']
-
 #['德甲','18','737551','737856']
 #['德甲','17','672920','673225']
 #['德甲','16','596166','596471']
@@ -187,5 +245,3 @@ for x in list2:	h.getbsid(int(x),int(x))
 #['法甲','15','522881','523257']
 #['法甲','14','435091','435470']
 #['法甲','13','398015','398394']
-#[]
-
