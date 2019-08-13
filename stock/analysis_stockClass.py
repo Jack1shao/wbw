@@ -66,7 +66,7 @@ class analysis_stock(object):
 		#df['ma']=None
 		print(df.loc[0,'close'])
 		print(df.loc[l,'close'])
-		for ind in range(0,l):
+		for ind in range(0,l+1):
 
 			index2=l-ind
 			if index2>=N:x=0
