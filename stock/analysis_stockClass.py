@@ -1,5 +1,6 @@
 #
 from getstockClass import getstock
+import talib
 class analysis_stock(object):
 	"""docstring for analysis_stock
 		分析单只股票k线数据
@@ -47,93 +48,65 @@ class analysis_stock(object):
 		return 0
 	#计算5日10日交易量
 	def find_vol(self,df,index1):
-		s5vol=0
-		s10vol=0
-		for x in range(10):
-			s10vol+=df.loc[index1-x-1,'volume']
-		for x in range(5):
-			s5vol+=df.loc[index1-x-1,'volume']
-
-		return int(s5vol/5),int(s10vol/10)
+		s5=df[index1-5:index1]['volume'].mean()
+		s10=df[index1-10:index1]['volume'].mean()
+		return s5,s10
 	#MA=近N日收盘价的累计之和÷N
 	#得到一个倒叙的list
-	def  MA(self,df,N):
+	def _MA(self,df,N):
 		MA_list=[]
 		listindex=[]
 		for index,row in df.iterrows():
 			listindex.append(index)
 		l=listindex[-1]
-		#df['ma']=None
-		print(df.loc[0,'close'])
-		print(df.loc[l,'close'])
-		for ind in range(0,l+1):
-
+		l+=1
+		for ind in range(0,l):
 			index2=l-ind
-			if index2>=N:x=0
-			else:x=index2-N
-			#print(df.loc[0,'close'])
-			#求均值
+			x=index2-N if index2>=N else 0
+			#求均值 
+			#其中df[x:index2]不包含index2，包含x，元素个数为index2-x个#print(df[627:641])
 			lsdf=df[x:index2]['close'].mean()
-			#df.ix[index2,'ma']=lsdf
-			#print(df.loc[index2,'ma'])
 			MA_list.append(lsdf)
-		#print(df[0:10])
-		print(MA_list[-1])
 		return MA_list
-
-	def Md(self,df,N,ma):
+	#Md=近N日收盘价的平均偏离
+	#得到一个倒叙的list
+	def _Md(self,df,N):
 		Md_list=[]
 		listindex=[]
 		for index,row in df.iterrows():
 			listindex.append(index)
-		#
-		#ma=self.MA(df,N)
 		l=listindex[-1]
+		l+=1
 		for ind in range(0,l):
-
-			a=0
-			#少于N个 时 ii起作用
-			ii=0
-			for x in range(N):
-				if l-ind-x<=0:break
-				ii+=1;
-				a+=(ma[ind-x]-df.loc[l-ind-x-1,'close'])
-			
-			Md_list.append(a/ii)
-		print(Md_list[0])
-		#print(len(Md_list),Md_list)
+			index2=l-ind
+			x=index2-N if index2>=N else 0
+			lsdf=df[x:index2]['close'].mad()
+			#print(x,index2,lsdf)
+			Md_list.append(lsdf)
+		
 		return Md_list
-	def TP(self,df,index):
+	def _TP(self,df,index):
 		tp=0
 		tp=df.loc[index,'high']+df.loc[index,'low']+df.loc[index,'close']
-		#print(df.loc[index,'high'],df.loc[index,'low'],df.loc[index,'close'])
-		#print(tp/3)
 		return tp/3
+
 	def cci(self,df,index1,N):
-		#CCI（N日）=（TP－MA）÷MD÷0.015
-		listindex=[]
-		for index,row in df.iterrows():
-			listindex.append(index)
-		#
-		#ma=self.MA(df,N)
-		l=listindex[-1]
-		cci=0
-		ma=self.MA(df,N)
-		md=self.Md(df,N,ma)
-		tp=self.TP(df,index1)
-		print(ma[l-index1],md[l-index1],tp)
-		cci=(tp-ma[l-index1])/(md[l-index1]*0.015)
-		print(cci)
+
+		
 		return cci
 
 
 	def test2(self):
 		df,name=self._getk()
-		index=640
+		index=605
 		N=14
+
 		print(name,df.loc[index,'date'])
-		#(self.cci(df,index,N))
-		self.MA(df,N)
+		#real=talib.CCI(df.high,df.low,df.close)
+		#print(real.head())
+		#self.cci(df,index,N)
+		#self.Md(df,N)
+		#self.find_vol(df,index)
 
 	def test(self):
 		df,name=self._getk()
