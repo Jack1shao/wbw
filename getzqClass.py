@@ -133,7 +133,7 @@ class getzqClass(object):
 				self.getbs(x)
 				print(datetime.datetime.now())
 		#补齐之前比赛的数据
-		self.getbs_othor(idstart)
+		#self.getbs_othor(idstart)
 
 		print(datetime.datetime.now())
 		return 0
@@ -157,7 +157,7 @@ class getzqClass(object):
 	
 h=getzqClass('')
 #h.getbs(779440)
-in_list=[]
+in_list=['809503', '809507', '810788']
 between_list=[
 				['法甲','19','808039','808055'],
 				['法乙','19','809429','809483'],

@@ -40,68 +40,27 @@ class analysis_stock(object):
 		if high>high1 and high2>high1 :
 			#必须是阳线
 			if close>close1:
-				s5,s10=self.find_vol(df,index1)
-				#print(s5,s10,int(df.loc[index1,'volume']))
-				if int(df.loc[index1,'volume'])>s5 :
-					print(s5,s10,int(df.loc[index1,'volume']))
-					return i
+				return i
 		return 0
 	#计算5日10日交易量
 	def find_vol(self,df,index1):
 		s5=df[index1-5:index1]['volume'].mean()
 		s10=df[index1-10:index1]['volume'].mean()
 		return s5,s10
-	#MA=近N日收盘价的累计之和÷N
-	#得到一个倒叙的list
-	def _MA(self,df,N):
-		MA_list=[]
-		listindex=[]
-		for index,row in df.iterrows():
-			listindex.append(index)
-		l=listindex[-1]
-		l+=1
-		for ind in range(0,l):
-			index2=l-ind
-			x=index2-N if index2>=N else 0
-			#求均值 
-			#其中df[x:index2]不包含index2，包含x，元素个数为index2-x个#print(df[627:641])
-			lsdf=df[x:index2]['close'].mean()
-			MA_list.append(lsdf)
-		return MA_list
-	#Md=近N日收盘价的平均偏离
-	#得到一个倒叙的list
-	def _Md(self,df,N):
-		Md_list=[]
-		listindex=[]
-		for index,row in df.iterrows():
-			listindex.append(index)
-		l=listindex[-1]
-		l+=1
-		for ind in range(0,l):
-			index2=l-ind
-			x=index2-N if index2>=N else 0
-			lsdf=df[x:index2]['close'].mad()
-			#print(x,index2,lsdf)
-			Md_list.append(lsdf)
-		
-		return Md_list
-	def _TP(self,df,index):
-		tp=0
-		tp=df.loc[index,'high']+df.loc[index,'low']+df.loc[index,'close']
-		return tp/3
-
-	def cci(self,df,index1,N):
-
-		
-		return cci
-
+	def vol_ana(self,df,index):
+		s5,s10=self.find_vol(df,index)
+		s51,s101=self.find_vol(df,index-1)
+		if s101>s10 :return 0
+		if int(df.loc[index,'volume'])<int(df.loc[index-1,'volume']):return 0
+		return 1
 
 	def test2(self):
 		df,name=self._getk()
-		index=605
+		index=617
 		N=14
 
 		print(name,df.loc[index,'date'])
+<<<<<<< HEAD
 		#real=talib.CCI(df.high,df.low,df.close, timeperiod=14)
 		#real=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
 		#real=talib.BBANDS(df.close,timeperiod=20,nbdevup=1,nbdevdn=1,matype=0)
@@ -110,10 +69,25 @@ class analysis_stock(object):
 		#self.cci(df,index,N)
 		#self.Md(df,N)
 		#self.find_vol(df,index)
+=======
+		#real=talib.CCI(df.high,df.low,df.close)
+		#MINUS_DM=talib.MINUS_DM(df.high,df.low,timeperiod=14)
+		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
+		#DX = talib.DX(df.high,df.low,df.close,timeperiod=14)
+		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
+		#PLUS_DM = talib.PLUS_DM(df.high,df.low, timeperiod=14)
+
+		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=14)
+		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=14)
+		#ADXR = talib.DMI(df.high,df.low,df.close, timeperiod=14)
+		print(ADX.loc[index],ADXR.loc[index],PLUS_DI.loc[index])
+		#print(talib.function())
+
+>>>>>>> 96bd6199642e26504dbed0383b42e0f25b224dde
 
 	def test(self):
 		df,name=self._getk()
-
+		print(name)
 		if df.empty :
 			print("Error:DF is empty ..")
 			return 0
@@ -125,13 +99,10 @@ class analysis_stock(object):
 		for x in range(l):
 			if l-x<11:break
 			ind=self.find_fenxin(df,l-x)
-			if ind>0:
+			in_vol=self.vol_ana(df,l-x)
+			if ind>0 and in_vol:
 				print(ind,df.loc[ind,'date'])
 			
-
-
-
-		
 
 	#k线分型
 	#分析当前k线上涨1、2或下跌-1，-2

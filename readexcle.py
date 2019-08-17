@@ -20,7 +20,7 @@ class readExcle(object):
 		#print(os.listdir('e:'))
 		with pandas.ExcelFile(filespath) as excelfiles1:
 			
-			data= pandas.read_excel(excelfiles1,sheetname=0)
+			data= pandas.read_excel(excelfiles1,sheet_name=0)
 		#print(len(data))
 		#for i,row in data.iterrows():			print(row['s2'])
 		excelfiles1.close()
