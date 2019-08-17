@@ -102,8 +102,11 @@ class analysis_stock(object):
 		N=14
 
 		print(name,df.loc[index,'date'])
-		#real=talib.CCI(df.high,df.low,df.close)
-		#print(real.head())
+		#real=talib.CCI(df.high,df.low,df.close, timeperiod=14)
+		#real=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
+		#real=talib.BBANDS(df.close,timeperiod=20,nbdevup=1,nbdevdn=1,matype=0)
+		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
+		print(up)
 		#self.cci(df,index,N)
 		#self.Md(df,N)
 		#self.find_vol(df,index)
