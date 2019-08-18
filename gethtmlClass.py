@@ -5,6 +5,7 @@ import random
 import zlib
 from chardet import detect
 from bs4 import BeautifulSoup
+import time
 
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium import webdriver
@@ -58,12 +59,16 @@ class getHtml(object):
 		htmlfile = decompressed_data.decode(codes)
 
 		return htmlfile
+
 	def getHtml_by_firefox(self,url):
 		driver = webdriver.Firefox( )
 		try:
 			driver.get(url)
-			tb1=driver.find_element_by_id("table_live")
-			t=tb1.text
+			#
+			#tb1=driver.find_element_by_id("table_live")
+			time.sleep(5)
+			htmlfile=driver.page_source
+			#t=tb1.text
 			#print (t)
 
 		except Exception as e:
@@ -71,7 +76,7 @@ class getHtml(object):
 
 		finally:
 			driver.close()
-		return t
+		return htmlfile
 	#
 	def gethtml_by_selum(self,url):
 		#print("get by selum")

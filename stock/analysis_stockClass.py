@@ -1,6 +1,8 @@
 #
 from getstockClass import getstock
 import talib
+import mpl_finance as mpf
+import matplotlib.pyplot as plt
 class analysis_stock(object):
 	"""docstring for analysis_stock
 		分析单只股票k线数据
@@ -48,42 +50,93 @@ class analysis_stock(object):
 		s10=df[index1-10:index1]['volume'].mean()
 		return s5,s10
 	def vol_ana(self,df,index):
-		s5,s10=self.find_vol(df,index)
-		s51,s101=self.find_vol(df,index-1)
-		if s101>s10 :return 0
+		#s5,s10=self.find_vol(df,index)
+		#s51,s101=self.find_vol(df,index-1)
+		#if s101>s10 :return 0
 		if int(df.loc[index,'volume'])<int(df.loc[index-1,'volume']):return 0
 		return 1
+	def cci_ana(self,df,index):
 
-	def test2(self):
-		df,name=self._getk()
-		index=617
-		N=14
+		pass
+	def dmi_ana(self,df,index):
 
-		print(name,df.loc[index,'date'])
-<<<<<<< HEAD
-		#real=talib.CCI(df.high,df.low,df.close, timeperiod=14)
-		#real=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
-		#real=talib.BBANDS(df.close,timeperiod=20,nbdevup=1,nbdevdn=1,matype=0)
-		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
-		print(up)
-		#self.cci(df,index,N)
-		#self.Md(df,N)
-		#self.find_vol(df,index)
-=======
-		#real=talib.CCI(df.high,df.low,df.close)
-		#MINUS_DM=talib.MINUS_DM(df.high,df.low,timeperiod=14)
 		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
 		#DX = talib.DX(df.high,df.low,df.close,timeperiod=14)
 		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
 		#PLUS_DM = talib.PLUS_DM(df.high,df.low, timeperiod=14)
+		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=6)
+		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=6)
+		adxlist=ADX.values.tolist()
+		#plt.plot(ADX.values.tolist(),'g',ADXR.values.tolist(),'b',PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k'
+		#plt.show()
+		#if adxlist[index]<adxlist[index-2]:return 0
+		if adxlist[index]<25:return 0
+		return 1
+	def dmi(self,df,index):
+		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
+		#DX = talib.DX(df.high,df.low,df.close,timeperiod=14)
+		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
+		#PLUS_DM = talib.PLUS_DM(df.high,df.low, timeperiod=14)
+		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=6)
+		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=6)
+		return MINUS_DI,PLUS_DI,ADX,ADXR
 
-		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=14)
-		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=14)
-		#ADXR = talib.DMI(df.high,df.low,df.close, timeperiod=14)
-		print(ADX.loc[index],ADXR.loc[index],PLUS_DI.loc[index])
-		#print(talib.function())
+	def cci(self,df,index):
+		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
+		return cci
+	def macd(self,df,index):
+		macd1,macd2,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
+		return macd1,macd2,macd3
 
->>>>>>> 96bd6199642e26504dbed0383b42e0f25b224dde
+	def  boll(self,df,index):
+		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
+		return up,mid,lo
+		
+
+	def test2(self):
+		df1,name=self._getk()
+		index=619
+		N=14
+		df=df1
+		#图表格式
+		X=3
+		Y=1
+		fig = plt.figure()
+		ax5=fig.add_subplot(X,Y,1)
+		ax2=fig.add_subplot(X,Y,2)
+		ax3=fig.add_subplot(X,Y,3)		
+
+		print(name,df.loc[index,'date'])
+
+		'''fig = plt.figure()
+								ax1=fig.add_subplot(5,1,1)
+								ax2=fig.add_subplot(5,1,2)
+								ax3=fig.add_subplot(5,1,3)
+								ax4=fig.add_subplot(5,1,4)
+								ax5=fig.add_subplot(5,1,5)
+
+								ax1.plot(macd1.values.tolist(),'g',macd2.values.tolist(),'b',macd3.values.tolist(),'y')
+								ax2.plot(up.values.tolist(),'g',mid.values.tolist(),'b',lo.values.tolist(),'y')
+								ax3.plot(cci.values.tolist(),'r')'''
+
+			
+
+		#dmi图
+		MINUS_DI,PLUS_DI,ADX,ADXR=self.dmi(df,index)
+		l=len(ADX.values.tolist())
+		print(l)
+		zz=[1 if ADX.loc[x]<MINUS_DI.loc[x] and ADX.loc[x]<PLUS_DI.loc[x]  else 0 for x in range(l)]
+		print(zz)
+		ax3.plot(zz)
+		ax2.plot(PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k')
+		#ax2.plot(ADX.values.tolist(),'g',ADXR.values.tolist(),'b',PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k')
+		
+		#股价图
+		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values, closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+
+		plt.show()
+
+
 
 	def test(self):
 		df,name=self._getk()
@@ -97,11 +150,26 @@ class analysis_stock(object):
 			#print(row['date'],df.loc[index,])
 		l=listindex[-1]
 		for x in range(l):
-			if l-x<11:break
+			if l-x<30:
+				break
 			ind=self.find_fenxin(df,l-x)
-			in_vol=self.vol_ana(df,l-x)
-			if ind>0 and in_vol:
-				print(ind,df.loc[ind,'date'])
+			if ind>0:
+				in_vol=self.vol_ana(df,l-x)
+				in_dmi=self.dmi_ana(df,l-x)
+				if in_vol*in_dmi==0:
+					continue
+					
+
+				#if ind>0 and in_vol*in_dmi:
+				print(ind,df.loc[ind,'date'],in_vol,in_dmi)
+			#else:print(df.loc[l-x,'date'],in_vol,in_dmi)
+		index=510
+		#N=14
+		MINUS_DI,PLUS_DI,ADX,ADXR=self.dmi(df,index)
+		
+		print(name,df.loc[index,'date'],PLUS_DI.loc[index],MINUS_DI.loc[index],ADX.loc[index],ADXR.loc[index])
+		#print(ADX.loc[index],ADX.loc[index-1])
+
 			
 
 	#k线分型
