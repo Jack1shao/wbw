@@ -15,7 +15,7 @@ class readExcle(object):
 	#读取电子表格返回dateframe
 	def read(self):
 		filespath=self.arg
-		filespath='e:/05iceland.xlsx'
+		#filespath='e:/05iceland.xlsx'
 
 		#print(os.listdir('e:'))
 		with pandas.ExcelFile(filespath) as excelfiles1:

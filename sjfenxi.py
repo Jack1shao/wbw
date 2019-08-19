@@ -79,7 +79,7 @@ class sjfenxClass(object):
 		print(l1)
 		print(l2)
 
-		df,l=readExcle('').read()
+		df,l=readExcle('e:/05iceland.xlsx').read()
 		x=0
 		li=[]
 		for i,row in df.iterrows():

@@ -258,4 +258,4 @@ class htmlsoup(object):
 		return listbifa,1,listsjtd
 
 
-#h=htmlsoup(729966);print(h.getbifa())
+#h=htmlsoup(809463);print(h.getbifa())

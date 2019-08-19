@@ -97,17 +97,18 @@ class getzqClass(object):
 		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#print(sql)
 		idlist=self._bsid_from_db(idstart,idend,sql)
+		
 
 		for idnmrow in idlist:
 				for idnm0 in idnmrow:
 					list1.append(idnm0)
 					self.bqbf(idnm0)
 				print(datetime.datetime.now())
-		for x in range(idstart,idend+1):
-			if x  in list1:
-				jsq=jsq+1
-				#self.bqbf(x)
-				print(datetime.datetime.now())
+		'''for x in range(idstart,idend+1):
+									if x  in list1:
+										jsq=jsq+1
+										#self.bqbf(x)
+										print(datetime.datetime.now())'''
 		return 0
 	#获取比赛段的数据
 	def getbsid(self ,idstart,idend):
@@ -137,57 +138,60 @@ class getzqClass(object):
 
 		print(datetime.datetime.now())
 		return 0
-	#补齐之前比赛的数据
-	def getbs_othor(self,idend):
-		#获取该联赛最小idnm
+	#补齐之前整个联赛的比赛数据
+	def getbs_othor(self,ls,nd):
+		#获取该联赛最小idnm 和最大id，补齐比赛数据
 		
 		idstart=0	
-		minidnm_sql="SELECT min(idnm) from scb where (nd,ls) in (SELECT nd,ls from scb where idnm={})".format(idend)
-		sv=savedateClass().select(minidnm_sql)
-		print("本联赛最小idnm :",sv[0][0])
-		if sv[0][0]!=None and  int(sv[0][0])+1<idend:
-			idstart=int(sv[0][0])
-		
-		if idstart>0:
-			print("补齐之前比赛的数据{}-{}".format(idstart,idend))
+		minidnm_sql="SELECT min(idnm) from scb where nd='{}' and ls='{}'".format(nd,ls)
+		maxidnm_sql="SELECT max(idnm) from scb where nd='{}' and ls='{}'".format(nd,ls)
+		#print(minidnm_sql,maxidnm_sql)
+		minid=savedateClass().select(minidnm_sql)
+		maxid=savedateClass().select(maxidnm_sql)
+		idstart=minid[0][0]
+		idend=maxid[0][0]
+		#print("补齐之前比赛的数据{}-{}".format(idstart,idend))
+		#print(minid[0][0],maxid[0][0])
+		if idstart and idend:
+			print("补齐比赛数据:{}{}赛季-->({}-{})".format(ls,nd,idstart,idend))
 			self.getbsid(idstart,idend)
+	
 		return 0
 
 
 	
 h=getzqClass('')
 #h.getbs(779440)
-in_list=['809503', '809507', '810788']
+in_list=['830801']
+
 between_list=[
-				['法甲','19','808039','808055'],
+				['法甲','19','808039','808071'],
 				['法乙','19','809429','809483'],
 				['英超','19','806501','806519'],
 				['西甲','19','830801','0'],
-				['意甲','19','853818','0'],
+				['意甲','19','853822','0'],
 				['德乙','19','825597','825627'],
 				['德甲','19','824571','0'],
-				['芬超','19','0','0'],
-				['丹超','18','729966','730147'],
-				['荷甲','18','731287','731591'],
-				['k1联','19','783817','784031'],
-				['日职','19','779376','779644'], 
-				['美职','19','780198','780588'],
+				['芬超','19','795956','0'],
+				['挪超','19','788508','0'],
+				['k1联','19','783817','784125'],
+				['日职','19','779376','779788'], 
+				['美职','19','780198','780808'],
 				['日乙','19','778452','779044'],
 				['丹超','19','805215','805245'],
-				['巴甲','19','800197','800357']
+				['巴甲','19','800197','800473']
 			]
 
 if len(in_list)!=0:
+
 	print(in_list)
 	for x in in_list:
 		h.getbsid(int(x),int(x))
-if len(between_list)!=0:
-	for x in between_list:
-		if int(x[2])*int(x[3])==0 :continue
-		print(int(x[2]),int(x[3]))
-		h.getbsid(int(x[2]),int(x[3]))
-
-#h.bqbfmain(714214,714604)
+#补齐比赛数据
+for x in between_list:
+	h.getbs_othor(x[0],x[1])
+#补齐必发数据，没有必发数据时，加入必发数据
+h.bqbfmain(714214,714604)
 #['k1联','19','783817','784031']
 #['日职','19','779376','779644'] 
 #['美职','19','780198','780588']
@@ -195,7 +199,6 @@ if len(between_list)!=0:
 #['丹超','19','805215','805245']
 #['巴甲','19','800197','800357']
 #['瑞典超','19','789008','789280']
-
 #['芬超','19','0','0']
 #['西甲','19','0','0']
 #['意甲','19','0','0']
@@ -204,11 +207,8 @@ if len(between_list)!=0:
 #['法甲','19','808039','808055']
 #['法乙','19','809429','809483']
 #['英超','19','806501','806519']
-
 #['丹超','18','729966','730147']
 #['荷甲','18','731287','731591']
-
-
 #['瑞典超','17','633991','634230']
 #['瑞典超','18','707696','707863']
 #['挪超','17','630624','630863']
