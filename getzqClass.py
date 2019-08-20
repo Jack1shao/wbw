@@ -93,13 +93,14 @@ class getzqClass(object):
 		#sql="select idnm from scb s where not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#		+" and idnm between " +str(idstart)+" and " +str(idend)
 		ypgs='Bet365'
-		jp1='受半球'
+		jp1='一球'
 		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#print(sql)
 		idlist=self._bsid_from_db(idstart,idend,sql)
 		
-
+		print(len(idlist))
 		for idnmrow in idlist:
+				#print(len(idnmrow))
 				for idnm0 in idnmrow:
 					list1.append(idnm0)
 					self.bqbf(idnm0)
@@ -162,7 +163,7 @@ class getzqClass(object):
 	
 h=getzqClass('')
 #h.getbs(779440)
-in_list=['830801']
+in_list=['519107', '519006']
 
 between_list=[
 				['法甲','19','808039','808071'],
@@ -179,7 +180,9 @@ between_list=[
 				['美职','19','780198','780808'],
 				['日乙','19','778452','779044'],
 				['丹超','19','805215','805245'],
-				['巴甲','19','800197','800473']
+				['巴甲','19','800197','800473'],
+				['英超','16','0','0']
+
 			]
 
 if len(in_list)!=0:
@@ -191,7 +194,7 @@ if len(in_list)!=0:
 for x in between_list:
 	h.getbs_othor(x[0],x[1])
 #补齐必发数据，没有必发数据时，加入必发数据
-h.bqbfmain(714214,714604)
+#h.bqbfmain(714214,714604)
 #['k1联','19','783817','784031']
 #['日职','19','779376','779644'] 
 #['美职','19','780198','780588']
@@ -223,6 +226,10 @@ h.bqbfmain(714214,714604)
 #['美职','18','714214','714604']
 #['英超','18','730907','731285']
 #['英超','17','663128','663507']
+#['英超','16','572731','']
+#['英超','15','0','']
+#['英超','14','0','']
+#['英超','13','0','']
 #['意甲','18','749789','750164']
 #['意甲','17','690000','690378']
 #['德乙','18','738015','738320']

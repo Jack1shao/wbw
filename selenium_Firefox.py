@@ -6,16 +6,16 @@ from selenium import webdriver
 def main():
 	#options = Options()
 	#options.add_argument('-headless')
-	url="https://live.500.com/zqdc.php"
+	url="http://odds.500.com/fenxi/ouzhi-806521.shtml"
 	driver = webdriver.Firefox( )
 	#driver.get("http://live.win007.com/index2in1.aspx?id=8")
 	try:
 		driver.get(url)
-		#print(driver.page_source)
-		tb1=driver.find_element_by_id("table_match")
-		tr=tb1.find_all('tr')
+		print(driver.page_source)
+		#tb1=driver.find_element_by_id("table_match")
+		#tr=tb1.find_all('tr')
 		#t=tb1.page_source
-		print (tr)
+		#print (tr)
 
 	except Exception as e:
 		raise

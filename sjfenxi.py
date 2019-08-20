@@ -22,14 +22,21 @@ class sjfenxClass(object):
 		scblist,bzsc=hs.getsc()
 		return scblist,bzsc
 
+	def _getyp(self):
+		hs=htmlsoup(self.id1)
+		yplist,bzyp=hs.getyapan()
+		return yplist,bzyp
+
 	#必发数据分析
 	def bfsjfx(self):
 		bflist,bzbf,bflist_sjtd=self._getbf()
-		fxlist=[]
+		
 		#print(datelist)
+		#容错
+		fxlist=[]
 		if bzbf==0:return fxlist,0
+		#分析
 		for li in bflist:
-			
 			if int(li[1])==2:
 				#print(li)
 				if  float(li[12])<20:fxlist.append("必发平局分析：大冷")
@@ -37,10 +44,11 @@ class sjfenxClass(object):
 				if  float(li[12])>=30: fxlist.append("必发平局分析：热")
 		#必发数据提点分析
 		#print(bflist_sjtd[0][4].find("必发"))
-		if bflist_sjtd[0][3].find("平局交易过冷")>=0:
+		if bflist_sjtd[0][4].find("平局交易过冷")>=0:
 			fxlist.append("数据提点分析：平局交易过冷")
 		else:fxlist.append("数据提点分析：其他")
-		print(fxlist)
+		fxlist.append(bflist_sjtd[0][3])
+		#print(fxlist)
 		return fxlist,1
 	
 		
@@ -68,31 +76,34 @@ class sjfenxClass(object):
 				break
 
 		return fxlist,1
+	#分析主程序	
 	def bd(self):
-		l1,bzbf=self.bfsjfx()
-		l2,bzoz=self.ozsjfx()
-		
-		#l1=['必发平局分析：大冷', '数据提点分析：其他']
-		#l2=['Iceland赔付正常', 'Iceland初返还高', 'Iceland负赔低-低于4']
-			
-		if bzbf*bzoz==0 or len(l2)*len(l1)==0:print("date lost ...");return 0
-		print(l1)
-		print(l2)
-
+		bffxlist,bzbf=self.bfsjfx()
+		ozfxlist,bzoz=self.ozsjfx()
+	
+		if bzbf*bzoz==0 or len(ozfxlist)*len(bffxlist)==0:print("date lost ...");return 0
+		#与已有数据比对
 		df,l=readExcle('e:/05iceland.xlsx').read()
 		x=0
 		li=[]
 		for i,row in df.iterrows():
-			if row['ykzs']==l1[0] and row['kl']==l2[0] and row['peifu']==l2[1] and row['fupei']==l2[2] :
+			if row['ykzs']==bffxlist[0] and row['kl']==ozfxlist[0] and row['peifu']==ozfxlist[1] and row['fupei']==ozfxlist[2] and row['bss2']==bffxlist[2]:
 				x+=1
-				#print(row['idnm'],row['jqc'],x)
 				li.append(row['sg'])
 			#print(row)
 		res=Counter(li)
 		scblist,bzsc=self._getsc()
+		
+		listreturn=[]
+		listreturn.extend(scblist[0])
+		listreturn.extend(ozfxlist)
+		listreturn.extend(bffxlist)
+		#print(scblist[0])
+		print(ozfxlist+bffxlist)
 		print(self.id1,res)
+		return listreturn,res
 
 
-#j=sjfenxClass(854706)
+#j=sjfenxClass(789320)
 #j.bd()
 #print(j.ozsjfx())

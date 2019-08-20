@@ -247,5 +247,5 @@ class analysis_stock(object):
 
 #
 
-k=analysis_stock('002340')
+k=analysis_stock('000062')
 k.test2()
