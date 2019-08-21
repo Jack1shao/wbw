@@ -2,6 +2,7 @@
 
 '''
 	从网页获取数据
+	主程序
 '''
 from savedateClass import savedateClass
 from htmlsoupClass import htmlsoup
@@ -13,28 +14,11 @@ class getzqClass(object):
 		super(getzqClass, self).__init__()
 		self.arg = arg
 
+	#获取数据库中批量比赛id
 	def _bsid_from_db(self,idstart,idend,sql):
 		#sql="select idnm from scb where idnm between " +str(idstart)+" and " +str(idend)
 		sv=savedateClass().select(sql)
 		return  sv
-	#补齐必发信息
-	def bqbf(self,id1):
-		print('开始获取必发',id1)
-		hs=htmlsoup(id1)
-		bflist,bzbf,bflist_sjtd=hs.getbifa()
-		print('写入数据库....')
-		dates=savedateClass()
-		bfsql="insert into bifa values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-		bfsql_sjtd="insert into sjtdbf values (%s,%s,%s,%s,%s)"
-
-		if bzbf==1:
-			dates.insert(bflist,bfsql)#写入必发
-			dates.insert(bflist_sjtd,bfsql_sjtd)#写入必发-数据提点
-		else:
-			print('no date ,写入必发空值')
-			dates.insert(bflist,bfsql)#写入必发空值
-			return 0
-		return 1
 
 	#获取单场信息
 	def getbs(self,id1):
@@ -84,33 +68,7 @@ class getzqClass(object):
 				dates.insert(bflist,bfsql)#写入必发空值
 
 		return 1
-	#补齐必发
-	def bqbfmain(self,idstart,idend):
-		jsq=0#计数器
-		list1=[]
-		if idstart>idend:return 0
-		#必发不存在的记录
-		#sql="select idnm from scb s where not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
-		#		+" and idnm between " +str(idstart)+" and " +str(idend)
-		ypgs='Bet365'
-		jp1='一球'
-		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
-		#print(sql)
-		idlist=self._bsid_from_db(idstart,idend,sql)
-		
-		print(len(idlist))
-		for idnmrow in idlist:
-				#print(len(idnmrow))
-				for idnm0 in idnmrow:
-					list1.append(idnm0)
-					self.bqbf(idnm0)
-				print(datetime.datetime.now())
-		'''for x in range(idstart,idend+1):
-									if x  in list1:
-										jsq=jsq+1
-										#self.bqbf(x)
-										print(datetime.datetime.now())'''
-		return 0
+	
 	#获取比赛段的数据
 	def getbsid(self ,idstart,idend):
 
@@ -122,7 +80,8 @@ class getzqClass(object):
 		if abs(idend-idstart)>500 : return 0
 		if idstart>idend:print("idstart>idend"); return 0
 
-		#获取数据库中已有的比赛id
+		#获取数据库中已有的比赛id，
+		#这些比赛不在从网页获取
 		sql="select idnm from scb_error where idnm between {0} and {1} union all select idnm from scb where  idnm between {0} and {1}".format(idstart,idend)
 		idlist=self._bsid_from_db(idstart,idend,sql)
 		for idnmrow in idlist:
@@ -134,8 +93,6 @@ class getzqClass(object):
 				jsq=jsq+1
 				self.getbs(x)
 				print(datetime.datetime.now())
-		#补齐之前比赛的数据
-		#self.getbs_othor(idstart)
 
 		print(datetime.datetime.now())
 		return 0
@@ -156,16 +113,10 @@ class getzqClass(object):
 		if idstart and idend:
 			print("补齐比赛数据:{}{}赛季-->({}-{})".format(ls,nd,idstart,idend))
 			self.getbsid(idstart,idend)
-	
 		return 0
-
-
-	
-h=getzqClass('')
-#h.getbs(779440)
-in_list=['519107', '519006']
-
-between_list=[
+	#主程序入口
+	def getzq_main(self):
+		between_list=[
 				['法甲','19','808039','808071'],
 				['法乙','19','809429','809483'],
 				['英超','19','806501','806519'],
@@ -181,18 +132,27 @@ between_list=[
 				['日乙','19','778452','779044'],
 				['丹超','19','805215','805245'],
 				['巴甲','19','800197','800473'],
-				['英超','16','0','0']
-
+				['丹甲','19','0','0']
 			]
 
-if len(in_list)!=0:
+		in_list=['820167', '820187']	
+		if len(in_list)!=0:
+			print(in_list)
+			for x in in_list:
+				self.getbsid(int(x),int(x))
+		#补齐比赛数据
+		iii=0
+		for x in between_list:
+			iii+=1
+			if iii>10:break
+			self.getbs_othor(x[0],x[1])
 
-	print(in_list)
-	for x in in_list:
-		h.getbsid(int(x),int(x))
-#补齐比赛数据
-for x in between_list:
-	h.getbs_othor(x[0],x[1])
+		return 0
+
+
+h=getzqClass('').getzq_main()
+#print(h.bqbf(800355))
+
 #补齐必发数据，没有必发数据时，加入必发数据
 #h.bqbfmain(714214,714604)
 #['k1联','19','783817','784031']

@@ -2,29 +2,54 @@
 from htmlsoupClass import htmlsoup
 from readexcle import readExcle
 from collections import Counter
+from savedateClass import savedateClass
 class sjfenxClass(object):
 	
 	def __init__(self, arg):
 		super(sjfenxClass, self).__init__()
 		self.arg = arg
-		self.id1=arg
+		self.id1=int(arg)
 	#获取必发数据
 	def _getbf(self):
-		hs=htmlsoup(self.id1)
-		bflist,bzbf,bflist_sjtd=hs.getbifa()
+		sql='select * from bifa y where y.xh>0 and y.idnm={}'.format(self.id1)
+		sql2='select * from sjtdbf y where y.idnm={}'.format(self.id1)
+		bflist=savedateClass().select(sql)
+		bflist_sjtd=savedateClass().select(sql2)
+		bzbf=1
+		#print(len(ozlist))
+		if len(bflist)==0:
+			hs=htmlsoup(self.id1)
+			bflist,bzbf,bflist_sjtd=hs.getbifa()
 		return bflist,bzbf,bflist_sjtd
 	def _getoz(self):
-		hs=htmlsoup(self.id1)
-		ozlist,bzoz=hs.getouzhi()
+		sql='select * from ouzhi y where y.idnm={}'.format(self.id1)
+		ozlist=savedateClass().select(sql)
+		bzoz=1
+		#print(len(ozlist))
+		if len(ozlist)==0:
+			hs=htmlsoup(self.id1)
+			ozlist,bzoz=hs.getouzhi()
+
 		return ozlist,bzoz
 	def _getsc(self):
-		hs=htmlsoup(self.id1)
-		scblist,bzsc=hs.getsc()
+		sql='select * from scb y where y.idnm={}'.format(self.id1)
+		scblist=savedateClass().select(sql)
+		bzsc=1
+		#print(len(scblist))
+		if len(scblist)==0:
+			hs=htmlsoup(self.id1)
+			scblist,bzsc=hs.getsc()
 		return scblist,bzsc
 
 	def _getyp(self):
-		hs=htmlsoup(self.id1)
-		yplist,bzyp=hs.getyapan()
+		sql='select * from yapan y where y.idnm={}'.format(self.id1)
+		#print(sql)
+		yplist=savedateClass().select(sql)
+		bzyp=1
+		#print(len(yplist))
+		if len(yplist)==0:
+			hs=htmlsoup(self.id1)
+			yplist,bzyp=hs.getyapan()
 		return yplist,bzyp
 
 	#必发数据分析
@@ -78,9 +103,15 @@ class sjfenxClass(object):
 		return fxlist,1
 	#分析主程序	
 	def bd(self):
+
+		#不是半球盘不分析
+		yplist,bzyp=self._getyp()
+		bz2=[x for x in yplist if x[2]=='Bet365' and x[4]=='半球']
+		if len(bz2)==0:return 0
+		#取必发和欧指数据
 		bffxlist,bzbf=self.bfsjfx()
 		ozfxlist,bzoz=self.ozsjfx()
-	
+		#容错
 		if bzbf*bzoz==0 or len(ozfxlist)*len(bffxlist)==0:print("date lost ...");return 0
 		#与已有数据比对
 		df,l=readExcle('e:/05iceland.xlsx').read()
@@ -92,18 +123,19 @@ class sjfenxClass(object):
 				li.append(row['sg'])
 			#print(row)
 		res=Counter(li)
+
 		scblist,bzsc=self._getsc()
 		
 		listreturn=[]
 		listreturn.extend(scblist[0])
 		listreturn.extend(ozfxlist)
 		listreturn.extend(bffxlist)
-		#print(scblist[0])
+		print(scblist[0])
+		print(bz2[0][4])
 		print(ozfxlist+bffxlist)
 		print(self.id1,res)
 		return listreturn,res
 
-
-#j=sjfenxClass(789320)
-#j.bd()
-#print(j.ozsjfx())
+list1=['816941']
+[sjfenxClass(x).bd()  for x in list1 if len(list1)>0]
+#[print(x) if x>10 else print(0) for x in range(1,10) ]
