@@ -16,8 +16,17 @@ class savedateClass(object):
 		def insert(self,datein,SqlInsert):
 			try:
 				conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
+
+			except Exception as e:
+				print('数据库连接异常')
+				#conn.close()
+				return 0
+			
+			try:
+				#conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
+				#print(conn)
 				cur=conn.cursor()#获取一个游标
-				
+
 				cur.executemany(SqlInsert,datein)
 				#print(dateIn)
 				print('插入成功');
@@ -35,8 +44,16 @@ class savedateClass(object):
 			dateList=[]
 			#获取一个数据库连接
 			try:
-				dateList=[]
 				conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
+
+			except Exception as e:
+				print('数据库连接异常')
+				#conn.close()
+				return 0
+			try:
+				dateList=[]
+				#conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
+				#print(conn)
 				cur=conn.cursor()#获取一个游标
 				cur.execute(sql)
 				dateList=cur.fetchall()

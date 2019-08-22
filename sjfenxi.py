@@ -35,8 +35,11 @@ class sjfenxClass(object):
 		sql='select * from scb y where y.idnm={}'.format(self.id1)
 		scblist=savedateClass().select(sql)
 		bzsc=1
+		#容错
+		rongcuo=scblist if scblist==0 else len(scblist)
+		print(rongcuo)
 		#print(len(scblist))
-		if len(scblist)==0:
+		if rongcuo==0:
 			hs=htmlsoup(self.id1)
 			scblist,bzsc=hs.getsc()
 		return scblist,bzsc
@@ -46,8 +49,11 @@ class sjfenxClass(object):
 		#print(sql)
 		yplist=savedateClass().select(sql)
 		bzyp=1
-		#print(len(yplist))
-		if len(yplist)==0:
+		#容错
+		rongcuo=yplist if yplist==0 else len(yplist)
+		print(rongcuo)
+		#print(len(scblist))
+		if rongcuo==0:
 			hs=htmlsoup(self.id1)
 			yplist,bzyp=hs.getyapan()
 		return yplist,bzyp
