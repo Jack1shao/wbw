@@ -13,31 +13,35 @@ class sjfenxClass(object):
 	def _getbf(self):
 		sql='select * from bifa y where y.xh>0 and y.idnm={}'.format(self.id1)
 		sql2='select * from sjtdbf y where y.idnm={}'.format(self.id1)
-		bflist=savedateClass().select(sql)
-		bflist_sjtd=savedateClass().select(sql2)
+		#bflist=savedateClass().select(sql)
+		#bflist_sjtd=savedateClass().select(sql2)
 		bzbf=1
-		#print(len(ozlist))
-		if len(bflist)==0:
+		#rongcuo=bflist if bflist==0 else len(bflist)
+		rongcuo=0
+		if rongcuo==0:
 			hs=htmlsoup(self.id1)
 			bflist,bzbf,bflist_sjtd=hs.getbifa()
 		return bflist,bzbf,bflist_sjtd
 	def _getoz(self):
 		sql='select * from ouzhi y where y.idnm={}'.format(self.id1)
-		ozlist=savedateClass().select(sql)
+		#ozlist=savedateClass().select(sql)
 		bzoz=1
+		#rongcuo=ozlist if ozlist==0 else len(ozlist)
+		rongcuo=0
 		#print(len(ozlist))
-		if len(ozlist)==0:
+		if rongcuo==0:
 			hs=htmlsoup(self.id1)
 			ozlist,bzoz=hs.getouzhi()
 
 		return ozlist,bzoz
 	def _getsc(self):
 		sql='select * from scb y where y.idnm={}'.format(self.id1)
-		scblist=savedateClass().select(sql)
+		#scblist=savedateClass().select(sql)
 		bzsc=1
 		#容错
-		rongcuo=scblist if scblist==0 else len(scblist)
-		print(rongcuo)
+		#rongcuo=scblist if scblist==0 else len(scblist)
+		rongcuo=0
+		#print(rongcuo)
 		#print(len(scblist))
 		if rongcuo==0:
 			hs=htmlsoup(self.id1)
@@ -47,11 +51,12 @@ class sjfenxClass(object):
 	def _getyp(self):
 		sql='select * from yapan y where y.idnm={}'.format(self.id1)
 		#print(sql)
-		yplist=savedateClass().select(sql)
+		#yplist=savedateClass().select(sql)
 		bzyp=1
 		#容错
-		rongcuo=yplist if yplist==0 else len(yplist)
-		print(rongcuo)
+		#rongcuo=yplist if yplist==0 else len(yplist)
+		rongcuo=0
+		#print(rongcuo)
 		#print(len(scblist))
 		if rongcuo==0:
 			hs=htmlsoup(self.id1)
@@ -113,12 +118,15 @@ class sjfenxClass(object):
 		#不是半球盘不分析
 		yplist,bzyp=self._getyp()
 		bz2=[x for x in yplist if x[2]=='Bet365' and x[4]=='半球']
-		if len(bz2)==0:return 0
+		if len(bz2)==0:
+			print('非半球，返回。。。')
+			return 0
 		#取必发和欧指数据
 		bffxlist,bzbf=self.bfsjfx()
 		ozfxlist,bzoz=self.ozsjfx()
+		print(ozfxlist,bffxlist)
 		#容错
-		if bzbf*bzoz==0 or len(ozfxlist)*len(bffxlist)==0:print("date lost ...");return 0
+		if bzbf*bzoz==0 or len(ozfxlist)*len(bffxlist)==0:print("date lost ...");return [],[]
 		#与已有数据比对
 		df,l=readExcle('e:/05iceland.xlsx').read()
 		x=0
@@ -142,6 +150,6 @@ class sjfenxClass(object):
 		print(self.id1,res)
 		return listreturn,res
 
-list1=['816941']
+list1=['837485', '837495', '796202','825659', '789336', '805673', '788800', '788802', '788810', '788804', '790944', '790936', '805293', '833943', '827323', '805667', '853832', '853826', '856066', '823513']
 [sjfenxClass(x).bd()  for x in list1 if len(list1)>0]
 #[print(x) if x>10 else print(0) for x in range(1,10) ]
