@@ -150,6 +150,6 @@ class sjfenxClass(object):
 		print(self.id1,res)
 		return listreturn,res
 
-list1=['837485', '837495', '796202','825659', '789336', '805673', '788800', '788802', '788810', '788804', '790944', '790936', '805293', '833943', '827323', '805667', '853832', '853826', '856066', '823513']
+list1=[853832]
 [sjfenxClass(x).bd()  for x in list1 if len(list1)>0]
 #[print(x) if x>10 else print(0) for x in range(1,10) ]
