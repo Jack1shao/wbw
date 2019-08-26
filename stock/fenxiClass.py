@@ -6,7 +6,13 @@ class fenxi(gupiaoClass):
 	
 	
 	def cci_ana(self):
-			pass
+		pass
+
+	def mcad_ana(self):
+		pass
+
+	def dmi_ana(self):
+		pass	
 
 h=gupiaoClass('1').select_k()
 kk=fenxi('1').select_k()
