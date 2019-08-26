@@ -1,9 +1,36 @@
 需求：
 1、从网络上获取单只股票或批量股票信息存入数据库
-	1）、获取单只股票的日k线，30，周和月线，股票的基础信息
-		要复权数据
-	2）、存入数据库，如果已有数据，则增量存入
-	3)、	读取股票数据
+    1）、获取单只股票的日k线，30，周和月线，股票的基础信息
+        要复权数据
+    2）、存入数据库，如果已有数据，则增量存入
+    3)、 读取股票数据
 2、提取股票信息分析股票历史状态，获取经验
+        1)\提取股票的高点与低点
+        2）获取高低点各指标的状态
+        3）统计大概率事件
+        4）
 
-3、根据股票实时动态信息，作出决断
+3、根据股票实时动态信息，作出决断，并记录决断数据用于将来分析是否决断正确，并统计决断后的收益
+
+前台输入的程序
+
+
+
+/*cci条件  大顶*/
+CON1:=CCIN<CCIY AND HIGH>REF(HIGH,1) ;/*创新高cci下降，卖出信号条件*/
+Con2:=Con1 AND CLOSE<OPEN AND HIGH>=HHV(HIGH,5);/*创新高收阴cci下降，强烈卖出信号，调整降至，可能延后几天*/
+Con3:=Con1 AND CLOSE<REF(CLOSE,1) AND HIGH>=HHV(HIGH,5) ;/*创新高收涨cci下降，强势调整，不做卖出*/
+DIN1:=CLOSE<OPEN AND LOW<REF(LOW,1)  AND REF(LOW,1)>REF(LOW,2) AND  CLOSE<REF(CLOSE,1) AND REF(OPEN,3)<=REF(CLOSE,2);
+DRAWTEXT(CON3,CCI,'P1'),coloryellow;
+DRAWTEXT(CON2,CCI,'卖');
+DRAWTEXT(din1,CCI,'P2'),coloryellow;
+
+/**底分型**/
+FDI:=REF(LOW,1)<LOW AND REF(HIGH,1)<REF(HIGH,2) AND HIGH>REF(HIGH,1) AND CLOSE>OPEN AND REF(HIGH,2)<REF(HIGH,3) ;
+FDIN:=REF(HIGH,1)>REF(HIGH,2) AND REF(HIGH,1)>LOW AND LOW <REF(LOW,1) AND CLOSE<REF(OPEN,1);
+
+/*
+MAI:=HIGH<REF(HIGH,1) AND REF(HIGH,1)>REF(HIGH,2) AND LOW<REF(LOW,1) AND REF(LOW,1)>REF(LOW,2) AND CLOSE<=OPEN ;
+*/
+MAI:=HIGH<REF(HIGH,1) AND LOW<REF(LOW,1) AND REF(LOW,1)>=REF(LOW,2) AND CLOSE<=OPEN ;
+CON22:=CCIN<-100 AND FDI;

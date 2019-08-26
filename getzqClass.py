@@ -77,7 +77,7 @@ class getzqClass(object):
 
 		#容错机制
 		if idstart==None:return 0
-		if abs(idend-idstart)>500 : return 0
+		if abs(idend-idstart)>1000 : print("idstart-idend>500"); return 0
 		if idstart>idend:print("idstart>idend"); return 0
 
 		#获取数据库中已有的比赛id，
@@ -92,8 +92,8 @@ class getzqClass(object):
 			if x not in list1:
 				jsq=jsq+1
 				self.getbs(x)
+				if jsq>30:break
 				print(datetime.datetime.now())
-
 		print(datetime.datetime.now())
 		return 0
 	#补齐之前整个联赛的比赛数据
@@ -110,6 +110,7 @@ class getzqClass(object):
 		idend=maxid[0][0]
 		#print("补齐之前比赛的数据{}-{}".format(idstart,idend))
 		#print(minid[0][0],maxid[0][0])
+
 		if idstart and idend:
 			print("补齐比赛数据:{}{}赛季-->({}-{})".format(ls,nd,idstart,idend))
 			self.getbsid(idstart,idend)
@@ -129,13 +130,13 @@ class getzqClass(object):
 				['k1联','19','783817','784125'],
 				['日职','19','779376','779788'], 
 				['美职','19','780198','780808'],
-				['日乙','19','778452','779044'],
+				['日职乙','19','778452','779044'],
 				['丹超','19','805215','805245'],
 				['巴甲','19','800197','800473'],
 				['丹甲','19','0','0']
 			]
 
-		in_list=['820167', '820187']	
+		in_list=['779070']	
 		if len(in_list)!=0:
 			print(in_list)
 			for x in in_list:
@@ -144,9 +145,9 @@ class getzqClass(object):
 		iii=0
 		for x in between_list:
 			iii+=1
-			if iii>10:break
+			
+			#if x[0]!='日职乙':continue
 			self.getbs_othor(x[0],x[1])
-
 		return 0
 
 
