@@ -2,6 +2,9 @@
 #股票类
 import tushare as ts
 import datetime
+import csv
+import os
+from pandas import read_csv
 class gupiaoClass(object):
 	"""docstring for gupiaoClass
 		股票类
@@ -9,7 +12,8 @@ class gupiaoClass(object):
 	def __init__(self, arg):
 		super(gupiaoClass, self).__init__()
 		self.arg = arg
-		self.code=arg
+		self.code=str(arg)
+		self.filepath='e:/stock_k/{}.csv'.format(self.code)
 		print(arg)
 	#获取股票基础信息
 	def get_jcxx(self):
@@ -33,6 +37,7 @@ class gupiaoClass(object):
 		datestart='2018-05-04' 
 		#起始日期 注：日期太早get_k_data会出现错误
 		now = datetime.datetime.now()
+		#加一天
 		delta = datetime.timedelta(days=1)
 		n_days=now+delta
 		dateend=n_days.strftime('%Y-%m-%d')#结束日期
@@ -53,17 +58,34 @@ class gupiaoClass(object):
 		return df
 	#当天的数据
 	def get_day_all(self):
+		filepath_today="e:/stock_k/today_all.csv"
+		
+		now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+		#print(now)
 		df=ts.get_today_all()
-		print(df.head())
-		return df
+		df['date']=now
+		df['name']=''
+		df.to_csv(filepath_today,encoding="gbk")
+		#print(df.head())
+		return 0
 
 	#存储K线
-	def save_k(self):
-		pass
+	def save_k(self,df):
+		#filepath='e:/stock_k/{}.csv'.format(self.code)
+		print(self.filepath)
+		df.to_csv(self.filepath)
+		return 1
+	#增量存储k线
+	def save_k_append(self,df):
+		#
+		df.to_csv(self.filepath,mode='a', header=None)
+		return 1
 
 	#存储基础信息
-	def save_jcxx(self):
-		pass
+	def save_jcxx(self,df):
+		filepath_jcxx="e:/stock_k/jcxx.csv"
+		df.to_csv(filepath_jcxx,encoding='utf-8')
+		return 1
 
 	#删除K线
 	def _delete_k(self):
@@ -75,8 +97,43 @@ class gupiaoClass(object):
 
 	#提取信息
 	def select_k(self):
-		pass
-		
+		if os.path.exists(self.filepath):
+			
+			with open(self.filepath, 'r') as csv_file:
+				df = read_csv(csv_file,header=0)
+
+		else:return 0
+
+		return df
+	#提取基础信息	
 	def select_jcxx(self):
-		pass
-h=gupiaoClass('').get_day_all()
+		filepath_jcxx="e:/stock_k/jcxx.csv"
+		if os.path.exists(filepath_jcxx):
+			
+			with open(filepath_jcxx, 'r',errors='ignore') as csv_file:
+				df = read_csv(csv_file,header=0)
+		else:return 0
+		for x in df.iterrows():
+			print(x)
+			
+		return df
+	def  select_today_k(self):
+		filepath_jcxx="e:/stock_k/today_all.csv"
+		if os.path.exists(filepath_jcxx):
+			
+			with open(filepath_jcxx, 'r',errors='ignore') as csv_file:
+				df = read_csv(csv_file,header=0,encoding="gbk")
+		else:return 0
+		for row in df.iterrows():
+			print(row)
+		
+		
+#h=gupiaoClass('002428')
+#h.get_day_all()
+#df=(h.get_k('002340','D','2019-01-01','2019-08-01'))
+#h.save_k(df)
+#h.save_jcxx(h.get_jcxx())
+#h.select_k()
+#h.select_today_k()
+#h.select_jcxx()
+#print(os.listdir('e:/stock_k/'))
