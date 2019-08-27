@@ -1,3 +1,7 @@
+底分型：
+	条件：dmi：adx<adxr and di1<di2
+	持有：macd 增长一直持有，macd衰竭有形成cci最高点，等待背驰
+
 需求：
 1、从网络上获取单只股票或批量股票信息存入数据库
     1）、获取单只股票的日k线，30，周和月线，股票的基础信息
@@ -13,6 +17,10 @@
 3、根据股票实时动态信息，作出决断，并记录决断数据用于将来分析是否决断正确，并统计决断后的收益
 
 前台输入的程序
+
+/**底分型**/
+HIGH>REF(HIGH,1) AND REF(HIGH,1)<REF(HIGH,2) AND CLOSE>REF(CLOSE,1) AND VOL>REF(VOL,1)
+
 
 
 
@@ -34,3 +42,17 @@ MAI:=HIGH<REF(HIGH,1) AND REF(HIGH,1)>REF(HIGH,2) AND LOW<REF(LOW,1) AND REF(LOW
 */
 MAI:=HIGH<REF(HIGH,1) AND LOW<REF(LOW,1) AND REF(LOW,1)>=REF(LOW,2) AND CLOSE<=OPEN ;
 CON22:=CCIN<-100 AND FDI;
+
+###3
+A:= (CLOSE-REF(CLOSE,1))/REF(CLOSE,1)>=(N/100) ;
+SUM(VOL,N1)/SHGZG>=(N2/100) 
+AND COUNT(VOL>REF(VOL,1),N3)==N3 AND COUNT(A,N3)==N3 
+
+
+cci
+
+TYP := (IF(ISNULL(HIGH),CLOSE,HIGH) + IF(ISNULL(LOW),CLOSE,LOW) + CLOSE)/3;
+CCI:(TYP-MA(TYP,N))/(0.015*AVEDEV(TYP,N));
+
+a:100;
+b:-100
