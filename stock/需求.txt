@@ -56,3 +56,4 @@ CCI:(TYP-MA(TYP,N))/(0.015*AVEDEV(TYP,N));
 
 a:100;
 b:-100
+

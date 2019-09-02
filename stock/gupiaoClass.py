@@ -8,6 +8,7 @@ from pandas import read_csv
 class gupiaoClass(object):
 	"""docstring for gupiaoClass
 		股票类
+		得到
 	"""
 	def __init__(self, arg):
 		super(gupiaoClass, self).__init__()
@@ -128,7 +129,7 @@ class gupiaoClass(object):
 			print(row)
 		
 		
-#h=gupiaoClass('002428')
+#h=gupiaoClass('300377')
 #h.get_day_all()
 #df=(h.get_k('002340','D','2019-01-01','2019-08-01'))
 #h.save_k(df)
