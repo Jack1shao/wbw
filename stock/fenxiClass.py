@@ -82,7 +82,7 @@ def  main():
 		if x<4:li.append(0);continue
 		z=kk.di(df,x)
 		li.append(z)
-	print(li,len(li))
+	#print(li,len(li))
 	X=3
 	Y=1
 	fig = plt.figure()
