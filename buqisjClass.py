@@ -50,7 +50,7 @@ class buqisj(object):
 		#sql="select idnm from scb s where not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		#		+" and idnm between " +str(idstart)+" and " +str(idend)
 		ypgs='Bet365'
-		jp1='两球'
+		jp1='平手'
 		sql="SELECT s.idnm from scb s ,yapan y  where s.idnm=y.idnm and y.ypgs='"+ypgs+"' and y.jp='"+jp1+"' and not EXISTS (select 1 from bifa b where b.idnm=s.idnm)"
 		
 		idlist=savedateClass().select(sql)

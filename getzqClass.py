@@ -92,7 +92,7 @@ class getzqClass(object):
 			if x not in list1:
 				jsq=jsq+1
 				self.getbs(x)
-				if jsq>30:break
+				if jsq>20:break
 				print(datetime.datetime.now())
 		print(datetime.datetime.now())
 		return 0
@@ -133,10 +133,14 @@ class getzqClass(object):
 				['日职乙','19','778452','779044'],
 				['丹超','19','805215','805245'],
 				['巴甲','19','800197','800473'],
-				['丹甲','19','0','0']
+				['丹甲','19','0','0'],
+				['葡超','19','837459','0'],
+				['瑞士超','19','0','0'],
+				['瑞典超','19','789008','789280'],
+				['荷甲','19','0','0']
 			]
 
-		in_list=['779070']	
+		in_list=['808799','805581','867116','867116']	
 		if len(in_list)!=0:
 			print(in_list)
 			for x in in_list:
