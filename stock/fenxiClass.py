@@ -3,14 +3,24 @@
 from gupiaoClass import gupiaoClass
 import mpl_finance as mpf
 import matplotlib.pyplot as plt
+import talib
 class fenxi(gupiaoClass):
 	"""docstring for fenxi"""
 	
-	def cci(self,df,index):
+	def cci(self):
+		df=self.select_k()
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
+		#print(len(cci))
 		return cci
-	def cci_ana(self):
-		pass
+	def cci_ana(self,index):
+		listcci=self.cci()
+		print(len(listcci))
+		if index<2:print('The end ');return 0,0,0
+		cci=listcci[index]
+		refcci1=listcci[index-1]
+		refcci2=listcci[index-2]
+		return cci,refcci1,refcci2
+
 	def macd(self,df,index):
 		macd1,macd2,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
 		return macd1,macd2,macd3
@@ -60,7 +70,14 @@ class fenxi(gupiaoClass):
 	#底
 	def di(self,df,index):
 		i=-1 if self._fxdq(df,index)==-1 else 0
-		return i
+
+		#加cci分析
+		bz_cci=1
+		cci,refcci1,refcci2=self.cci_ana(index) 
+		if (cci>-100 and refcci1<-100) or (cci>100 and refcci1<100):
+			bz_cci=1
+		else :bz_cci=0
+		return i*bz_cci
 	#顶
 	def din(self,df,index):
 		i=1 if self._fxdq(df,index)==-1 else 0
@@ -76,6 +93,9 @@ def  main():
 	kk=fenxi('300377')
 	df=kk.select_k()
 	index=df.index.values[-1]
+	print(df[-1:])
+	print(kk.cci_ana(640))
+
 	li=[]
 	for x in range(index+1):
 		i=index-x
@@ -92,11 +112,9 @@ def  main():
 
 	mpf.candlestick2_ochl(ax=ax1,opens=df["open"].values, closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
 	ax2.plot(li)
+	ax3.plot(kk.cci())
 	plt.show()
 	return 0
-
-
-
 
 main()
 #h=gupiaoClass('002340').select_k()

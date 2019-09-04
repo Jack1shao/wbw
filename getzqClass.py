@@ -140,7 +140,7 @@ class getzqClass(object):
 				['荷甲','19','0','0']
 			]
 
-		in_list=['808799','805581','867116','867116']	
+		in_list=['779816','805581','867116','867116']	
 		if len(in_list)!=0:
 			print(in_list)
 			for x in in_list:
