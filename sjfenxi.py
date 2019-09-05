@@ -150,6 +150,6 @@ class sjfenxClass(object):
 		print(self.id1,res)
 		return listreturn,res
 
-list1=[853832]
+list1=[793553]
 [sjfenxClass(x).bd()  for x in list1 if len(list1)>0]
 #[print(x) if x>10 else print(0) for x in range(1,10) ]

@@ -38,15 +38,79 @@ class zqconfigClass(object):
 		df.to_csv('zqconfig.csv')
 		print(df)
 		return 0
-
 	def cfg_select(self):
-		filepath_jcxx='zqconfig.csv'
-		print("读取联赛配置文件，'zqconfig.csv'")
+		return self.select('zqconfig.csv')
+
+	def select(self,files1):
+		filepath_jcxx=files1
+		
+		print("读取联赛配置文件，'*.csv'")
 		if os.path.exists(filepath_jcxx):
 			with open(filepath_jcxx,'r',encoding='utf-8') as csv_file:
 				df = read_csv(csv_file,index_col=0)#指定0列为index列
 		else:return 0
 		return df
+	#队名对照表
+	def cfg_dmdzb_save(self,df):
+		listdzb=df.values
+		if len(listdzb)==0:print('date is None');return 0
+		#整理
+		listzl=[]
+		for li in listdzb:
+			for x in range(0,4):
+				
+				if li[x]==li[x+4]:continue
+				list11=[]
+				list11.append(li[x])
+				list11.append(li[x+4])
+				list11.sort()
+				if (list11 not in listzl):
+					listzl.append(list11)
+			
+		listdzb3=[]
+		while len(listzl)>0:
+	
+			listdzb2=[]
+			for x in range(0,4):
+				if len(listzl)==0:break
+				i=listzl.pop();
+				listdzb2.insert(x,i[0])
+				listdzb2.insert(x+4,i[1])
+			if len(listdzb2)!=8:
+				l=int(len(listdzb2)/2)
+				i=(4-l)
+				
+				for x in range(0,int(i)):
+						listdzb2.insert(l+x,'0')
+						listdzb2.insert(l+x+4,'0')
+			if len(listdzb2)==8 :
+				listdzb3.append(listdzb2)
+		#list to datefame
+		df=DataFrame(listdzb3,columns=['n1','n2','n3','n4','n5','n6','n7','n8'])
+		df.to_csv('zqconfig_dmdzb.csv')
+		print(df)
+		return 0
 
-zqconfigClass(''). cfg_select()
-#zqconfigClass('').cfg_save()
+	def cfg_dmdzb_append(self,df,files1):
+		df.to_csv(files1,mode='a',header=False)
+		return 0
+
+	def cfg_dmdzb_select(self):
+		df=self.select('zqconfig_dmdzb.csv')
+		ii=0
+		for index,x in df.iterrows():
+			if x.n1==x.n5:
+				ii+=1
+				print(x.n1)
+			if ii>10:self.cfg_save(df)
+
+		return df
+			
+
+#zqconfigClass(''). cfg_select()
+#kk=zqconfigClass(0)
+#if kk.arg==0:print(kk.cfg_dmdzb_select())
+
+#kk.cfg_dmdzb_append(df,'zqconfig_dmdzb.csv')
+
+#print(df.values)

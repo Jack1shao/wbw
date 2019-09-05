@@ -68,7 +68,13 @@ class getzqClass(object):
 				dates.insert(bflist,bfsql)#写入必发空值
 
 		return 1
-	
+	#获取数据库中批量比赛id_to list
+	def getbsid_bylist(self,list1):
+		#list1=[779110,779824]
+		if len(list1)==0:return 0
+		sql="select s.idnm from scb s where s.idnm in {}".format(tuple(list1))
+		list_idnm=savedateClass().select(sql)
+		return list_idnm
 	#获取比赛段的数据
 	def getbsid(self ,idstart,idend):
 
@@ -154,8 +160,9 @@ class getzqClass(object):
 			self.getbs_othor(x[0],x[1])
 		return 0
 
+#h=getzqClass('').idnm_in([])
 
-h=getzqClass('').getzq_main()
+#h=getzqClass('').getzq_main()
 #print(h.bqbf(800355))
 
 #补齐必发数据，没有必发数据时，加入必发数据
