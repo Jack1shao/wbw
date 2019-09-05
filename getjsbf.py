@@ -53,12 +53,20 @@ class getjsbfClass(object):
 			bsxxlist.append(listgy)
 		return bsxxlist
 
+
+
+	def wcbf(self,day):
+		url1="https://live.500.com/wanchang.php"
+		url2='?e={}'.format(day)
+		url=url1+url2
+		print(url)
+		return self.get500wwcbf(url)
 		
 	#获取昨日完场比分
-	def get500wwcbf(self):
+	def get500wwcbf(self,url):
 		print("获取500w比赛昨日完场比分数据")
 		#url="https://live.500.com/wanchang.php"
-		url='https://live.500.com/wanchang.php?e=2019-09-01'
+		#url='https://live.500.com/wanchang.php?e=2019-09-01'
 		htmltext=getHtml().geturltext(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		listtable=soup.find_all(id='table_match')

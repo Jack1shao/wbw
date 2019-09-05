@@ -3,6 +3,8 @@
 from getjsbf import getjsbfClass
 from zqconfigClass import zqconfigClass
 from getzqClass import getzqClass
+from tooth_day import tooth_dayClass
+
 class zqmain(object):
 	"""docstring for zqmain"""
 
@@ -14,7 +16,11 @@ class zqmain(object):
 
 	def zrwc_save(self):
 		kk=getjsbfClass(1)
-		li_wbw_wcbf=kk.get500wwcbf()
+		list_day=tooth_dayClass(1).last_sunday_saturday()
+		li_wbw_wcbf=[]
+		for d in list_day:
+
+			li_wbw_wcbf.extend(kk.wcbf(d))
 		if len(li_wbw_wcbf)==0:print('完场数据 have no date');return 0
 		#读取联赛列表 from zqconfig
 		zqdf=zqconfigClass('').cfg_select()
@@ -25,7 +31,8 @@ class zqmain(object):
 		kk=getzqClass('')
 
 		#获取数据库中批量比赛id
-		list_idnm=kk.getbsid_bylist(id_wbw_wcbs)
+		list_idnm=[[]]
+		#list_idnm=kk.getbsid_bylist(id_wbw_wcbs)
 		#二维转一维
 		li_id=[]
 		for li in list_idnm:
@@ -34,7 +41,7 @@ class zqmain(object):
 		#数据库中没有的比赛id列表S
 		z=[id1 for id1 in id_wbw_wcbs if id1 not in li_id]
 		print('数据库中没有的比赛id列表',z)
-		[getzqClass('').getbsid(idnm,idnm) for idnm in z if len(z)>0]
+		#[getzqClass('').getbsid(idnm,idnm) for idnm in z if len(z)>0]
 	
 		return 1
 	#未开场数据分析
@@ -44,7 +51,8 @@ class zqmain(object):
 
 #获取完场数据
 h=zqmain(0)
-#if h.arg==0:h.zrwc_save()
-h.wkc_fenxi()
+if h.arg==0:h.zrwc_save()
+#h.wkc_fenxi()
+
 
 
