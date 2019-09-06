@@ -9,6 +9,7 @@ class zqconfigClass(object):
 	def __init__(self, arg):
 		super(zqconfigClass, self).__init__()
 		self.arg = arg
+		
 
 	def cfg_save(self):
 		between_list=[
@@ -41,14 +42,24 @@ class zqconfigClass(object):
 	def cfg_select(self):
 		return self.select('zqconfig.csv')
 
+	def save(self,df,files1):
+		#files1='zqconfig_bslb.csv'
+		if df.empty:
+			print("empty")
+			return 0
+		df.to_csv(files1)
+		return 1		
+	def append(self,df,files1):
+		df.to_csv(files1,mode='a',header=False)
+		return 1	
+
 	def select(self,files1):
 		filepath_jcxx=files1
-		
-		print("读取联赛配置文件，'*.csv'")
-		if os.path.exists(filepath_jcxx):
-			with open(filepath_jcxx,'r',encoding='utf-8') as csv_file:
+		#print("读取联赛配置文件，'*.csv'")
+		if os.path.exists(files1):
+			with open(files1,'r',encoding='utf-8') as csv_file:
 				df = read_csv(csv_file,index_col=0)#指定0列为index列
-		else:return 0
+		else:return DataFrame([])
 		return df
 	#队名对照表
 	def cfg_dmdzb_save(self,df):
@@ -101,16 +112,28 @@ class zqconfigClass(object):
 		for index,x in df.iterrows():
 			if x.n1==x.n5:
 				ii+=1
-				print(x.n1)
+				#print(x.n1)
 			if ii>10:self.cfg_save(df)
 
 		return df
-			
+	#未完成的购买比赛列表
+	def cfg_gmlb_save(self,df,files1):
+		#files1='zqconfig_bslb.csv'
+		if df.empty:
+			print("empty")
+			return 0
+		df.to_csv('files1')
+		return 1
+	def cfg_gmlb_append(self,df,files1):
+		df.to_csv(files1,mode='a',header=False)
+		return 0
+	def cfg_gmlb_select(self,files1):
+		df=self.select(files1)
+		return df
+				
 
-#zqconfigClass(''). cfg_select()
+#zqconfigClass('').save(df1,files1)
 #kk=zqconfigClass(0)
 #if kk.arg==0:print(kk.cfg_dmdzb_select())
-
 #kk.cfg_dmdzb_append(df,'zqconfig_dmdzb.csv')
-
 #print(df.values)

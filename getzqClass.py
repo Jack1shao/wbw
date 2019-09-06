@@ -78,7 +78,7 @@ class getzqClass(object):
 	#获取比赛段的数据
 	def getbsid(self ,idstart,idend):
 
-		jsq=0#计数器
+		iii=0#计数器
 		list1=[]
 
 		#容错机制
@@ -89,19 +89,19 @@ class getzqClass(object):
 		#获取数据库中已有的比赛id，
 		#这些比赛不在从网页获取
 		sql="select idnm from scb_error where idnm between {0} and {1} union all select idnm from scb where  idnm between {0} and {1}".format(idstart,idend)
-		idlist=self._bsid_from_db(idstart,idend,sql)
+		idlist=self._bsid_from_db(0,0,sql)
 		for idnmrow in idlist:
 			for idnm0 in idnmrow:
 				list1.append(idnm0)
 		#获取还未进入数据库的比赛
 		for x in range(idstart,idend+1):
 			if x not in list1:
-				jsq=jsq+1
+				iii=iii+1
 				self.getbs(x)
-				if jsq>20:break
-				print(datetime.datetime.now())
-		print(datetime.datetime.now())
-		return 0
+				if iii>20:break
+				print(datetime.datetime.now(),'--->',iii,'<---')
+		print('<<<...',datetime.datetime.now(),'--->',iii,'<---')
+		return iii
 	#补齐之前整个联赛的比赛数据
 	def getbs_othor(self,ls,nd):
 		#获取该联赛最小idnm 和最大id，补齐比赛数据
@@ -109,56 +109,57 @@ class getzqClass(object):
 		idstart=0	
 		minidnm_sql="SELECT min(idnm) from scb where nd='{}' and ls='{}'".format(nd,ls)
 		maxidnm_sql="SELECT max(idnm) from scb where nd='{}' and ls='{}'".format(nd,ls)
-		#print(minidnm_sql,maxidnm_sql)
+		print(minidnm_sql,maxidnm_sql)
 		minid=savedateClass().select(minidnm_sql)
 		maxid=savedateClass().select(maxidnm_sql)
 		idstart=minid[0][0]
 		idend=maxid[0][0]
 		#print("补齐之前比赛的数据{}-{}".format(idstart,idend))
 		#print(minid[0][0],maxid[0][0])
-
-		if idstart and idend:
-			print("补齐比赛数据:{}{}赛季-->({}-{})".format(ls,nd,idstart,idend))
-			self.getbsid(idstart,idend)
-		return 0
-	#主程序入口
-	def getzq_main(self):
-		between_list=[
-				['法甲','19','808039','808071'],
-				['法乙','19','809429','809483'],
-				['英超','19','806501','806519'],
-				['西甲','19','830801','0'],
-				['意甲','19','853822','0'],
-				['德乙','19','825597','825627'],
-				['德甲','19','824571','0'],
-				['芬超','19','795956','0'],
-				['挪超','19','788508','0'],
-				['k1联','19','783817','784125'],
-				['日职','19','779376','779788'], 
-				['美职','19','780198','780808'],
-				['日职乙','19','778452','779044'],
-				['丹超','19','805215','805245'],
-				['巴甲','19','800197','800473'],
-				['丹甲','19','0','0'],
-				['葡超','19','837459','0'],
-				['瑞士超','19','0','0'],
-				['瑞典超','19','789008','789280'],
-				['荷甲','19','0','0']
-			]
-
-		in_list=['779816','805581','867116','867116']	
-		if len(in_list)!=0:
-			print(in_list)
-			for x in in_list:
-				self.getbsid(int(x),int(x))
-		#补齐比赛数据
 		iii=0
-		for x in between_list:
-			iii+=1
+		if idstart and idend:
+			print("补齐比赛数据:{}{}赛季-->({}-{})<---".format(ls,nd,idstart,idend))
+			iii=self.getbsid(idstart,idend)
+			print('--->{}<---'.format(iii))
+		return iii
+	#主程序入口
+	'''def getzq_main(self):
+					between_list=[
+							['法甲','19','808039','808071'],
+							['法乙','19','809429','809483'],
+							['英超','19','806501','806519'],
+							['西甲','19','830801','0'],
+							['意甲','19','853822','0'],
+							['德乙','19','825597','825627'],
+							['德甲','19','824571','0'],
+							['芬超','19','795956','0'],
+							['挪超','19','788508','0'],
+							['k1联','19','783817','784125'],
+							['日职','19','779376','779788'], 
+							['美职','19','780198','780808'],
+							['日职乙','19','778452','779044'],
+							['丹超','19','805215','805245'],
+							['巴甲','19','800197','800473'],
+							['丹甲','19','0','0'],
+							['葡超','19','837459','0'],
+							['瑞士超','19','0','0'],
+							['瑞典超','19','789008','789280'],
+							['荷甲','19','0','0']
+						]
 			
-			#if x[0]!='日职乙':continue
-			self.getbs_othor(x[0],x[1])
-		return 0
+					in_list=['779816','805581','867116','867116']	
+					if len(in_list)!=0:
+						print(in_list)
+						for x in in_list:
+							self.getbsid(int(x),int(x))
+					#补齐比赛数据
+					iii=0
+					for x in between_list:
+						iii+=1
+						
+						#if x[0]!='日职乙':continue
+						self.getbs_othor(x[0],x[1])
+					return 0'''
 
 #h=getzqClass('').idnm_in([])
 

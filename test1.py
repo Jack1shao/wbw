@@ -9,10 +9,5 @@ from tooth_day import tooth_dayClass
 #df=getjsbfClass(1).wcbf(str_sunday)
 
 #print(df)
-i=0
-while i<5:
-	i+=1
-	print('中文字幕')
-	print('please input a:')
-	cc=input()
-	print(cc)
+def read():
+	pass

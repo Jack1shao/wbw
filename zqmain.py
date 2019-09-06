@@ -4,6 +4,7 @@ from getjsbf import getjsbfClass
 from zqconfigClass import zqconfigClass
 from getzqClass import getzqClass
 from tooth_day import tooth_dayClass
+from buqisjClass import buqisj
 
 class zqmain(object):
 	"""docstring for zqmain"""
@@ -31,28 +32,101 @@ class zqmain(object):
 		kk=getzqClass('')
 
 		#获取数据库中批量比赛id
-		list_idnm=[[]]
-		#list_idnm=kk.getbsid_bylist(id_wbw_wcbs)
+		#list_idnm=[[]]
+		list_idnm=kk.getbsid_bylist(id_wbw_wcbs)
 		#二维转一维
 		li_id=[]
 		for li in list_idnm:
 			for x in li:
 				li_id.append(x)
-		#数据库中没有的比赛id列表S
+		#数据库中没有的比赛id列表
 		z=[id1 for id1 in id_wbw_wcbs if id1 not in li_id]
 		print('数据库中没有的比赛id列表',z)
-		#[getzqClass('').getbsid(idnm,idnm) for idnm in z if len(z)>0]
-	
+		z1=z[:10] if len(z)>10 else z
+		print(z1,z)
+
+		[getzqClass('').getbsid(idnm,idnm) for idnm in z if len(z)>0 ]
+		
 		return 1
+	#获取比赛段的比赛数据
+	#从config 文件获取比赛段
+	def dwc_save(self):
+		zqdf=zqconfigClass('').cfg_select()
+		li=zqdf.values
+		if len(li)==0:return 0
+		print('..比赛段的比赛数据..')
+		iii=0
+		for idnm in li:
+			if idnm[2]>0 and idnm[3]>0:
+				iii+=getzqClass('').getbsid(idnm[2],idnm[3])
+				if iii>19:
+					print("--->{}<---".format(iii))
+					break
+
+		return 1
+	#补齐整个联赛的比赛数据
+	#从config 文件获取要补齐的联赛
+	def lswc_save(self):
+		zqdf=zqconfigClass('').cfg_select()
+		li=zqdf.values
+		ls=zqdf.ls.values
+		if '英超' not in ls :print('12234556');return 0
+		if len(li)==0:return 0
+		iii=0
+		for idnm in li:
+			print(iii)
+			if iii>60:break
+			iii+=getzqClass('').getbs_othor(idnm[0],idnm[1])
+		print("--->{}<---".format(iii))
+		return 1
+		
+
 	#未开场数据分析
 	def wkc_fenxi(self):
 		kk=getjsbfClass(1)
-		list_idnm=kk.hb()
+		list_idnm=kk.jsbf()
+
+	#补齐必发数据
+	def buqibf(self):
+		h=buqisj('').bqbfmain(1,2)
+		
+
+
+	def main(self):
+		i=0
+		while i<5:
+			i+=1
+
+			print('\n<中文字幕:>\n')
+			print('	1、获取完场比赛数据（昨日、上周六/上周日）  <1>')
+			print('	2、分析未完场比赛数据——半球               <2>')
+			print('	3、获取比赛段完场比赛数据和补齐联赛数据 <3 -33>')
+			print('	4、补齐必发数据							<18>')
+			print('	99、退出<99>\n')
+			print('--请输入你的选择:')
+			cc=input()
+			if cc=='1':
+				print('	1、获取完场比赛数据（昨日、上周六/上周日）<1>')
+				self.zrwc_save()
+			if cc=='2':
+				print('	分析未完场比赛数据——半球<2>')
+				self.wkc_fenxi()
+			if cc=='3':
+				print('	补齐联赛数据<3>')
+				self.lswc_save()
+			if cc=='33':
+				print('	获取比赛段完场比赛数据<33>')
+				self.dwc_save()
+			if cc=='18':
+				print('补齐必发数据')
+				self.buqibf()
+			if cc=='99':
+				print('	退出<99>')
+				break
 
 #获取完场数据
-h=zqmain(0)
-if h.arg==0:h.zrwc_save()
-#h.wkc_fenxi()
+h=zqmain(0).main()
+
 
 
 
