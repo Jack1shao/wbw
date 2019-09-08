@@ -183,6 +183,10 @@ class getjsbfClass(object):
 		listqt=[]
 		for x in listqt1:
 			if x[0].find('女')>-1:continue
+			if x[0].find('丙')>-1:continue
+			if x[0].find('丁')>-1:continue
+
+
 			if x[5]=='半球':
 				print('--------------->>',x)
 				listqt.append(x)
