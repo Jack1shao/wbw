@@ -18,7 +18,7 @@ class getjsbfClass(object):
 		url="https://live.500.com/zqdc.php"
 		
 		#url="https://live.500.com/2h1.php"
-		htmltext=getHtml().geturltext(url)
+		htmltext=getHtml().getHtml_by_firefox(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		return soup
 	#500w北单比方情况
@@ -67,7 +67,7 @@ class getjsbfClass(object):
 		print("获取500w比赛昨日完场比分数据")
 		#url="https://live.500.com/wanchang.php"
 		#url='https://live.500.com/wanchang.php?e=2019-09-01'
-		htmltext=getHtml().geturltext(url)
+		htmltext=getHtml().getHtml_by_firefox(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		listtable=soup.find_all(id='table_match')
 		list31=listtable[0].find_all('tr')
