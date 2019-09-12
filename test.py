@@ -9,6 +9,7 @@ def last_sunday_saturday():
 	#如果今日非周六，周日
 	date=datetime.datetime.now()
 	day = date.weekday()
+
 	if day<5:
 		saturday=date+datetime.timedelta(days=-day-2)
 		sunday=date+datetime.timedelta(days=-day-1)
@@ -16,7 +17,9 @@ def last_sunday_saturday():
 		str_saturday=saturday.strftime('%Y-%m-%d')
 	return str_sunday,str_saturday
 print(last_sunday_saturday())
+print(last_sunday_saturday())
 
 
+#print()
 #print(list3)
 #for x in iter(li):	print(x)

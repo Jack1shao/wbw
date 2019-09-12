@@ -16,7 +16,7 @@ class htmlsoup(object):
 		
 
 	def _gethtmlsoup(self,url):
-		htmltext=getHtml().geturltext(url)
+		htmltext=getHtml().getHtml_by_firefox(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		return soup
 
@@ -127,13 +127,13 @@ class htmlsoup(object):
 		datalist+=self._ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
 
 		a=self._getbcgscount(soup)-1
-		for x in range(int(a/30)):
-			
-			starts=30*(x+1)
-			soup2,id2=self._set_sc_url_soup(starts)
-			aalist=self._ansy_500wouzhi(id1,soup2)
-			if len(aalist)==0 and id1!=id2: return datalist,0
-			datalist+=aalist
+		'''for x in range(int(a/30)):
+									
+									starts=30*(x+1)
+									soup2,id2=self._set_sc_url_soup(starts)
+									aalist=self._ansy_500wouzhi(id1,soup2)
+									if len(aalist)==0 and id1!=id2: return datalist,0
+									datalist+=aalist'''
 
 		return datalist,1
 
@@ -257,5 +257,6 @@ class htmlsoup(object):
 		#print(listbifa,1,listsjtd)
 		return listbifa,1,listsjtd
 
-
-#h=htmlsoup(809463);print(h.getbifa())
+h=htmlsoup(809463);
+list1,z=h.getouzhi()
+print(list1)

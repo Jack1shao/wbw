@@ -12,8 +12,11 @@ def main():
 	driver = webdriver.Firefox( )
 	#driver.get("http://live.win007.com/index2in1.aspx?id=8")
 	try:
-		#driver.get(url)
-		driver.get("http://www.baidu.com")
+		driver.get(url)
+		#driver.get("http://www.baidu.com")
+		js="var q=document.documentElement.scrollTop=100000"
+		driver.execute_script(js)
+
 		print(driver.page_source)
 		#tb1=driver.find_element_by_id("table_match")
 		#tr=tb1.find_all('tr')

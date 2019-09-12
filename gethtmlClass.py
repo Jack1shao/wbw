@@ -66,7 +66,9 @@ class getHtml(object):
 			driver.get(url)
 			#
 			#tb1=driver.find_element_by_id("table_live")
-			time.sleep(5)
+			js="var q=document.documentElement.scrollTop=100000"
+			driver.execute_script(js)
+			time.sleep(10)
 			htmlfile=driver.page_source
 			#t=tb1.text
 			#print (t)
