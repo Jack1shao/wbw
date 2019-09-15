@@ -26,7 +26,7 @@ class getzqClass(object):
 		dates=savedateClass()
 		hs=htmlsoup(id1)
 
-		scblist,bzsc=hs.getsc()
+		scblist,bzsc,ozlist=hs.getscbandouzhi()
 		if bzsc==0:
 			print("无赛程")
 			scberrorsql="insert into scb_error values (%s,%s)"
@@ -38,8 +38,8 @@ class getzqClass(object):
 
 			dates.insert(listee,scberrorsql)
 			return 0
-
-		ozlist,bzoz=hs.getouzhi()
+		bzoz=bzsc
+		#ozlist,bzoz=hs.getouzhi()
 		yplist,bzyp=hs.getyapan()
 		bflist,bzbf,bflist_sjtd=hs.getbifa()
 

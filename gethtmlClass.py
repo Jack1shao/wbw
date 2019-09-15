@@ -59,6 +59,29 @@ class getHtml(object):
 		htmlfile = decompressed_data.decode(codes)
 
 		return htmlfile
+	#滚动条
+	def getHtml_by_firefox2(self,url,count):
+		driver = webdriver.Firefox( )
+		try:
+			driver.get(url)
+			#
+			#tb1=driver.find_element_by_id("table_live")
+			js="var q=document.documentElement.scrollTop=100000"
+			if count>0 and count<10:
+				for x in range(count):
+					driver.execute_script(js)
+					time.sleep(1)
+				
+			htmlfile=driver.page_source
+			#t=tb1.text
+			#print (t)
+
+		except Exception as e:
+			raise
+
+		finally:
+			driver.close()
+		return htmlfile
 
 	def getHtml_by_firefox(self,url):
 		driver = webdriver.Firefox( )
@@ -68,7 +91,9 @@ class getHtml(object):
 			#tb1=driver.find_element_by_id("table_live")
 			js="var q=document.documentElement.scrollTop=100000"
 			driver.execute_script(js)
-			time.sleep(10)
+			time.sleep(1)
+
+
 			htmlfile=driver.page_source
 			#t=tb1.text
 			#print (t)

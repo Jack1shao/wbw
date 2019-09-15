@@ -19,12 +19,16 @@ class htmlsoup(object):
 		htmltext=getHtml().getHtml_by_firefox(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		return soup
-
+	#欧指需加滚动条
+	def _gethtmlsoup_oz(self,url):
+		htmltext=getHtml().getHtml_by_firefox2(url,7)
+		soup=BeautifulSoup(htmltext,'lxml')
+		return soup
 
 	def _set_sc_url_soup(self,starts):
 		url="http://odds.500.com/fenxi1/ouzhi.php?id={}&ctype=1&start={}&r=1&style=0&guojia=0&chupan=1".format(self.idnm,starts)
 		id1=self.idnm
-		return self._gethtmlsoup(url),id1
+		return self._gethtmlsoup_oz(url),id1
 	def _set_yapan_soup(self):
 		url="http://odds.500.com/fenxi/yazhi-{}.shtml?ctype=2".format(self.idnm)
 		id1=self.idnm
@@ -33,8 +37,65 @@ class htmlsoup(object):
 		url="https://odds.500.com/fenxi/touzhu-{}.shtml".format(self.idnm)
 		id1=self.idnm
 		return self._gethtmlsoup(url),id1
-		
 
+	#赛程和欧洲赔率
+	def getscandouzhi(self):
+		scblist=[]
+		ouzhilist=[]
+		print("-->获取 -- {} -- 赛程和欧洲赔率数据".format(self.idnm))
+
+		soup,id1=self._set_sc_url_soup(0)
+		scblist,z=self._ansy_scb(id1,soup)
+		if z==0:return scblist,0,ouzhilist
+
+		ouzhilist+=self._ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
+		return scblist,1,ouzhilist
+	#分析赛程表数据
+	def _ansy_scb(self,id1,soup):
+		
+		datalist=[]
+		soupdz=soup.find_all('a','hd_name')
+		#判断数据，返回空
+		if len(soupdz)!=3:return datalist,0
+		#创建比赛信息列表
+		bsxxlist=[]
+		bsxxlist.append(str(id1))
+		bsxxlist.append(soupdz[0].text.strip())
+		bsxxlist.append(soupdz[2].text.strip())
+
+		str11=soupdz[1].text.strip()
+		#取年份
+		bsxxlist.append(str11[0:2])
+
+		#去掉‘第’字。联赛
+		ls=re.findall('.*?([\u4E00-\u9FA5]+)',str11)
+		bsxxlist.append(ls[0][0:-1])
+		#print(str11[-3:],str11)
+
+		#获取轮次
+		lun=re.findall('\d+',str11[-3:])
+		if len(lun)>0:bsxxlist.append(lun[0])
+		else:bsxxlist.append('-1')
+
+		#获取比分
+		soupbf=soup.find('p','odds_hd_bf')
+		jqs=re.findall('\d+',soupbf.text)
+		if len(jqs)==0:
+			bsxxlist.append('-100')
+			bsxxlist.append('-1000')
+		else:
+			[bsxxlist.append(x) for x in jqs]
+			
+		#获取比赛时间
+		souptime=soup.find('p','game_time')
+		bsxxlist.append(souptime.text.strip('比赛时间'))
+		print(bsxxlist)
+		
+		datalist.append(bsxxlist)
+
+		return datalist,1
+
+		
 	#返回赛程表
 	def getsc(self):
 		#返回数据列表
@@ -80,6 +141,7 @@ class htmlsoup(object):
 		print(bsxxlist)
 		
 		datalist.append(bsxxlist)
+
 		return datalist,1
 
 
@@ -125,16 +187,6 @@ class htmlsoup(object):
 		tbsoup=soup.find_all(id='table_cont')
 		if len(tbsoup)==0:logger().error(str(self.idnm)+'欧洲指数无数据0001');return datalist,0
 		datalist+=self._ansy_500wouzhi(id1,soup.find_all(id='table_cont'))
-
-		a=self._getbcgscount(soup)-1
-		'''for x in range(int(a/30)):
-									
-									starts=30*(x+1)
-									soup2,id2=self._set_sc_url_soup(starts)
-									aalist=self._ansy_500wouzhi(id1,soup2)
-									if len(aalist)==0 and id1!=id2: return datalist,0
-									datalist+=aalist'''
-
 		return datalist,1
 
 	def getyapan(self):
@@ -257,6 +309,6 @@ class htmlsoup(object):
 		#print(listbifa,1,listsjtd)
 		return listbifa,1,listsjtd
 
-h=htmlsoup(809463);
-list1,z=h.getouzhi()
-print(list1)
+#h=htmlsoup(809463);
+#list1,z,list2=h.getscandouzhi()
+#print(list1,list2)
