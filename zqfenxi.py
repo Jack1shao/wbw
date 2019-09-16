@@ -237,6 +237,63 @@ class zqfenxi(object):
 		df.to_csv('e:/555.csv')
 		#print(fx_list)
 		return df
+
+	def fenxi3(self,df,idnm):
+		n37=[]
+		n30=[]
+		n23=[]
+		n16=[]
+		n9=[]
+		n5=[]
+
+		return 0
+	#构造规则方案配置表
+	def fenxigzb_save(self):
+		zy1='胜平多'
+		zy2=' 平负'
+		#li1=[['n37','11,11',zy1,'s2019091601'],['n9','11,11',zy1,'s2019091601']]
+		#li1=[['n37','12',zy1,'s2019091602'],['n9','12',zy1,'s2019091602']]
+		#li1=[['n37',11,zy1,'s2019091701'],['n23',11,zy1,'s2019091701']]
+		li1=[['n39','1010',zy1,'s2019091702'],['n18','1010',zy1,'s2019091702']]
+		df=DataFrame(li1,columns=['n','li','zy','name'])
+		df.to_csv('zqconfig_gzb.csv',mode='a',header=False)
+		print(df)
+		return
+
+
+
+	def fenxi4(self):
+
+		df=zqconfigClass(0).select('e:/555.csv')
+
+		df_dzb=zqconfigClass(0).select('zqconfig_gzb.csv')
+		#规则方案名称列表
+		#去重
+		list111=set(df_dzb.name.tolist())
+		print(list111)
+		#偏离每个规则列表
+		list_idnm=[]
+		listsg=[]	
+		for l in list111:
+			#规则方案名称列表
+			list222=df_dzb[df_dzb.name==l].values
+			#传入数据表
+			df1=df
+			for x in list222:
+				#规则
+				li_mx=x[1].split(',')
+				li_mx_new=[int(mx) for mx in li_mx]
+				#筛选
+				df1=df1[df1[x[0]].isin(li_mx_new)]
+			list_idnm+=df1.n1.values.tolist()
+			
+			listsg=[]
+			listsg+=df1.n2.values.tolist()
+			print(list222,'------->',Counter(listsg))
+		print(len(set(list_idnm)))
+
+		return 0
+
 	def fenxi2(self):
 		#df=self.fenxi()
 		df=zqconfigClass(0).select('e:/555.csv')
@@ -259,11 +316,14 @@ class zqfenxi(object):
 		#n9==11 and n37=11
 		#n9==12 and n37=12
 		#n37=102 and n30=102 and n23=102 and n5=13
-		df1=df[(df.n5>=20)&(df.n23.isin([11,12]))&(df.n37.isin([11,12]))]
+
+		s=[31,32]
+		s2=[11,12]
+		df1=df[(df.n5>=20)&(df.n23.isin(s2))&(df.n37.isin(s2))]
 		listsg=df1.n2.values
 		print(Counter(listsg))
 
-		df1=df[(df.n16.isin([11,12]))&(df.n37.isin([31,32]))&(df.n30.isin([31,32]))]
+		df1=df[(df.n16.isin(s2))&(df.n37.isin(s))&(df.n30.isin(s))]
 		listsg=df1.n2.values
 		print(Counter(listsg))
 		
@@ -272,5 +332,5 @@ class zqfenxi(object):
 
 
 h=zqfenxi('1')
-#h.fenxi()
-h.fenxi2()
+#h.fenxigzb_save()
+h.fenxi4()
