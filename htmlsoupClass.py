@@ -39,7 +39,7 @@ class htmlsoup(object):
 		return self._gethtmlsoup(url),id1
 
 	#赛程和欧洲赔率
-	def getscandouzhi(self):
+	def getscbandouzhi(self):
 		scblist=[]
 		ouzhilist=[]
 		print("-->获取 -- {} -- 赛程和欧洲赔率数据".format(self.idnm))

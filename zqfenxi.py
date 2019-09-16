@@ -232,7 +232,7 @@ class zqfenxi(object):
 		columns1=[]
 		for x in range(n):
 			columns1.append('n'+str(x))
-		print(columns1)
+		#print(columns1)
 		df=DataFrame(fx_list,columns=columns1)
 		df.to_csv('e:/555.csv')
 		#print(fx_list)
@@ -255,7 +255,7 @@ class zqfenxi(object):
 		#N37=31 AND N5=21
 		#df1=df[(df.n37==31)&(df.n5==21)]
 		#df1=df[(df.n5==21)&df.n37.isin([31,32,11,12,0])]
-		#n30 in [31,32] and n37 in [1,32] and n16 in [11,12]
+		#n30 in [31,32] and n37 in [31,32] and n16 in [11,12]
 		#n9==11 and n37=11
 		#n9==12 and n37=12
 		#n37=102 and n30=102 and n23=102 and n5=13
