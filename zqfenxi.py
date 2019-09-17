@@ -3,6 +3,7 @@ from pandas.core.frame import DataFrame
 from tooth_excle import tooth_excleClass
 from collections import Counter
 from zqconfigClass import zqconfigClass
+from getjsbf import getjsbfClass
 class zqfenxi(object):
 	"""docstring for zqfenxi"""
 	def __init__(self, arg):
@@ -238,15 +239,7 @@ class zqfenxi(object):
 		#print(fx_list)
 		return df
 
-	def fenxi3(self,df,idnm):
-		n37=[]
-		n30=[]
-		n23=[]
-		n16=[]
-		n9=[]
-		n5=[]
 
-		return 0
 	#构造规则方案配置表
 	def fenxigzb_save(self):
 		zy1='胜平多'
@@ -329,8 +322,125 @@ class zqfenxi(object):
 		
 
 		return 0
+	def _get_bisai_df(self):
+		k=getjsbfClass(0)
+		df=k.get_id_list()
+		print(df)
+		return
 
 
-h=zqfenxi('1')
-#h.fenxigzb_save()
-h.fenxi4()
+	def text(self):
+		k=getjsbfClass(0)
+		df_ouzhi=k.get_ouzhi_df(830867)#取网页
+		df=df_ouzhi[df_ouzhi.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland'])]
+		print(df)
+		list_oz=self.moxin_kaili(df,830867)
+		print(list_oz)
+
+		return 0
+
+	def fenxi_wwbs(self):
+
+		k=getjsbfClass(0)
+		df=k.get_id_list()
+		#idnm去重
+		list_idnm=df.idnm.values
+		id1_list=[]
+		for x in list_idnm:
+			if x not in id1_list:
+				id1_list.append(x)
+
+		fx_list=[]
+		iii=0
+		for idnm in id1_list:
+			iii+=1
+
+			#if iii>10:break
+			li=[]
+			#序号
+			li.append(iii)
+
+			#赛果
+			li.extend([idnm,-1000,'赛果'])
+			#必发
+			df_bifa=k.get_bifa_df(idnm)#取网页
+
+			list_bifa=(self.bifa(df_bifa,idnm))
+			for x in list_bifa:
+				li.extend(x)
+			#亚盘
+			df_yapan=k.get_yapan_df(idnm)#取网页
+			list_yp=self.yapan(df_yapan,idnm)
+
+			#欧赔
+			df_ouzhi=k.get_ouzhi_df(idnm)#取网页
+			list_oz=self.moxin_kaili(df_ouzhi,idnm)
+			list_kong=['',0,0,0,0,0,0]
+			list11=[]
+			for x in range(5):
+				list11.append(list_kong)
+			z=-1
+			for x in list_oz:
+				del x[0]
+				x.pop(-1)
+				if x[0]=='Iceland':	z=0
+				if x[0]=='Oddset':	z=1
+				if x[0]=='Expekt':	z=2
+				if x[0]=='Sweden':	z=3
+				if x[0]=='BINGOAL':	z=4
+				if z!=-1:
+					del list11[z]
+					list11.insert(z,x)
+
+			for x in list11:
+				li.extend(x)
+
+			fx_list.append(li)
+		n=len(fx_list[0])
+		columns1=[]
+		for x in range(n):
+			columns1.append('n'+str(x))
+		
+		df=DataFrame(fx_list,columns=columns1)
+		df.to_csv('e:/666.csv')
+		
+		return df
+
+	def main(self):
+		i=0
+		while i<5:
+			i+=1
+
+			print('\n-------------------------数据分析<中文字幕:>-------------------------\n')
+			print('	1、需获取比赛数据  <1>')
+			print('	2、生成模型       <2>')
+			print('	3、模型匹配  <3 -33>')
+			#print('	4、补齐必发数据							<18>')
+			print('	99、退出<99>\n')
+			print('\n-------------------------<    选   择     >-------------------------\n')
+			print('--请输入你的选择:')
+			cc=input()
+			if cc=='1':
+				print('	1、需获取比赛数据')
+				self._get_bisai_df()
+			if cc=='2':
+				print('	2、生成模型')
+				self.fenxi_wwbs()
+			if cc=='3':
+				print('	补齐联赛数据<3>')
+			
+			if cc=='33':
+				print('	获取比赛段完场比赛数据<33>')
+			
+			if cc=='18':
+				print('补齐必发数据')
+				
+			if cc=='99':
+
+				print('	退出<99>')
+				break
+
+#获取完场数据
+h=zqfenxi(0).main()
+#h=zqfenxi(0).text()
+

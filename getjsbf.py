@@ -245,27 +245,74 @@ class getjsbfClass(object):
 		h=zqconfigClass(0)
 		df=h.select('zqconfig_bslb.csv')
 		#print(df.idnm.values)
-		return df.idnm.values.tolist()
-	#返回df
-	def get_df(self,list1):
-		li=self.get_id_list()
-		print(li)
-		k=htmlsoup(0)
-		iii=0
-		for x in li:
-			iii+=1
-			if iii>1:break
-			k=htmlsoup(x)
-			scblist,z,ouzhilist=k.getscbandouzhi()
-			columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
-			df=DataFrame(ouzhilist,columns=columns_list)
-			print(df.head())
 		return df
+	
+	#取网页数据返回Dataframe
+	def get_ouzhi_df(self,idnm):
+		k=htmlsoup(idnm)
+		scblist,z,ouzhilist=k.getscbandouzhi()
+		columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
+		df=DataFrame(ouzhilist,columns=columns_list_ouzhi)
+		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland'])]
+		df.to_csv('bifa.csv')
+
+		df1=zqconfigClass(0).select('bifa.csv')
+
+		#print(df)
+		return df1
+	#取网页数据返回Dataframe
+	def get_yapan_df(self,idnm):
+		k=htmlsoup(idnm)
+		yplist,z=k.getyapan()
+		columns=['idnm','xh','bcgs','n1','jp','n2','n3','cp','n4']
+		#print(yplist)
+		df=DataFrame(yplist,columns=columns)
+		df1=df[df.bcgs=='Bet365']
+		print(idnm,df1.jp.values)
+		return 	df1
+	#取网页数据返回Dataframe
+	def get_bifa_df(self,idnm):
+		k=htmlsoup(idnm)
+		columns_list=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
+		listbifa,z,listsjtd=k.getbifa()
+		df=DataFrame(listbifa,columns=columns_list)
+		#用bifa。csv 中转，结局字符和数据的转换
+		df.to_csv('bifa.csv')
+		df_li=[]
+		df_li2=[]
+		df_li.append(int(idnm))
+
+		df1=zqconfigClass(0).select('bifa.csv')
+
+		listbbb=df1.values.tolist()
+		
+		for x in listbbb:
+			if x[1]==1:
+				df_li.append(x[4]-x[6])
+				df_li.append(x[12])
+		for x in listbbb:
+			if x[1]==2:
+				df_li.append(x[4]-x[6])
+				df_li.append(x[12])
+		for x in listbbb:
+			if x[1]==3:
+				df_li.append(x[4]-x[6])
+				df_li.append(x[12])				
+
+		columns=['idnm','glc3','ykzs3','glc1','ykzs1','glc0','ykzs0']
+		df_li2.append(df_li)
+		df=DataFrame(df_li2,columns=columns)
+		
+		return df
+
+	#返回df
+
+
 #columns_list_scb= ['idnm', 'zd', 'kd', 'nd', 'ls', 'lc', 'zjq', 'kjq', 'bstime']
 #columns_list_bifa=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
 
 
 #测试。。。。。。。。。	
 #k=getjsbfClass(0)
-#k.get_df(k.get_id_list())
+#k.get_ouzhi_df(784159)
 

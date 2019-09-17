@@ -63,7 +63,7 @@ def list_in(*li):
 
 conn=pymysql.connect(host='localhost',user='root',passwd='123456',db='mysql',port=3306,charset='utf8')
 #charset用于修正中文输出为问号的问题
-sql = "select * from bifa where idnm=784159"
+sql = "select * from yapan where idnm=784159"
 df = pd.read_sql(sql, conn)
 print(df.columns.values.tolist())
 conn.close
