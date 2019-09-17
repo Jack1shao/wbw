@@ -54,7 +54,7 @@ class buqisj(object):
 					print(iii,idnm0)
 					if self.bqbf(idnm0)>0:
 						iii+=1
-						if iii>30:return 0
+						if iii>60:return 0
 				print(datetime.datetime.now())
 		return 0
 

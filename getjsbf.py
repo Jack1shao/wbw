@@ -240,6 +240,32 @@ class getjsbfClass(object):
 		listwbw.clear()
 		listwbw1.clear()
 		return 0
+	#获取要分析的比赛列表
+	def get_id_list(self):
+		h=zqconfigClass(0)
+		df=h.select('zqconfig_bslb.csv')
+		#print(df.idnm.values)
+		return df.idnm.values.tolist()
+	#返回df
+	def get_df(self,list1):
+		li=self.get_id_list()
+		print(li)
+		k=htmlsoup(0)
+		iii=0
+		for x in li:
+			iii+=1
+			if iii>1:break
+			k=htmlsoup(x)
+			scblist,z,ouzhilist=k.getscbandouzhi()
+			columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
+			df=DataFrame(ouzhilist,columns=columns_list)
+			print(df.head())
+		return df
+#columns_list_scb= ['idnm', 'zd', 'kd', 'nd', 'ls', 'lc', 'zjq', 'kjq', 'bstime']
+#columns_list_bifa=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
+
 
 #测试。。。。。。。。。	
+#k=getjsbfClass(0)
+#k.get_df(k.get_id_list())
 
