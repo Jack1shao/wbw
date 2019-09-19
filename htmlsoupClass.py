@@ -16,7 +16,7 @@ class htmlsoup(object):
 		
 
 	def _gethtmlsoup(self,url):
-		htmltext=getHtml().getHtml_by_firefox(url)
+		htmltext=getHtml().geturltext(url)
 		soup=BeautifulSoup(htmltext,'lxml')
 		return soup
 	#欧指需加滚动条
@@ -309,6 +309,6 @@ class htmlsoup(object):
 		#print(listbifa,1,listsjtd)
 		return listbifa,1,listsjtd
 
-#h=htmlsoup(809463);
-#list1,z,list2=h.getscandouzhi()
+#h=htmlsoup(830867);
+#h.getyapan()
 #print(list1,list2)

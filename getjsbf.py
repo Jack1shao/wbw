@@ -65,15 +65,17 @@ class getjsbfClass(object):
 	#获取昨日完场比分
 	def get500wwcbf(self,url):
 		print("获取500w比赛昨日完场比分数据")
-		#url="https://live.500.com/wanchang.php"
+		
 		#url='https://live.500.com/wanchang.php?e=2019-09-01'
-		htmltext=getHtml().getHtml_by_firefox(url)
+		htmltext=getHtml().geturltext(url)
+		
 		soup=BeautifulSoup(htmltext,'lxml')
 		listtable=soup.find_all(id='table_match')
+
 		list31=listtable[0].find_all('tr')
 		bsxxlist=[]
-		#zqdf=zqconfigClass('').cfg_select()
-		#li=zqdf.ls.values
+		zqdf=zqconfigClass('').cfg_select()
+		li=zqdf.ls.values
 		#print(li)
 
 		for x in list31:
@@ -310,9 +312,12 @@ class getjsbfClass(object):
 
 #columns_list_scb= ['idnm', 'zd', 'kd', 'nd', 'ls', 'lc', 'zjq', 'kjq', 'bstime']
 #columns_list_bifa=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
-
+#columns_list_yapan['idnm', 'xh', 'ypgs', 'jzs', 'jp', 'jks', 'czs', 'cp', 'cks']
 
 #测试。。。。。。。。。	
 #k=getjsbfClass(0)
 #k.get_ouzhi_df(784159)
+#url='https://live.500.com/wanchang.php?e=2019-09-18'
+#k=getjsbfClass(0)
+#k.get500wwcbf(url)
 

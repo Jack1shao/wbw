@@ -61,11 +61,10 @@ class getHtml(object):
 		return htmlfile
 	#滚动条
 	def getHtml_by_firefox2(self,url,count):
+		htmlfile=''
 		driver = webdriver.Firefox( )
 		try:
 			driver.get(url)
-			#
-			#tb1=driver.find_element_by_id("table_live")
 			js="var q=document.documentElement.scrollTop=100000"
 			if count>0 and count<10:
 				for x in range(count):
@@ -73,36 +72,29 @@ class getHtml(object):
 					time.sleep(1)
 				
 			htmlfile=driver.page_source
-			#t=tb1.text
-			#print (t)
-
 		except Exception as e:
-			raise
-
-		finally:
 			driver.close()
+		finally:
+			if htmlfile!='':
+				driver.close()
 		return htmlfile
 
 	def getHtml_by_firefox(self,url):
+		htmlfile=''
 		driver = webdriver.Firefox( )
 		try:
-			driver.get(url)
-			#
-			#tb1=driver.find_element_by_id("table_live")
+			ddd=driver.get(url)
+			#print(ddd)
+
 			js="var q=document.documentElement.scrollTop=100000"
 			driver.execute_script(js)
 			time.sleep(1)
-
-
 			htmlfile=driver.page_source
-			#t=tb1.text
-			#print (t)
-
 		except Exception as e:
-			raise
-
-		finally:
 			driver.close()
+		finally:
+			if htmlfile!='':
+				driver.close()
 		return htmlfile
 	#
 	def gethtml_by_selum(self,url):

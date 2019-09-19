@@ -113,7 +113,7 @@ class zqconfigClass(object):
 			if x.n1==x.n5:
 				ii+=1
 				#print(x.n1)
-			if ii>10:self.cfg_save(df)
+			#if ii>10:self.cfg_save(df)
 
 		return df
 	#未完成的购买比赛列表
