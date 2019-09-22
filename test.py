@@ -144,9 +144,12 @@ def t2():
 	return htmlfile
 
 			
-t2()
+#t2()
 li1=[1,2,3,4,5,6]
 li2=[101,102,103,104,105,106]
+list_bifa=['0','0','0','0']
+[print(x) for x in list_bifa]
+
 #z=li_kz2(li1,li1)
 #li_kz2(z,li1)
 #print(last_sunday_saturday())
