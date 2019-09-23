@@ -363,11 +363,17 @@ class zqfenxi(object):
 			#赛果
 			li.extend([idnm,-1000,'赛果'])
 			#必发
-			df_bifa=k.get_bifa_df(idnm)#取网页
+			df_bifa,z=k.get_bifa_df(idnm)#取网页
 
-			list_bifa=(self.bifa(df_bifa,idnm))
-			for x in list_bifa:
-				li.extend(x)
+
+			if z!=0:
+				list_bifa=(self.bifa(df_bifa,idnm))
+			else: 
+				#continue
+				list_bifa=['0','0','0','0']
+			
+			[li.extend(x) for x in list_bifa]
+					
 			#亚盘
 			df_yapan=k.get_yapan_df(idnm)#取网页
 			list_yp=self.yapan(df_yapan,idnm)
@@ -394,16 +400,24 @@ class zqfenxi(object):
 
 			for x in list11:
 				li.extend(x)
-
+			n=len(li)
+			columns1=[]
+			for x in range(n):
+				columns1.append('n'+str(x))
+			lili=[]
+			lili.append(li)
+			df=DataFrame(lili,columns=columns1)
+			df.to_csv('e:/666.csv',mode='a',header=False)
 			fx_list.append(li)
+
 		n=len(fx_list[0])
 		columns1=[]
+
 		for x in range(n):
 			columns1.append('n'+str(x))
-		
 		df=DataFrame(fx_list,columns=columns1)
-		df.to_csv('e:/666.csv')
-		
+		#df.to_csv('e:/666.csv',mode='a',header=False)
+	
 		return df
 
 	def main(self):
