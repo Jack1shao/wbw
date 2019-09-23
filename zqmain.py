@@ -5,6 +5,7 @@ from zqconfigClass import zqconfigClass
 from getzqClass import getzqClass
 from tooth_day import tooth_dayClass
 from buqisjClass import buqisj
+from zqfenxi import zqfenxi
 
 class zqmain(object):
 	"""docstring for zqmain"""
@@ -94,6 +95,8 @@ class zqmain(object):
 
 	def main(self):
 		i=0
+		kk=zqfenxi(0)
+
 		while i<5:
 			i+=1
 
@@ -102,6 +105,10 @@ class zqmain(object):
 			print('	2、分析未完场比赛数据——半球               <2>')
 			print('	3、获取比赛段完场比赛数据和补齐联赛数据 <3 -33>')
 			print('	4、补齐必发数据							<18>')
+			print('	5、需获取比赛数据  <5>')
+			print('	6、生成模型       <6>')
+			print('	7、模型匹配  		<7>')
+			print('	8、已有数据生成模型  		<8>')
 			print('	99、退出<99>\n')
 			print('--请输入你的选择:')
 			cc=input()
@@ -120,6 +127,17 @@ class zqmain(object):
 			if cc=='18':
 				print('补齐必发数据')
 				self.buqibf()
+			if cc=='5':
+				print('5、需获取比赛数据')
+				kk.get_bisai_df()
+			if cc=='6':
+				print('	6、生成模型       <6>')
+				kk.fenxi_wwbs()
+			if cc=='7':
+				print('	7、模型匹配  		<7>')
+			if cc=='8':
+				print('	8、已有数据生成模型  		<8>')
+				kk.fenxi_yysj()
 			if cc=='99':
 				print('	退出<99>')
 				break

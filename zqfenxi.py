@@ -174,7 +174,7 @@ class zqfenxi(object):
 
 
 	#已有数据分析
-	def fenxi(self):
+	def fenxi_yysj(self):
 		df=tooth_excleClass('e:/0.5.xlsx').read()
 		#按列值分组
 		#df1=df[df.bcgs=='Iceland']
@@ -207,9 +207,9 @@ class zqfenxi(object):
 
 			#欧赔
 			list_oz=self.moxin_kaili(df,idnm)
-			list_kong=['',0,0,0,0,0,0]
+			list_kong=['0',0,0,0,0,0,0]
 			list11=[]
-			for x in range(5):
+			for x in range(7):
 				list11.append(list_kong)
 			z=-1
 			for x in list_oz:
@@ -220,6 +220,8 @@ class zqfenxi(object):
 				if x[0]=='Expekt':	z=2
 				if x[0]=='Sweden':	z=3
 				if x[0]=='BINGOAL':	z=4
+				if x[0]=='Bet365':z=5
+				if x[0]=='威廉希尔':z=6
 				if z!=-1:
 					del list11[z]
 					list11.insert(z,x)
@@ -227,13 +229,13 @@ class zqfenxi(object):
 			for x in list11:
 				li.extend(x)
 
-			#print(li)
+			print(len(li),li)
 			fx_list.append(li)
 		n=len(fx_list[0])
 		columns1=[]
 		for x in range(n):
 			columns1.append('n'+str(x))
-		#print(columns1)
+		print(n,columns1)
 		df=DataFrame(fx_list,columns=columns1)
 		df.to_csv('e:/555.csv')
 		#print(fx_list)
@@ -322,7 +324,7 @@ class zqfenxi(object):
 		
 
 		return 0
-	def _get_bisai_df(self):
+	def get_bisai_df(self):
 		k=getjsbfClass(0)
 		df=k.get_id_list()
 		print(df)
@@ -383,7 +385,7 @@ class zqfenxi(object):
 			list_oz=self.moxin_kaili(df_ouzhi,idnm)
 			list_kong=['',0,0,0,0,0,0]
 			list11=[]
-			for x in range(5):
+			for x in range(7):
 				list11.append(list_kong)
 			z=-1
 			for x in list_oz:
@@ -394,6 +396,8 @@ class zqfenxi(object):
 				if x[0]=='Expekt':	z=2
 				if x[0]=='Sweden':	z=3
 				if x[0]=='BINGOAL':	z=4
+				if x[0]=='Bet365':z=5
+				if x[0]=='威廉希尔':z=6
 				if z!=-1:
 					del list11[z]
 					list11.insert(z,x)
@@ -436,7 +440,7 @@ class zqfenxi(object):
 			cc=input()
 			if cc=='1':
 				print('	1、需获取比赛数据')
-				self._get_bisai_df()
+				self.get_bisai_df()
 			if cc=='2':
 				print('	2、生成模型')
 				self.fenxi_wwbs()
@@ -455,6 +459,6 @@ class zqfenxi(object):
 				break
 
 #获取完场数据
-h=zqfenxi(0).main()
-#h=zqfenxi(0).text()
+#h=zqfenxi(0).main()
+h=zqfenxi(0).fenxi_yysj()
 
