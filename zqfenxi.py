@@ -396,8 +396,8 @@ class zqfenxi(object):
 				if x[0]=='Expekt':	z=2
 				if x[0]=='Sweden':	z=3
 				if x[0]=='BINGOAL':	z=4
-				if x[0]=='Bet365':z=5
-				if x[0]=='威廉希尔':z=6
+				if x[0]=='Bet365':	z=5
+				if x[0]=='威廉希尔':	z=6
 				if z!=-1:
 					del list11[z]
 					list11.insert(z,x)
@@ -411,7 +411,7 @@ class zqfenxi(object):
 			lili=[]
 			lili.append(li)
 			df=DataFrame(lili,columns=columns1)
-			df.to_csv('e:/666.csv',mode='a',header=False)
+			df.to_csv('e:/666.csv',mode='a',header=False,encoding="utf_8_sig")
 			fx_list.append(li)
 
 		n=len(fx_list[0])
@@ -460,5 +460,5 @@ class zqfenxi(object):
 
 #获取完场数据
 #h=zqfenxi(0).main()
-h=zqfenxi(0).fenxi_yysj()
+#h=zqfenxi(0).fenxi_yysj()
 

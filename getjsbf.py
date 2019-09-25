@@ -255,7 +255,7 @@ class getjsbfClass(object):
 		scblist,z,ouzhilist=k.getscbandouzhi()
 		columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
 		df=DataFrame(ouzhilist,columns=columns_list_ouzhi)
-		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland'])]
+		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland','Bet365','威廉希尔'])]
 		df.to_csv('bifa.csv')
 
 		df1=zqconfigClass(0).select('bifa.csv')
