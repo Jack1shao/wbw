@@ -187,6 +187,10 @@ class getjsbfClass(object):
 			if x[0].find('女')>-1:continue
 			if x[0].find('丙')>-1:continue
 			if x[0].find('丁')>-1:continue
+			if x[0].find('地区')>-1:continue
+			if x[0].find('U')>-1:continue
+			if x[0].find('友谊')>-1:continue
+
 
 
 			if x[5]=='半球':
@@ -269,6 +273,9 @@ class getjsbfClass(object):
 		columns=['idnm','xh','bcgs','n1','jp','n2','n3','cp','n4']
 		#print(yplist)
 		df=DataFrame(yplist,columns=columns)
+		df.to_csv('bifa.csv')
+
+		df=zqconfigClass(0).select('bifa.csv')
 		df1=df[df.bcgs=='Bet365']
 		print(idnm,df1.jp.values)
 		return 	df1
