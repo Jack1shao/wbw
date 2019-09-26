@@ -491,5 +491,5 @@ class zqfenxi(object):
 
 #获取完场数据
 #h=zqfenxi(0).main()
-h=zqfenxi(0).fenxi_yysj()
+#h=zqfenxi(0).fenxi_yysj()
 
