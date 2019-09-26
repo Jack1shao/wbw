@@ -169,16 +169,34 @@ class zqfenxi(object):
 
 	#亚盘
 	def yapan(self,df,idnm):
+		#k=getjsbfClass(0)
+		#df=k.get_yapan_df(idnm)
 
-		pass
+		df_yapan=df[df.idnm==idnm]
+		#print(df_yapan)
+		#print(df_yapan.values[4],df_yapan.values[7])
+		list_jp=[]
+		list_cp=[]
+		list_yp=[]
+		for index,row in df_yapan.iterrows():
+			if row.jp in list_jp or row.cp in list_cp:continue
+			list_jp.append(row.jp)
+			list_cp.append(row.cp)
+			
+
+		if len(list_jp)!=1:return list_yp#返回空
+
+		list_yp.append(list_jp[0])
+		list_yp.append(list_cp[0])
+		list_yp.append(str(self._yapan_jcp(idnm)))
+		#print(list_yp)
+		return list_yp
 
 
 	#已有数据分析
 	def fenxi_yysj(self):
 		df=tooth_excleClass('e:/0.5.xlsx').read()
 		#按列值分组
-		#df1=df[df.bcgs=='Iceland']
-		#df1=df1[df1.idnm==779599]
 		list_idnm=df.idnm.values
 		id1_list=[]
 		for x in list_idnm:
@@ -202,8 +220,7 @@ class zqfenxi(object):
 			list_bifa=(self.bifa(df,idnm))
 			for x in list_bifa:
 				li.extend(x)
-			#亚盘
-			list_yp=self.yapan(df,idnm)
+
 
 			#欧赔
 			list_oz=self.moxin_kaili(df,idnm)
@@ -215,19 +232,25 @@ class zqfenxi(object):
 			for x in list_oz:
 				del x[0]
 				x.pop(-1)
-				if x[0]=='Iceland':	z=0
+				if x[0]=='Iceland':	z=3
 				if x[0]=='Oddset':	z=1
 				if x[0]=='Expekt':	z=2
-				if x[0]=='Sweden':	z=3
-				if x[0]=='BINGOAL':	z=4
-				if x[0]=='Bet365':z=5
-				if x[0]=='威廉希尔':z=6
+				if x[0]=='Sweden':	z=5
+				if x[0]=='BINGOAL':	z=6
+				if x[0]=='Bet365':z=0
+				if x[0]=='威廉希尔':z=4
 				if z!=-1:
 					del list11[z]
 					list11.insert(z,x)
 
+
 			for x in list11:
 				li.extend(x)
+			#亚盘
+			list_yp=self.yapan(df,idnm)
+			print(list_yp)
+			for x in list_yp:
+				li.append(x)
 
 			print(len(li),li)
 			fx_list.append(li)
@@ -237,7 +260,7 @@ class zqfenxi(object):
 			columns1.append('n'+str(x))
 		print(n,columns1)
 		df=DataFrame(fx_list,columns=columns1)
-		df.to_csv('e:/555.csv')
+		df.to_csv('e:/555.csv',encoding="utf_8_sig")
 		#print(fx_list)
 		return df
 
@@ -376,9 +399,7 @@ class zqfenxi(object):
 			
 			[li.extend(x) for x in list_bifa]
 					
-			#亚盘
-			df_yapan=k.get_yapan_df(idnm)#取网页
-			list_yp=self.yapan(df_yapan,idnm)
+
 
 			#欧赔
 			df_ouzhi=k.get_ouzhi_df(idnm)#取网页
@@ -391,19 +412,29 @@ class zqfenxi(object):
 			for x in list_oz:
 				del x[0]
 				x.pop(-1)
-				if x[0]=='Iceland':	z=0
+				if x[0]=='Iceland':	z=3
 				if x[0]=='Oddset':	z=1
 				if x[0]=='Expekt':	z=2
-				if x[0]=='Sweden':	z=3
-				if x[0]=='BINGOAL':	z=4
-				if x[0]=='Bet365':z=5
-				if x[0]=='威廉希尔':z=6
+				if x[0]=='Sweden':	z=5
+				if x[0]=='BINGOAL':	z=6
+				if x[0]=='Bet365':z=0
+				if x[0]=='威廉希尔':z=4
 				if z!=-1:
 					del list11[z]
 					list11.insert(z,x)
 
+
+
 			for x in list11:
 				li.extend(x)
+			#亚盘
+			df_yapan=k.get_yapan_df(idnm)#取网页
+			list_yp=self.yapan(df_yapan,idnm)
+			#li+=list_yp
+			for x in list_yp:
+				li.append(x)
+
+
 			n=len(li)
 			columns1=[]
 			for x in range(n):
@@ -411,7 +442,7 @@ class zqfenxi(object):
 			lili=[]
 			lili.append(li)
 			df=DataFrame(lili,columns=columns1)
-			df.to_csv('e:/666.csv',mode='a',header=False)
+			df.to_csv('e:/666.csv',mode='a',header=False,encoding="utf_8_sig")
 			fx_list.append(li)
 
 		n=len(fx_list[0])

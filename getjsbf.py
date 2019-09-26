@@ -187,6 +187,10 @@ class getjsbfClass(object):
 			if x[0].find('女')>-1:continue
 			if x[0].find('丙')>-1:continue
 			if x[0].find('丁')>-1:continue
+			if x[0].find('地区')>-1:continue
+			if x[0].find('U')>-1:continue
+			if x[0].find('友谊')>-1:continue
+
 
 
 			if x[5]=='半球':
@@ -255,7 +259,7 @@ class getjsbfClass(object):
 		scblist,z,ouzhilist=k.getscbandouzhi()
 		columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
 		df=DataFrame(ouzhilist,columns=columns_list_ouzhi)
-		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland'])]
+		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland','Bet365','威廉希尔'])]
 		df.to_csv('bifa.csv')
 
 		df1=zqconfigClass(0).select('bifa.csv')
@@ -269,6 +273,9 @@ class getjsbfClass(object):
 		columns=['idnm','xh','bcgs','n1','jp','n2','n3','cp','n4']
 		#print(yplist)
 		df=DataFrame(yplist,columns=columns)
+		df.to_csv('bifa.csv')
+
+		df=zqconfigClass(0).select('bifa.csv')
 		df1=df[df.bcgs=='Bet365']
 		print(idnm,df1.jp.values)
 		return 	df1
