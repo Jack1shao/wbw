@@ -1,6 +1,6 @@
 
 import itertools
-#获取球探当日的比赛信息
+
 import time,datetime
 from pandas.core.frame import DataFrame
 from functools import reduce
