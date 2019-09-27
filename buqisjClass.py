@@ -45,7 +45,7 @@ class buqisj(object):
 	def bqbfmain(self,idstart,idend):
 		jsq=0#计数器
 		#必发不存在的记录
-		sql="SELECT s.idnm from scb s where  s.nd=17 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm) limit 60"
+		sql="SELECT s.idnm from scb s where  s.nd=16 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm) limit 60"
 		idlist=savedateClass().select(sql)
 		#补齐在列表Idlist 中的比赛必发数据
 		iii=0
