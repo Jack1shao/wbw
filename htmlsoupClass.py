@@ -16,7 +16,7 @@ class htmlsoup(object):
 		
 
 	def _gethtmlsoup(self,url):
-		htmltext=getHtml().geturltext(url)
+		htmltext=getHtml().getHtml_by_firefox2(url,2)
 		soup=BeautifulSoup(htmltext,'lxml')
 		return soup
 	#欧指需加滚动条
