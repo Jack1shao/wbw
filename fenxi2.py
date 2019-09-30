@@ -1,7 +1,14 @@
 #fenxi2
 #
+from collections import Counter
 from pandas.core.frame import DataFrame
 from savedateClass import savedateClass
+from zqfenxi import zqfenxi
+import numpy as np
+from zqconfigClass import zqconfigClass
+from zqfenxi_gz import zqfenxi_gz
+
+import json
 class fenxi2(object):
 	"""docstring for fenxi2"""
 	def __init__(self, arg):
@@ -58,7 +65,7 @@ class fenxi2(object):
 		return list_yy
 
 	def get_bssj_from_db(self,bcgs):
-		bcgs='Sweden'
+		#bcgs='Sweden'
 		sql="SELECT DISTINCT s.idnm,s.ls,s.nd,s.zd,s.kd,s.zjq,s.kjq,y.jp,y.cp,o.bcgs,o.chf,o.jhf,o.ck3,o.ck1,o.ck0,o.jk3,o.jk1,o.jk0,o.cz3,o.cz1,o.cz0,"
 		sql+="(SELECT DISTINCT b.gl-b.bf from 	bifa b WHERE b.idnm=s.idnm and b.xh=1 ) as glc3,"
 		sql+="(SELECT DISTINCT b.gl-b.bf from 	bifa b WHERE b.idnm=s.idnm and b.xh=2 ) as glc1,"
@@ -82,10 +89,76 @@ class fenxi2(object):
 		#print(df.head())
 		
 		return df
-		
-			
+	def get_bssj_from_csv(self):
+		kk=zqconfigClass(0)
+		df=kk.select('e:/555.csv')
+		#print(df.head())
+		return df
+	#计算离散度
+	def jslsd(self,list_sg):
+		kk=zqfenxi_gz()
+		list_r=[]
+		cc=kk.count(list_sg)
+		lll=cc.values[0]
+		li=[]
+		li.append(lll[0]+lll[1])
+		li.append(lll[2])
+		li.append(lll[3])
+		lsxi,fc=kk.lisan(li)
+		list_r.extend(lll)
+		list_r.append('-')
+		list_r.extend(li)
+		list_r.append(lsxi)
+		list_r.append(fc)
+		return list_r
 
+	def test2(self):
+		
+		list_bcgs=self.get_bcgs()
+		print(list_bcgs)
+		for bcgs in list_bcgs:
+			files='e:/csv/{}.csv'.format(bcgs)
+			print(files)
+			df=self.get_bssj_from_db(bcgs)
+			print(df.head())
+			df.to_csv(files,encoding="utf_8_sig")
+			
+		return 0	
+	
+
+	def test(self):
+		
+		df=self.get_bssj_from_csv()
+		df=df[df.n58=='半球']
+		list_mx=[31,32,11,12,101,102]
+		list_yp=['半球','一球']
+
+		for x in list_mx:
+			sss='n9:{}'.format(x)
+			df1=df[(df.n9==x)]
+			list_lsd=self.jslsd( list(df1.n2.values))
+			list_lsd.insert(0,sss)
+			print(list_lsd)
+			sss='n16:{}'.format(x)
+			df1=df[(df.n30==x)]
+			list_lsd=self.jslsd( list(df1.n2.values))
+			list_lsd.insert(0,sss)
+			print(list_lsd)
+
+
+		for x in list_mx:
+			sss='Bet365模型:{}'.format(x)
+			for y in list_mx:
+				sss1=' will模型:{}'.format(y)
+				df1=df[(df.n9==x)&(df.n37==y)]
+				list_lsd=self.jslsd( list(df1.n2.values))
+				list_lsd.insert(0,sss+sss1)
+				print(list_lsd)
+		return 0
 
 
 uu=fenxi2(0)
-uu.get_bssj_from_db('0')
+uu.test2()
+#uu.lisan([3766,3302,2955,2821])
+#uu.count('')
+#uu.get_bssj_from_csv()
