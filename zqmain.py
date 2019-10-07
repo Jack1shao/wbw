@@ -85,7 +85,7 @@ class zqmain(object):
 	#未开场数据分析
 	def wkc_fenxi(self):
 		kk=getjsbfClass(1)
-		list_idnm=kk.jsbf()
+		list_idnm=kk.jsbf2()
 
 	#补齐必发数据
 	def buqibf(self):
@@ -102,13 +102,13 @@ class zqmain(object):
 
 			print('\n<中文字幕:>\n')
 			print('	1、获取完场比赛数据（昨日、上周六/上周日）  <1>')
-			print('	2、分析未完场比赛数据——半球               <2>')
+			print('	2、分析未完场比赛数据                   <2>')
 			print('	3、获取比赛段完场比赛数据和补齐联赛数据 <3 -33>')
-			print('	4、补齐必发数据							<18>')
-			print('	5、需获取比赛数据  <5>')
-			print('	6、生成模型       <6>')
-			print('	7、模型匹配  		<7>')
-			print('	8、已有数据生成模型  		<8>')
+			print('	4、补齐必发数据					<18>')
+			print('	5、需获取比赛数据    					 <5>')
+			print('	6、生成模型    					   <6>')
+			print('	7、模型匹配  							<7>')
+			print('	8、已有数据生成模型  					<8>')
 			print('	99、退出<99>\n')
 			print('--请输入你的选择:')
 			cc=input()
@@ -116,7 +116,7 @@ class zqmain(object):
 				print('	1、获取完场比赛数据（昨日、上周六/上周日）<1>')
 				self.zrwc_save()
 			if cc=='2':
-				print('	分析未完场比赛数据——半球<2>')
+				print('	分析未完场比赛数据<2>')
 				self.wkc_fenxi()
 			if cc=='3':
 				print('	补齐联赛数据<3>')
@@ -132,7 +132,7 @@ class zqmain(object):
 				kk.get_bisai_df()
 			if cc=='6':
 				print('	6、生成模型       <6>')
-				kk.fenxi_wwbs()
+				kk.add_mxk_wwcsj()
 			if cc=='7':
 				print('	7、模型匹配  		<7>')
 			if cc=='8':

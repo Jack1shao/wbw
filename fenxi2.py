@@ -7,6 +7,8 @@ from zqfenxi import zqfenxi
 import numpy as np
 from zqconfigClass import zqconfigClass
 from zqfenxi_gz import zqfenxi_gz
+import os
+import pandas as pd
 
 import json
 class fenxi2(object):
@@ -112,15 +114,15 @@ class fenxi2(object):
 		list_r.append(fc)
 		return list_r
 
-	def test2(self):
-		
+	def get_ouzhi_to_csv(self):
+		#从数据库中获取各欧赔公司的数据，to_csv
 		list_bcgs=self.get_bcgs()
 		print(list_bcgs)
 		for bcgs in list_bcgs:
 			files='e:/csv/{}.csv'.format(bcgs)
 			print(files)
 			df=self.get_bssj_from_db(bcgs)
-			print(df.head())
+			#print(df.head())
 			df.to_csv(files,encoding="utf_8_sig")
 			
 		return 0	
@@ -131,7 +133,7 @@ class fenxi2(object):
 		df=self.get_bssj_from_csv()
 		df=df[df.n58=='半球']
 		list_mx=[31,32,11,12,101,102]
-		list_yp=['半球','一球']
+		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
 
 		for x in list_mx:
 			sss='n9:{}'.format(x)
@@ -156,9 +158,78 @@ class fenxi2(object):
 				print(list_lsd)
 		return 0
 
+	def d_fx(self,df,mx,yp):
+		df1=df[(df.c_klmx==mx)&(df.cp==yp)]
+		pass
+
+	def test2(self):
+		list_mx=[31,32,11,12,101,102]
+		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
+
+		path_f='e:/csv/'
+		uu=zqfenxi_gz()
+		kk=zqconfigClass(0)
+		list_files=os.listdir(path_f)
+		for files in list_files:
+			print(path_f+files)
+			df=kk.select(path_f+files)
+			#生成模型
+			df_mx=uu.get_mx(df)
+
+			for yp in list_yp:
+				list_to_csv=[]
+				df=df_mx[df_mx.cp==yp]
+
+				for x in list_mx:
+
+					sss='c_klmx:{}'.format(x)
+					df1=df[df.c_klmx==x]
+					if df1.empty:
+						print('kong')
+						continue
+					list_lsd=self.jslsd( list(df1.sg.values))
+					list_lsd.insert(0,sss)
+					list_lsd.append(yp)
+					list_lsd.append(files)
+					list_to_csv.append(list_lsd)
+					print(list_lsd)
+				df=DataFrame(list_to_csv)
+				df.to_csv('e:/mx.csv',mode='a',header=False,encoding="utf_8_sig")
+			
+		return 0
+	def test3(self):
+		list_files =['威廉希尔.csv','Iceland.csv','Bet365.csv']
+		list_files.sort()
+		path_f='e:/csv/'
+		uu=zqfenxi_gz()
+		kk=zqconfigClass(0)
+
+		#生成模型
+
+		df=kk.select(path_f+'Bet365.csv')
+		df=df[df.cp=='一球']
+		df_mx3=uu.get_mx(df)
+		print(df_mx3.head())
+		print(len(df_mx3))
+
+		for files in list_files:
+			if files=='Bet365.csv':continue
+			print(files)
+			df=kk.select(path_f+files)
+			df=df[df.cp=='一球']
+
+			df_mx2=uu.get_mx(df)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
+			print(df_mx2.head())
+			df_mx3=pd.merge(df_mx3,df_mx2,how='left',on='idnm')
+
+		#df=pd.merge(df_lj,df_mx,how='left',on='idnm')
+		#print(df_lj.columns.values)
+		#print(len(df_lj))
+		#print(df_lj[['idnm','cp_x']])
+		df_mx3.to_csv('e:/mx33.csv',encoding="utf_8_sig")
 
 uu=fenxi2(0)
-uu.test2()
+uu.test3()
 #uu.lisan([3766,3302,2955,2821])
 #uu.count('')
 #uu.get_bssj_from_csv()

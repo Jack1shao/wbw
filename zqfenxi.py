@@ -5,6 +5,8 @@ from collections import Counter
 from zqconfigClass import zqconfigClass
 from getjsbf import getjsbfClass
 from zqfenxi_gz import zqfenxi_gz
+import pandas as pd
+import os
 class zqfenxi(object):
 	"""docstring for zqfenxi"""
 	def __init__(self, arg):
@@ -187,14 +189,7 @@ class zqfenxi(object):
 		print(len(set(list_idnm)))
 		return 0
 
-	def fenxi2(self):
-		df=zqconfigClass(0).select('e:/555.csv')
-		return 0
-	def get_bisai_df(self):
-		k=getjsbfClass(0)
-		df=k.get_id_list()
-		print(df)
-		return
+
 	#未完成比赛数据
 	def fenxi_wwbs(self):
 		k=getjsbfClass(0)
@@ -257,7 +252,183 @@ class zqfenxi(object):
 		#df.to_csv('e:/666.csv',mode='a',header=False)
 		return df
 
+
+	#
+	def  get_bisai_df(self):
+		kk=zqconfigClass(0)
+		df=kk.select('zqconfig_bslb.csv')
+		print(df)
+		return df
+		
+	#模型库，经人工赛选
+	def read_mxk(self):
+		files1='e:/mxk.xlsx'
+		#print("读取联赛配置文件，'*.csv'")
+		kk=tooth_excleClass(files1)
+		df=kk.read()
+		df=(df[df.xh15>0])
+		return df
+	#未完场数据模型
+	def read_wwcsj_mx(self):
+		files1='e:/666.csv'
+		kk=zqconfigClass(0)
+		df=kk.select(files1)
+		print(df.head())
+		return df
+
+	#通过数据查找需获取的欧赔数据及模型情况
+	def get_sjmx_ozbcgs_by_cp(self):
+		return 0
+	#list去重
+	def list_qc(self,list1):
+		list_r=[]
+		for x in list1:
+			if x in list_r:
+				continue
+			list_r.append(x)
+		list_r.sort()
+		return list_r
+
+
+
+	#建立筛选库--mx
+	def creat_mxk(self,cp):
+		#list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
+		list_yp=[]
+		list_yp.append(cp)
+		list_yp=self.list_qc(list_yp)
+
+		df=self.read_mxk()
+		path_f='e:/csv/'
+		print(df)
+		uu=zqfenxi_gz()
+		kk=zqconfigClass(0)
+
+		for cp in list_yp:
+			list_bcgs=self.list_qc(df[df.xh13==cp].xh14.values.tolist())
+			print(cp,list_bcgs,len(list_bcgs))
+
+		
+			#以Bet365为基础
+			df=kk.select(path_f+'Bet365.csv')
+			#print(df.columns.values)
+			df=df[df.cp==cp]
+			df_mx3=uu.get_mx(df)
+			print(df_mx3.head())
+			print(len(df_mx3))
+
+			for files in list_bcgs:
+				if files=='Bet365.csv':continue
+				print(files)
+				df=kk.select(path_f+files)
+				df=df[df.cp==cp]
+
+				df_mx2=uu.get_mx(df)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
+				print(df_mx2.head())
+				df_mx3=pd.merge(df_mx3,df_mx2,how='left',on='idnm')	
+			files='e:/{}.csv'.format(cp.replace('/','-'))
+			print(files)
+			df_mx3.to_csv(files,encoding="utf_8_sig")
+			#end for list_yp
+		return 0
+
+	def add_mxk_wwcsj(self):
+		k=getjsbfClass(0)
+		uu=zqfenxi_gz()
+		df=k.get_id_list()
+		list_idnm=self.list_qc(df.idnm.values.tolist())
+		li=[]
+		
+		list_idnm.sort()
+		print(list_idnm)
+		df_mxk=self.read_mxk()
+		files2='yhq_idnm_list.csv'
+		df_idnm=zqconfigClass(0).select(files2)
+		
+
+		for idnm in list_idnm:
+
+			li=[]
+			df_idnm=zqconfigClass(0).select(files2)
+			if df_idnm[df_idnm.idnm==idnm].empty==False:
+				print('{}--已经生成模型--'.format(idnm))
+				continue
+
+			df_bifa,z=k.get_bifa_df(idnm)#必发
+			#print(df_bifa)
+
+			
+			#赛果
+			
+			df_yapan=k.get_yapan_df(idnm)#亚盘
+			if df_yapan.empty:continue
+			cp=df_yapan.cp.values.tolist()[0]
+
+			list_bcgs=self.list_qc(df_mxk[df_mxk.xh13==cp].xh14.values.tolist())
+			#print(cp,list_bcgs,len(list_bcgs))
+			bcgs=[]
+			for b in list_bcgs:
+				dd=b[:-4]
+				bcgs.append(dd)
+				#print(dd)
+			bcgs.sort()
+			df_ouzhi,df_scb=k.get_ouzhi_df(idnm)#赛程和欧指
+
+			df_ouzhi=df_ouzhi[df_ouzhi.bcgs.isin(bcgs) ]
+
+			#print(3,df_scb)
+			df=df_scb[['idnm','zd','kd','zjq','kjq']]
+			#merge
+			df=pd.merge(df,df_bifa,how='left',on='idnm')
+			df=pd.merge(df,df_yapan[['idnm','jp','cp']],how='left',on='idnm')	
+			df_q=pd.merge(df,df_ouzhi,how='left',on='idnm')	
+
+			#生成模型1
+			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
+			#print(df_q.head())
+
+			
+			#print(5,df_bet365.head())
+
+			for bcgs in bcgs:
+				if bcgs=='Bet365':continue
+				
+				df_ddd=df_q[df_q.bcgs==bcgs]
+
+				df_mx2=uu.get_mx(df_ddd)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
+				#print(df_mx2.head())
+				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
+				#print(6,df_bet365.head())
+
+			files='e:/{}.csv'.format(cp.replace('/','-'))
+			print(files)
+
+			if os.path.exists(files):
+				print('\n-->增加到{}'.format(files))
+				df_bet365.to_csv(files,mode='a',header=False,encoding="utf_8_sig")
+			else:
+				print('无模型库文件，创建[{}]模型库'.format(cp))
+				self.creat_mxk(cp)
+				print('\n-->增加到{}'.format(files))
+				df_bet365.to_csv(files,mode='a',header=False,encoding="utf_8_sig")
+
+			files2='yhq_idnm_list.csv'
+			list_111=[idnm,cp,df_scb.zd.values[0],df_scb.kd.values[0],df_scb.bssj.values[0]]
+			df_idnm=DataFrame([list_111])
+			df_idnm.to_csv(files2,mode='a',header=False,encoding="utf_8_sig")
+
+			#for b
+
+			
+			#print(df_yapan)
+			#li.extend([idnm,-1000,])
+			
+
+
+		return 0
+
 #获取完场数据
-#h=zqfenxi(0).main()
+#h=zqfenxi(0).add_mxk_wwcsj()
 #h=zqfenxi(0).fenxi_yysj()
+#h=zqfenxi(0).creat_mxk('一球')
 

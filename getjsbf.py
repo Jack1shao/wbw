@@ -29,7 +29,7 @@ class getjsbfClass(object):
 		listtable=soup.find_all(id='table_match')
 		list31=listtable[0].find_all('tr')
 		bsxxlist=[]
-		
+		#print(list31[1])
 		for x in list31:
 			#获取500w比赛id
 
@@ -48,6 +48,9 @@ class getjsbfClass(object):
 			#list连接成一个
 			listgy.extend(listsj)
 			listgy.extend(idlist)
+			listzt=(tdlist[4].get_text().split(' '))
+			listgy.append(listzt[0])
+			if listzt[0]=='完':continue
 			#
 			#if listbcbf[0]==' ':
 			bsxxlist.append(listgy)
@@ -77,7 +80,7 @@ class getjsbfClass(object):
 		zqdf=zqconfigClass('').cfg_select()
 		li=zqdf.ls.values
 		#print(li)
-
+		#print(list31[0])
 		for x in list31:
 			#print(x)
 			id12=(x.get('id'))
@@ -89,10 +92,10 @@ class getjsbfClass(object):
 			#获取联赛的球队
 			listgy=(x.get('gy').split(','))
 
-			#if listgy[0] not in li :continue
-			#if listgy[0].find('女')>-1:continue
-			#if listgy[0].find('U')>-1:continue
-			#if listgy[0].find('丙')>-1:continue	
+			if listgy[0] not in li :continue
+			if listgy[0].find('女')>-1:continue
+			if listgy[0].find('U')>-1:continue
+			if listgy[0].find('丙')>-1:continue	
 			listgy.extend(idlist)
 			bsxxlist.append(listgy)
 		#print(bsxxlist)	
@@ -164,6 +167,40 @@ class getjsbfClass(object):
 				if  x[xx]==name1 and x[xx+4]==name2:return 1
 				if  x[xx]==name2 and x[xx+4]==name1:return 1
 		return 0
+	def jsbf2(self):
+
+		print("\n.....................开始获取即时比分数据.....................")
+		
+		print("\n1.获取500万数据")
+		listwbw=self.get500wzqdc(self._gethtmlsoup(''))
+
+		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()
+		#整理500万数据
+		#listls=[]
+		listwbw1=[]
+		for wbw in listwbw:
+			if wbw[0] in list_ls:
+				#wbw=['德甲', '拜仁慕尼黑', '霍芬海姆', '10-05', '21:30', '824679']
+				#print(wbw)
+				del wbw[3]
+				listwbw1.append(wbw[0:5])
+				#listls.append(listwbw1)	
+
+
+		print("\n-----------------------比对结果：写入config文件---------------\n")	
+		
+		
+		if len(listwbw1)>0:	
+			#['欧洲杯', '德国', '荷兰', '02:45', '793185']
+			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bssj','idnm'])
+			files1='zqconfig_bslb.csv'
+			df1.to_csv(files1)#写入文件
+		for x in listwbw1:
+			print(x)
+		print("\n------------------------------比对结束-------------------------\n")
+
+
+
 
 	#获取即时比分
 	def jsbf(self):
@@ -172,11 +209,14 @@ class getjsbfClass(object):
 		
 		print("\n1.获取500万数据")
 		listwbw=self.get500wzqdc(self._gethtmlsoup(''))
+
+		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()
 		#整理500万数据
 		listwbw1=[]
 		for wbw in listwbw:
-			del wbw[3]
-			listwbw1.append(wbw[0:5])
+			if wbw[0] in list_ls:
+				del wbw[3]
+				listwbw1.append(wbw[0:5])
 		#500万格式
 		#['苏联杯', '邓迪FC', '阿伯丁', '22:00', '857652']
 
@@ -259,13 +299,17 @@ class getjsbfClass(object):
 		scblist,z,ouzhilist=k.getscbandouzhi()
 		columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
 		df=DataFrame(ouzhilist,columns=columns_list_ouzhi)
-		df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland','Bet365','威廉希尔'])]
+		#df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland','Bet365','威廉希尔'])]
 		df.to_csv('bifa.csv')
 
-		df1=zqconfigClass(0).select('bifa.csv')
+		df_ouzhi=zqconfigClass(0).select('bifa.csv')
 
-		#print(df)
-		return df1
+		columns_list_scb=['idnm','zd','kd','nd','ls','lc','zjq','kjq','bssj']
+		df=DataFrame(scblist,columns=columns_list_scb)
+		df.to_csv('bifa.csv')
+		df_scb=zqconfigClass(0).select('bifa.csv')
+		#print(df_scb)
+		return df_ouzhi,df_scb
 	#取网页数据返回Dataframe
 	def get_yapan_df(self,idnm):
 		k=htmlsoup(idnm)
@@ -323,9 +367,9 @@ class getjsbfClass(object):
 #columns_list_yapan['idnm', 'xh', 'ypgs', 'jzs', 'jp', 'jks', 'czs', 'cp', 'cks']
 
 #测试。。。。。。。。。	
-#k=getjsbfClass(0)
+#k=getjsbfClass(0).jsbf2()
 #k.get_ouzhi_df(784159)
 #url='https://live.500.com/wanchang.php?e=2019-09-18'
 #k=getjsbfClass(0)
-#k.get500wwcbf(url)
+#k.get_ouzhi_df(806641)
 

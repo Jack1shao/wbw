@@ -18,6 +18,11 @@ $ git clone git@github.com:Jack1shao/wbw.git d:/py/500w
 git clean  -d  -fx
 git pull
 
+2.放弃本地修改，直接覆盖之
+
+git reset --hard
+git pull
+
 
 --20190915
 	bifa:11	expekt:12+11
