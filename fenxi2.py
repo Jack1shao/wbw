@@ -53,8 +53,9 @@ class fenxi2(object):
 				'BetAdria', 'BetClic.fr', 'BetClick', 'BetCRIS', 'Betflag.it', 'Betfred(博发)', 'Betsafe', 
 				'Betshop', 'Betstar', 'Better.it', 'BINGOAL', 'BoDog(博狗)', 'BookieBob', 'Bovada', 'Boylesports', 
 				'Bwin', 'Bwin.es', 'CashPoint', 'Coral', 'Domusbet.it', 'Efbet', 'Eurobet', 'Eurobet.it', 'Expekt',
-				 'Fonbet', 'France-pari.fr', 'Gamebookers', 'Goalbet', 'Gwbet', 'HrvatskaLutrija', 'IBCBET(沙巴)', 'Iceland', 'Iddaa', 'IFortuna.sk', 'Intertops', 'Interwetten', 'Interwetten.es', 'Intralot(因特拉洛)', 'Intralot.it', 'Mansion88(明升)', 'Matchbook', 'MeridianBet', 'Miseojeu', 'MyBet', 'Nike', 'Nordicbet', 'Norway', 'Oddset', 'Olimpkz', 'PaddyPower', 'PartyBets', 'PMU', 'Skybet', 'Smarkets', 'SNAI', 'SportingBet(博天堂)', 'Sportsbet', 'StarPrice', 'STS', 'SuperSport', 'Sweden', 'SynotTIP', 'TheGreek.com', 'Tipico', 'TipKurz', 'Tipsport', 'Titanbet', 'TopSport', 'Tote', 'Totesport', 'Toto', 'TotoSi', 'Unibet.fr', 'Unibet.it', 'Unitab', 'Wewbet(盈禾)', '伟德', '利记', '威廉希尔', '威廉希尔.it', '必发', '易胜博', '澳门', '皇冠', '立博', '香港马会', 'DanskeSpil', 'Fivebet.it', 'Pamestihima', '竞彩官方', '金宝博', '18Bet', 'BetClic.it', 'Betrally', 'BetssonSportsbook', 'Leon', 'NorskTipping', 'SvenskaSpel', 'VBet', 'Milenium', 'Stoiximan', 'Setantabet', 'Unibet(优胜客)', 'Championsbet', 'Isibet', 'Sjbet', 'Tipsport.sk', 'Bookmaker.eu', 'Agile.it', '888Sport', 'Merkur-win', '奥地利博彩', 'Betbright', 'BetfairSB', 'CMD368.com', 'Netbet.fr', 'PlanetWin365', 'BetClic', 'Vernons', 'Winamax.fr', '1xBet', 'GentingBet', 'Stanleybet.it', 'X-TiP', 'Zebet.fr', 'BetfairESSportsbook', 'BetfairUKSportsbook', 'BetVictor', 'Singbet', 'RB88(走地皇)', 'Pinnacle平博', 'iFortuna.cz', 'Marcaapuestas', 'Tipbet', 'Titanbet.es', 'Betano.ro', 'Bethard', 'BetOlimp', 'Betway(必威)', 'Sisal.it', 'CoolBet',
-				 'Giocodigitale.it', 'Babibet', 'Marathon(马博)']
+				'Fonbet', 'France-pari.fr', 'Gamebookers', 'Goalbet', 'Gwbet', 'HrvatskaLutrija', 'IBCBET(沙巴)', 'Iceland', 'Iddaa', 'IFortuna.sk', 'Intertops', 'Interwetten', 'Interwetten.es', 'Intralot(因特拉洛)', 'Intralot.it', 'Mansion88(明升)', 'Matchbook', 'MeridianBet', 'Miseojeu', 'MyBet', 'Nike', 'Nordicbet', 'Norway', 'Oddset', 'Olimpkz', 'PaddyPower', 'PartyBets', 'PMU', 'Skybet', 'Smarkets', 'SNAI', 'SportingBet(博天堂)', 'Sportsbet', 'StarPrice', 'STS', 'SuperSport', 'Sweden', 'SynotTIP', 'TheGreek.com', 'Tipico', 'TipKurz', 'Tipsport', 'Titanbet', 'TopSport', 'Tote', 'Totesport', 'Toto', 'TotoSi', 'Unibet.fr', 'Unibet.it', 'Unitab', 'Wewbet(盈禾)', '伟德', '利记', '威廉希尔', '威廉希尔.it', '必发', '易胜博', '澳门',
+				'皇冠', '立博', '香港马会', 'DanskeSpil', 'Fivebet.it', 'Pamestihima', '竞彩官方', '金宝博', '18Bet', 'BetClic.it', 'Betrally', 'BetssonSportsbook', 'Leon', 'NorskTipping', 'SvenskaSpel', 'VBet', 'Milenium', 'Stoiximan', 'Setantabet', 'Unibet(优胜客)', 'Championsbet', 'Isibet', 'Sjbet', 'Tipsport.sk', 'Bookmaker.eu', 'Agile.it', '888Sport', 'Merkur-win', '奥地利博彩', 'Betbright', 'BetfairSB', 'CMD368.com', 'Netbet.fr', 'PlanetWin365', 'BetClic', 'Vernons', 'Winamax.fr', '1xBet', 'GentingBet', 'Stanleybet.it', 'X-TiP', 'Zebet.fr', 'BetfairESSportsbook', 'BetfairUKSportsbook', 'BetVictor', 'Singbet', 'RB88(走地皇)', 'Pinnacle平博', 'iFortuna.cz', 'Marcaapuestas', 'Tipbet', 'Titanbet.es', 'Betano.ro', 'Bethard', 'BetOlimp', 'Betway(必威)', 'Sisal.it', 'CoolBet',
+				'Giocodigitale.it', 'Babibet', 'Marathon(马博)']
 		li=self.get_bcgs_from_db()
 
 		list_yy=[]
@@ -194,8 +195,7 @@ class fenxi2(object):
 					list_to_csv.append(list_lsd)
 					print(list_lsd)
 				df=DataFrame(list_to_csv)
-				df.to_csv('e:/mx.csv',mode='a',header=False,encoding="utf_8_sig")
-			
+				df.to_csv('e:/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
 		return 0
 	def test3(self):
 		list_files =['威廉希尔.csv','Iceland.csv','Bet365.csv']
@@ -229,7 +229,7 @@ class fenxi2(object):
 		df_mx3.to_csv('e:/mx33.csv',encoding="utf_8_sig")
 
 uu=fenxi2(0)
-uu.test3()
+uu.qingli()
 #uu.lisan([3766,3302,2955,2821])
 #uu.count('')
 #uu.get_bssj_from_csv()

@@ -13,7 +13,7 @@ class zqfenxi(object):
 		super(zqfenxi, self).__init__()
 		self.arg = arg
 		self.idnm=int(arg)
-	
+	"""
 	#必发
 	def bifa(self,df,idnm):
 		kk=zqfenxi_gz()
@@ -254,6 +254,7 @@ class zqfenxi(object):
 
 
 	#
+	"""
 	def  get_bisai_df(self):
 		kk=zqconfigClass(0)
 		df=kk.select('zqconfig_bslb.csv')
@@ -263,10 +264,9 @@ class zqfenxi(object):
 	#模型库，经人工赛选
 	def read_mxk(self):
 		files1='e:/mxk.xlsx'
-		#print("读取联赛配置文件，'*.csv'")
 		kk=tooth_excleClass(files1)
 		df=kk.read()
-		df=(df[df.xh15>0])
+		df=(df[df.xh15>0])#该值为手工填写
 		return df
 	#未完场数据模型
 	def read_wwcsj_mx(self):
@@ -276,9 +276,6 @@ class zqfenxi(object):
 		print(df.head())
 		return df
 
-	#通过数据查找需获取的欧赔数据及模型情况
-	def get_sjmx_ozbcgs_by_cp(self):
-		return 0
 	#list去重
 	def list_qc(self,list1):
 		list_r=[]
@@ -288,8 +285,61 @@ class zqfenxi(object):
 			list_r.append(x)
 		list_r.sort()
 		return list_r
+	#计算离散度
+	def jslsd(self,list_sg):
+		kk=zqfenxi_gz()
+		list_r=[]
+		cc=kk.count(list_sg)
+		lll=cc.values[0]
+		li=[]
+		li.append(lll[0]+lll[1])
+		li.append(lll[2])
+		li.append(lll[3])
+		lsxi,fc=kk.lisan(li)
+		list_r.extend(lll)
+		list_r.append('-')
+		list_r.extend(li)
+		list_r.append(lsxi)
+		list_r.append(fc)
+		return list_r
+	#计算各菠菜公司的离散度	
+	def lsd_liebiao(self):
+		list_mx=[31,32,11,12,101,102]
+		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
+		path_f='e:/csv/'
+		uu=zqfenxi_gz()
+		kk=zqconfigClass(0)
+		list_files=os.listdir(path_f)
+		for files in list_files:
+			print(path_f+files)
+			df=kk.select(path_f+files)
+			#生成模型
+			df_mx=uu.get_mx(df)
 
+			for yp in list_yp:
+				list_to_csv=[]
+				df=df_mx[df_mx.cp==yp]
 
+				for x in list_mx:
+
+					sss='c_klmx:{}'.format(x)
+					df1=df[df.c_klmx==x]
+					if df1.empty:
+						print('kong')
+						continue
+					list_lsd=self.jslsd( list(df1.sg.values))
+					print(list_lsd)
+					if(list_lsd[9]==0.2):continue
+					if list_lsd[5]+list_lsd[6]+list_lsd[7]<8:continue
+					#[0, 0, 0, 1, '-', 0, 0, 1, 1.4142, 0.2]
+					list_lsd.insert(0,sss)
+					list_lsd.append(yp)
+					list_lsd.append(files)
+					list_to_csv.append(list_lsd)
+					print(list_lsd)
+				df=DataFrame(list_to_csv)
+				df.to_csv('e:/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
+		return 0
 
 	#建立筛选库--mx
 	def creat_mxk(self,cp):
@@ -307,7 +357,6 @@ class zqfenxi(object):
 		for cp in list_yp:
 			list_bcgs=self.list_qc(df[df.xh13==cp].xh14.values.tolist())
 			print(cp,list_bcgs,len(list_bcgs))
-
 		
 			#以Bet365为基础
 			df=kk.select(path_f+'Bet365.csv')
@@ -344,65 +393,48 @@ class zqfenxi(object):
 		df_mxk=self.read_mxk()
 		files2='yhq_idnm_list.csv'
 		df_idnm=zqconfigClass(0).select(files2)
-		
 
 		for idnm in list_idnm:
-
 			li=[]
 			df_idnm=zqconfigClass(0).select(files2)
 			if df_idnm[df_idnm.idnm==idnm].empty==False:
 				print('{}--已经生成模型--'.format(idnm))
 				continue
-
-			df_bifa,z=k.get_bifa_df(idnm)#必发
-			#print(df_bifa)
-
-			
-			#赛果
 			
 			df_yapan=k.get_yapan_df(idnm)#亚盘
-			if df_yapan.empty:continue
+			if df_yapan.empty:continue#没有亚盘数据就跳过
+			#获取初盘
 			cp=df_yapan.cp.values.tolist()[0]
-
+			#根据初盘从模型库中获取筛选出来的欧赔菠菜公司，并去重
 			list_bcgs=self.list_qc(df_mxk[df_mxk.xh13==cp].xh14.values.tolist())
-			#print(cp,list_bcgs,len(list_bcgs))
+			#整理欧赔菠菜公司名称，去除(.csv)后缀
 			bcgs=[]
 			for b in list_bcgs:
 				dd=b[:-4]
 				bcgs.append(dd)
-				#print(dd)
-			bcgs.sort()
-			df_ouzhi,df_scb=k.get_ouzhi_df(idnm)#赛程和欧指
+			bcgs.sort()#排序
 
+			df_ouzhi,df_scb=k.get_ouzhi_df(idnm)#赛程和欧指
+			df_bifa,z=k.get_bifa_df(idnm)#必发
 			df_ouzhi=df_ouzhi[df_ouzhi.bcgs.isin(bcgs) ]
 
-			#print(3,df_scb)
 			df=df_scb[['idnm','zd','kd','zjq','kjq']]
-			#merge
+			#merge，，拼接完整的数据集
 			df=pd.merge(df,df_bifa,how='left',on='idnm')
 			df=pd.merge(df,df_yapan[['idnm','jp','cp']],how='left',on='idnm')	
 			df_q=pd.merge(df,df_ouzhi,how='left',on='idnm')	
 
-			#生成模型1
+			#生成模型1（Bet365）做为基础判断
 			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
-			#print(df_q.head())
-
-			
-			#print(5,df_bet365.head())
-
+			#循环
 			for bcgs in bcgs:
 				if bcgs=='Bet365':continue
-				
 				df_ddd=df_q[df_q.bcgs==bcgs]
-
 				df_mx2=uu.get_mx(df_ddd)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
-				#print(df_mx2.head())
+				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
-				#print(6,df_bet365.head())
 
 			files='e:/{}.csv'.format(cp.replace('/','-'))
-			print(files)
-
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
 				df_bet365.to_csv(files,mode='a',header=False,encoding="utf_8_sig")
@@ -416,19 +448,10 @@ class zqfenxi(object):
 			list_111=[idnm,cp,df_scb.zd.values[0],df_scb.kd.values[0],df_scb.bssj.values[0]]
 			df_idnm=DataFrame([list_111])
 			df_idnm.to_csv(files2,mode='a',header=False,encoding="utf_8_sig")
-
-			#for b
-
-			
-			#print(df_yapan)
-			#li.extend([idnm,-1000,])
-			
-
-
 		return 0
 
 #获取完场数据
-#h=zqfenxi(0).add_mxk_wwcsj()
+h=zqfenxi(0).lsd_liebiao()
 #h=zqfenxi(0).fenxi_yysj()
 #h=zqfenxi(0).creat_mxk('一球')
 
