@@ -267,6 +267,7 @@ class zqfenxi(object):
 		kk=tooth_excleClass(files1)
 		df=kk.read()
 		df=(df[df.xh15>0])#该值为手工填写
+		df.to_csv('zqconfig_mxk.csv',encoding="utf_8_sig")
 		return df
 	#未完场数据模型
 	def read_wwcsj_mx(self):
@@ -306,18 +307,27 @@ class zqfenxi(object):
 	def lsd_liebiao(self):
 		list_mx=[31,32,11,12,101,102]
 		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
+		list_yp=self.list_qc(list_yp)
+		print(list_yp)
+
 		path_f='e:/csv/'
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
 		list_files=os.listdir(path_f)
+		#list_files=self.list_qc(list_files)
+		list_f_in=[]
 		for files in list_files:
+
 			print(path_f+files)
+			if files in list_f_in:continue
+			list_f_in.append(files)
 			df=kk.select(path_f+files)
 			#生成模型
 			df_mx=uu.get_mx(df)
 
 			for yp in list_yp:
 				list_to_csv=[]
+
 				df=df_mx[df_mx.cp==yp]
 
 				for x in list_mx:
@@ -348,14 +358,14 @@ class zqfenxi(object):
 		list_yp.append(cp)
 		list_yp=self.list_qc(list_yp)
 
-		df=self.read_mxk()
+		df_r_mxk=self.read_mxk()
 		path_f='e:/csv/'
-		print(df)
+		#print(df_r_mxk)
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
 
 		for cp in list_yp:
-			list_bcgs=self.list_qc(df[df.xh13==cp].xh14.values.tolist())
+			list_bcgs=self.list_qc(df_r_mxk[df_r_mxk.xh13==cp].xh14.values.tolist())
 			print(cp,list_bcgs,len(list_bcgs))
 		
 			#以Bet365为基础
@@ -416,6 +426,7 @@ class zqfenxi(object):
 
 			df_ouzhi,df_scb=k.get_ouzhi_df(idnm)#赛程和欧指
 			df_bifa,z=k.get_bifa_df(idnm)#必发
+
 			df_ouzhi=df_ouzhi[df_ouzhi.bcgs.isin(bcgs) ]
 
 			df=df_scb[['idnm','zd','kd','zjq','kjq']]
@@ -450,8 +461,10 @@ class zqfenxi(object):
 			df_idnm.to_csv(files2,mode='a',header=False,encoding="utf_8_sig")
 		return 0
 
+
+	
 #获取完场数据
-h=zqfenxi(0).lsd_liebiao()
+#h=zqfenxi(0).read_mxk()
 #h=zqfenxi(0).fenxi_yysj()
 #h=zqfenxi(0).creat_mxk('一球')
 

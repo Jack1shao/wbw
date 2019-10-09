@@ -328,7 +328,11 @@ class getjsbfClass(object):
 		k=htmlsoup(idnm)
 		columns_list=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
 		listbifa,z,listsjtd=k.getbifa()
-		if z==0:return DataFrame([]),z
+		if z==0:
+			columns=['idnm','glc3','ykzs3','glc1','ykzs1','glc0','ykzs0']
+			list_bf=[[idnm,0,0,0,0,0,0]]
+			df=DataFrame(list_bf,columns=columns)
+			return df,z
 		df=DataFrame(listbifa,columns=columns_list)
 		#用bifa。csv 中转，结局字符和数据的转换
 		df.to_csv('bifa.csv')

@@ -82,10 +82,7 @@ def read_sql():
 def t():
 	#df=kk.select('e:/mxk.csv')
 	files1='e:/mxk.xlsx'
-	#print("读取联赛配置文件，'*.csv'")
-	#kk=tooth_excleClass(files1)
-	#df=kk.read()
-	#print(df[df.xh15==1])
+
 	cp='两球/两球半'
 	print(cp)
 	print(cp.replace('/','-'))
@@ -101,8 +98,7 @@ def t():
 	print(list_files)
 	print(list_files.index('利记.csv'))
 
-	lll=['10BET', '12BET(壹貳博)', '1Bet', '5Dimes', 'Bet-at-home', 'Bet3000', 'Bet365', 'BetAdria', 'BetClic.fr', 'BetClick', 'BetCRIS', 'Betflag.it', 'Betfred(博发)', 'Betsafe', 'Betshop', 'Betstar', 'Better.it', 'BINGOAL', 'BoDog(博狗)', 'BookieBob', 'Bovada', 'Boylesports', 'Bwin', 'Bwin.es', 'CashPoint', 'Coral', 'Domusbet.it', 'Efbet', 'Eurobet', 'Eurobet.it', 'Expekt', 'Fonbet', 'France-pari.fr', 'Gamebookers', 'Goalbet', 'Gwbet', 'HrvatskaLutrija', 'IBCBET(沙巴)', 'Iceland', 'Iddaa', 'IFortuna.sk', 'Intertops', 'Interwetten', 'Interwetten.es', 'Intralot(因特拉洛)', 'Intralot.it', 'Mansion88(明升)', 'Matchbook', 'MeridianBet', 'Miseojeu', 'MyBet', 'Nike', 'Nordicbet', 'Norway', 'Oddset', 'Olimpkz', 'PaddyPower', 'PartyBets', 'PMU', 'Skybet', 'Smarkets', 'SNAI', 'SportingBet(博天堂)', 'Sportsbet', 'StarPrice', 'STS', 'SuperSport', 'Sweden', 'SynotTIP', 'TheGreek.com', 'Tipico', 'TipKurz', 'Tipsport', 'Titanbet', 'TopSport', 'Tote', 'Totesport', 'Toto', 'TotoSi', 'Unibet.fr', 'Unibet.it', 'Unitab', 'Wewbet(盈禾)', '伟德', '利记', '威廉希尔', '威廉希尔.it', '必发', '易胜博', '澳门', '皇冠', '立博', '香港马会', 'DanskeSpil', 'Fivebet.it', 'Pamestihima', '竞彩官方', '金宝博', '18Bet', 'BetClic.it', 'Betrally', 'BetssonSportsbook', 'Leon', 'NorskTipping', 'SvenskaSpel', 'VBet', 'Milenium', 'Stoiximan', 'Setantabet', 'Unibet(优胜客)', 'Championsbet', 'Isibet', 'Sjbet', 'Tipsport.sk', 'Bookmaker.eu', 'Agile.it', '888Sport', 'Merkur-win', '奥地利博彩', 'Betbright', 'BetfairSB', 'CMD368.com', 'Netbet.fr', 'PlanetWin365', 'BetClic', 'Vernons', 'Winamax.fr', '1xBet', 'GentingBet', 'Stanleybet.it', 'X-TiP', 'Zebet.fr', 'BetfairESSportsbook', 'BetfairUKSportsbook', 'BetVictor', 'Singbet', 'RB88(走地皇)', 'Pinnacle平博', 'iFortuna.cz', 'Marcaapuestas', 'Tipbet', 'Titanbet.es', 'Betano.ro', 'Bethard', 'BetOlimp', 'Betway(必威)', 'Sisal.it', 'CoolBet', 'Giocodigitale.it', 'Babibet', 'Marathon(马博)']
-	print(len(lll))		
+
 t()
 
 #z=li_kz2(li1,li1)
