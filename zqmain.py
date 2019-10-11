@@ -130,6 +130,7 @@ class zqmain(object):
 			if cc=='5':
 				print('5、需获取比赛数据')
 				kk.get_bisai_df()
+				kk.get_yjmx_idnm_list()
 			if cc=='6':
 				print('	6、生成模型       <6>')
 				kk.add_mxk_wwcsj()

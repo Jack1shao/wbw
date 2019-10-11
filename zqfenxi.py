@@ -398,7 +398,7 @@ class zqfenxi(object):
 		list_idnm=self.list_qc(df.idnm.values.tolist())
 		li=[]
 		
-		list_idnm.sort()
+		#list_idnm.sort()
 		print(list_idnm)
 		df_mxk=self.read_mxk()
 		files2='yhq_idnm_list.csv'
@@ -460,6 +460,15 @@ class zqfenxi(object):
 			df_idnm=DataFrame([list_111])
 			df_idnm.to_csv(files2,mode='a',header=False,encoding="utf_8_sig")
 		return 0
+	def get_yjmx_idnm_list(self):
+		files2='yhq_idnm_list.csv'
+		
+		df_idnm=zqconfigClass(0).select(files2)
+		df=df_idnm.sort_values(by=['cp','bssj'],axis = 0,ascending = True)
+		print(df)
+		df=df_idnm.sort_values(by=['bssj','cp'],axis = 0,ascending = True)
+		print(df)
+		return df
 
 
 	

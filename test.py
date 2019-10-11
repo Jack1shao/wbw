@@ -90,7 +90,8 @@ def t():
 	files2='yhq_idnm_list.csv'
 	idnm=806641
 	df_idnm=zqconfigClass(0).select(files2)
-	print(df_idnm[df_idnm.idnm==idnm].empty)
+	df=df_idnm.sort_values(by=['cp','bssj'],axis = 0,ascending = True)
+	print(df)
 
 	list_files =['利记.csv','Iceland.csv','Bet365.csv']
 	print(list_files[0][:-4])
