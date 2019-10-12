@@ -54,6 +54,7 @@ class getjsbfClass(object):
 			#
 			#if listbcbf[0]==' ':
 			bsxxlist.append(listgy)
+
 		return bsxxlist
 
 
@@ -182,8 +183,8 @@ class getjsbfClass(object):
 			if wbw[0] in list_ls:
 				#wbw=['德甲', '拜仁慕尼黑', '霍芬海姆', '10-05', '21:30', '824679']
 				#print(wbw)
-				del wbw[3]
-				listwbw1.append(wbw[0:5])
+				#del wbw[3]
+				listwbw1.append(wbw)
 				#listls.append(listwbw1)	
 
 
@@ -192,7 +193,7 @@ class getjsbfClass(object):
 		
 		if len(listwbw1)>0:	
 			#['欧洲杯', '德国', '荷兰', '02:45', '793185']
-			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bssj','idnm'])
+			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bsrq','bssj','idnm'])
 			files1='zqconfig_bslb.csv'
 			df1.to_csv(files1)#写入文件
 		for x in listwbw1:

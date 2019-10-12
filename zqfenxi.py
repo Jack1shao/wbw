@@ -13,6 +13,9 @@ class zqfenxi(object):
 		super(zqfenxi, self).__init__()
 		self.arg = arg
 		self.idnm=int(arg)
+		self.files2='yhq_idnm_list.csv'#用于存放已经取数据的比赛信息
+		self.files_mxk_lsd='e:/mxk.xlsx'#用于存放手工筛选的模型库的离散度
+		#self.files_
 	"""
 	#必发
 	def bifa(self,df,idnm):
@@ -263,8 +266,8 @@ class zqfenxi(object):
 		
 	#模型库，经人工赛选
 	def read_mxk(self):
-		files1='e:/mxk.xlsx'
-		kk=tooth_excleClass(files1)
+		
+		kk=tooth_excleClass(self.files_mxk_lsd)
 		df=kk.read()
 		df=(df[df.xh15>0])#该值为手工填写
 		df.to_csv('zqconfig_mxk.csv',encoding="utf_8_sig")
@@ -390,22 +393,21 @@ class zqfenxi(object):
 			df_mx3.to_csv(files,encoding="utf_8_sig")
 			#end for list_yp
 		return 0
-
+	#未完场比赛数据获取和建立模型。
 	def add_mxk_wwcsj(self):
 		k=getjsbfClass(0)
 		uu=zqfenxi_gz()
+		#未完成比赛idnm
 		df=k.get_id_list()
 		list_idnm=self.list_qc(df.idnm.values.tolist())
-		li=[]
-		
-		#list_idnm.sort()
+			
 		print(list_idnm)
 		df_mxk=self.read_mxk()
+		#print(df_mxk)
 		files2='yhq_idnm_list.csv'
 		df_idnm=zqconfigClass(0).select(files2)
 
 		for idnm in list_idnm:
-			li=[]
 			df_idnm=zqconfigClass(0).select(files2)
 			if df_idnm[df_idnm.idnm==idnm].empty==False:
 				print('{}--已经生成模型--'.format(idnm))
@@ -432,16 +434,36 @@ class zqfenxi(object):
 			df=df_scb[['idnm','zd','kd','zjq','kjq']]
 			#merge，，拼接完整的数据集
 			df=pd.merge(df,df_bifa,how='left',on='idnm')
-			df=pd.merge(df,df_yapan[['idnm','jp','cp']],how='left',on='idnm')	
-			df_q=pd.merge(df,df_ouzhi,how='left',on='idnm')	
+			df=pd.merge(df,df_yapan[['idnm','jp','cp']],how='left',on='idnm')
+			df_q=pd.merge(df,df_ouzhi,how='left',on='idnm')
 
 			#生成模型1（Bet365）做为基础判断
 			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
+			df_bet365['sg']=-1000
 			#循环
 			for bcgs in bcgs:
 				if bcgs=='Bet365':continue
 				df_ddd=df_q[df_q.bcgs==bcgs]
+				
 				df_mx2=uu.get_mx(df_ddd)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
+				#取单值,判断在模型库中的情况
+				if df_mx2.empty:
+					print('empty--')
+				else:
+					if df_mx2.loc[0,'bcgs']==None:
+						print('{}不存在'.format(bcgs))
+					else:
+						bcgs_csv="{}.csv".format(df_mx2.loc[0,'bcgs'])
+						c_klmx_1="c_klmx:{}".format(df_mx2.loc[0,'c_klmx'])
+						print(bcgs_csv,c_klmx_1)
+						df_mxk=self.read_mxk()
+						df_mxk2=df_mxk[(df_mxk.xh2==c_klmx_1)&(df_mxk.xh13==cp)&(df_mxk.xh14==bcgs_csv)]
+						#print(df_mxk2)
+					if df_mxk2.empty:
+						df_mx2['c_zz']=-1
+					else:
+						d_index = list(df_mxk2.columns).index('xh15')
+						df_mx2['c_zz']=df_mxk2.iloc[0,d_index]
 				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
 

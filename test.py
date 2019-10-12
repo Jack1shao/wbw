@@ -91,7 +91,11 @@ def t():
 	idnm=806641
 	df_idnm=zqconfigClass(0).select(files2)
 	df=df_idnm.sort_values(by=['cp','bssj'],axis = 0,ascending = True)
+	df['cp']=-1000
+	df1=df.iloc[0,5]
 	print(df)
+	print(df1)
+
 
 	list_files =['利记.csv','Iceland.csv','Bet365.csv']
 	print(list_files[0][:-4])
