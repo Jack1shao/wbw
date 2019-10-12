@@ -193,7 +193,8 @@ class getjsbfClass(object):
 		
 		if len(listwbw1)>0:	
 			#['欧洲杯', '德国', '荷兰', '02:45', '793185']
-			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bsrq','bssj','idnm'])
+			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bsrq','bssj','idnm','zt'])
+			df1=df1.sort_values(by=['bsrq','ls','bssj'],axis = 0,ascending = True)
 			files1='zqconfig_bslb.csv'
 			df1.to_csv(files1)#写入文件
 		for x in listwbw1:
