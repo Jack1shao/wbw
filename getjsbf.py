@@ -15,7 +15,7 @@ class getjsbfClass(object):
 
 	def _gethtmlsoup(self,url):
 		#500w北单比方情况
-		url="https://live.500.com/zqdc.php"
+		#url="https://live.500.com/zqdc.php"
 		
 		#url="https://live.500.com/2h1.php"
 		htmltext=getHtml().getHtml_by_firefox(url)
@@ -168,126 +168,121 @@ class getjsbfClass(object):
 				if  x[xx]==name1 and x[xx+4]==name2:return 1
 				if  x[xx]==name2 and x[xx+4]==name1:return 1
 		return 0
+	#即时比分数据
 	def jsbf2(self):
-
 		print("\n.....................开始获取即时比分数据.....................")
-		
 		print("\n1.获取500万数据")
-		listwbw=self.get500wzqdc(self._gethtmlsoup(''))
+		url="https://live.500.com/zqdc.php"
+		url2="https://live.500.com/zucai.php"
 
-		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()
+		listwbw=self.get500wzqdc(self._gethtmlsoup(url))#足球单场
+		list_zucai=self.get500wzqdc(self._gethtmlsoup(url2))#足彩
+		listwbw.extend(list_zucai)
+		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()#选用的大联赛
 		#整理500万数据
-		#listls=[]
 		listwbw1=[]
 		for wbw in listwbw:
 			if wbw[0] in list_ls:
 				#wbw=['德甲', '拜仁慕尼黑', '霍芬海姆', '10-05', '21:30', '824679']
-				#print(wbw)
-				#del wbw[3]
 				listwbw1.append(wbw)
-				#listls.append(listwbw1)	
-
-
-		print("\n-----------------------比对结果：写入config文件---------------\n")	
-		
-		
+		print("\n-----------------------选取结果：写入config文件---------------\n")	
 		if len(listwbw1)>0:	
-			#['欧洲杯', '德国', '荷兰', '02:45', '793185']
 			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bsrq','bssj','idnm','zt'])
 			df1=df1.sort_values(by=['bsrq','ls','bssj'],axis = 0,ascending = True)
 			files1='zqconfig_bslb.csv'
 			df1.to_csv(files1)#写入文件
 		for x in listwbw1:
 			print(x)
-		print("\n------------------------------比对结束-------------------------\n")
+		print("\n------------------------------选取结束-------------------------\n")
 
 
 
 
-	#获取即时比分
-	def jsbf(self):
-		
-		print("\n.....................开始获取即时比分数据.....................")
-		
-		print("\n1.获取500万数据")
-		listwbw=self.get500wzqdc(self._gethtmlsoup(''))
-
-		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()
-		#整理500万数据
-		listwbw1=[]
-		for wbw in listwbw:
-			if wbw[0] in list_ls:
-				del wbw[3]
-				listwbw1.append(wbw[0:5])
-		#500万格式
-		#['苏联杯', '邓迪FC', '阿伯丁', '22:00', '857652']
-
-		print("\n2.获取球探数据")
-		listqt1=self.getqtzqdc()
-		listqt=[]
-		for x in listqt1:
-			if x[0].find('女')>-1:continue
-			if x[0].find('丙')>-1:continue
-			if x[0].find('丁')>-1:continue
-			if x[0].find('地区')>-1:continue
-			if x[0].find('U')>-1:continue
-			if x[0].find('友谊')>-1:continue
-
-
-
-			if x[5]=='半球':
-				print('--------------->>',x)
-				listqt.append(x)
-		#获取对照表
-		cfg=zqconfigClass(1)
-		df=cfg.cfg_dmdzb_select()
-		listdzb3=df.values
-		#球探数据格式
-		#['比乙', '22:00', '圣吉罗斯', '洛克伦', '1-0']
-		listls=[]
-		list_fz=[]
-		for qt in listqt:
-			for wbw in listwbw1:
-				bz=1
-				#队名和比赛时间相等
-				for x in range(0,4):
-					bz=bz*self.dmdzb(qt[x],wbw[x],listdzb3)
-				if bz:
-					listls.append(wbw)
-					break
-
-				#辅助对照
-				if bz==0 and self.dmdzb(qt[3],wbw[3],listdzb3) and self.dmdzb(qt[0],wbw[0],listdzb3) and (self.dmdzb(qt[1],wbw[1],listdzb3) or self.dmdzb(qt[2],wbw[2],listdzb3)):
-					print("\n@@辅助对照：")
-					l1=[]
-					l2=[]
-					for x in range(0,4):
-						l2.append(wbw[x])
-						l1.append(qt[x])
-					l1.extend(l2)
-					print(l1)
-					list_fz.append(l1)
-		if len(list_fz)>0:
-			df1=DataFrame(list_fz,columns=['n1','n2','n3','n4','n5','n6','n7','n8'])		
-			cfg.cfg_dmdzb_append(df1,'zqconfig_dmdzb.csv') 
-		
-		print("\n-----------------------比对结果：写入config文件---------------\n")		
-		if len(listls)>0:	
-			#['欧洲杯', '德国', '荷兰', '02:45', '793185']
-			df1=DataFrame(listls,columns=['ls','zd','kd','bssj','idnm'])
-			files1='zqconfig_bslb.csv'
-			cfg.append(df1,files1)#写入文件
-		for x in listls:
-			print(x)
-		print("\n------------------------------比对结束-------------------------\n")
-		
-		#清理
-		listls.clear()
-		list_fz.clear()
-		listqt.clear()
-		listwbw.clear()
-		listwbw1.clear()
-		return 0
+	'''#获取即时比分，弃用
+				def jsbf(self):
+					
+					print("\n.....................开始获取即时比分数据.....................")
+					
+					print("\n1.获取500万数据")
+					listwbw=self.get500wzqdc(self._gethtmlsoup(''))
+			
+					list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()
+					#整理500万数据
+					listwbw1=[]
+					for wbw in listwbw:
+						if wbw[0] in list_ls:
+							del wbw[3]
+							listwbw1.append(wbw[0:5])
+					#500万格式
+					#['苏联杯', '邓迪FC', '阿伯丁', '22:00', '857652']
+			
+					print("\n2.获取球探数据")
+					listqt1=self.getqtzqdc()
+					listqt=[]
+					for x in listqt1:
+						if x[0].find('女')>-1:continue
+						if x[0].find('丙')>-1:continue
+						if x[0].find('丁')>-1:continue
+						if x[0].find('地区')>-1:continue
+						if x[0].find('U')>-1:continue
+						if x[0].find('友谊')>-1:continue
+			
+			
+			
+						if x[5]=='半球':
+							print('--------------->>',x)
+							listqt.append(x)
+					#获取对照表
+					cfg=zqconfigClass(1)
+					df=cfg.cfg_dmdzb_select()
+					listdzb3=df.values
+					#球探数据格式
+					#['比乙', '22:00', '圣吉罗斯', '洛克伦', '1-0']
+					listls=[]
+					list_fz=[]
+					for qt in listqt:
+						for wbw in listwbw1:
+							bz=1
+							#队名和比赛时间相等
+							for x in range(0,4):
+								bz=bz*self.dmdzb(qt[x],wbw[x],listdzb3)
+							if bz:
+								listls.append(wbw)
+								break
+			
+							#辅助对照
+							if bz==0 and self.dmdzb(qt[3],wbw[3],listdzb3) and self.dmdzb(qt[0],wbw[0],listdzb3) and (self.dmdzb(qt[1],wbw[1],listdzb3) or self.dmdzb(qt[2],wbw[2],listdzb3)):
+								print("\n@@辅助对照：")
+								l1=[]
+								l2=[]
+								for x in range(0,4):
+									l2.append(wbw[x])
+									l1.append(qt[x])
+								l1.extend(l2)
+								print(l1)
+								list_fz.append(l1)
+					if len(list_fz)>0:
+						df1=DataFrame(list_fz,columns=['n1','n2','n3','n4','n5','n6','n7','n8'])		
+						cfg.cfg_dmdzb_append(df1,'zqconfig_dmdzb.csv') 
+					
+					print("\n-----------------------比对结果：写入config文件---------------\n")		
+					if len(listls)>0:	
+						#['欧洲杯', '德国', '荷兰', '02:45', '793185']
+						df1=DataFrame(listls,columns=['ls','zd','kd','bssj','idnm'])
+						files1='zqconfig_bslb.csv'
+						cfg.append(df1,files1)#写入文件
+					for x in listls:
+						print(x)
+					print("\n------------------------------比对结束-------------------------\n")
+					
+					#清理
+					listls.clear()
+					list_fz.clear()
+					listqt.clear()
+					listwbw.clear()
+					listwbw1.clear()
+					return 0
+	'''
 	#获取要分析的比赛列表
 	def get_id_list(self):
 		h=zqconfigClass(0)

@@ -420,16 +420,17 @@ class zqfenxi(object):
 			#根据初盘从模型库中获取筛选出来的欧赔菠菜公司，并去重
 			list_bcgs=self.list_qc(df_mxk[df_mxk.xh13==cp].xh14.values.tolist())
 			#整理欧赔菠菜公司名称，去除(.csv)后缀
-			bcgs=[]
+			list_bcgs2=[]
+			list_bcgs2.append('Bet365')#保证有'Bet365'
 			for b in list_bcgs:
 				dd=b[:-4]
-				bcgs.append(dd)
-			bcgs.sort()#排序
-
+				list_bcgs2.append(dd)
+			list_bcgs2.sort()#排序
+			
 			df_ouzhi,df_scb=k.get_ouzhi_df(idnm)#赛程和欧指
 			df_bifa,z=k.get_bifa_df(idnm)#必发
 
-			df_ouzhi=df_ouzhi[df_ouzhi.bcgs.isin(bcgs) ]
+			df_ouzhi=df_ouzhi[df_ouzhi.bcgs.isin(list_bcgs2) ]
 
 			df=df_scb[['idnm','zd','kd','zjq','kjq']]
 			#merge，，拼接完整的数据集
@@ -441,10 +442,11 @@ class zqfenxi(object):
 			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
 			df_bet365['sg']=-1000
 			#循环
-			for bcgs in bcgs:
+
+			for bcgs in list_bcgs2:
 				if bcgs=='Bet365':continue
 				df_ddd=df_q[df_q.bcgs==bcgs]
-				
+				print(df_ddd)
 				df_mx2=uu.get_mx(df_ddd)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
 				#取单值,判断在模型库中的情况
 				if df_mx2.empty:
@@ -466,7 +468,7 @@ class zqfenxi(object):
 						df_mx2['c_zz']=df_mxk2.iloc[0,d_index]
 				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
-
+	
 			files='e:/{}.csv'.format(cp.replace('/','-'))
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
