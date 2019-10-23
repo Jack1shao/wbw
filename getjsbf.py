@@ -175,7 +175,7 @@ class getjsbfClass(object):
 		url="https://live.500.com/zqdc.php"
 		url2="https://live.500.com/zucai.php"
 
-		listwbw=self.get500wzqdc(self._gethtmlsoup(url2))#足球单场
+		listwbw=self.get500wzqdc(self._gethtmlsoup(url))#足球单场
 		list_zucai=self.get500wzqdc(self._gethtmlsoup(url2))#足彩
 		listwbw.extend(list_zucai)
 		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()#选用的大联赛
