@@ -499,5 +499,5 @@ class zqfenxi(object):
 #获取完场数据
 #h=zqfenxi(0).read_mxk()
 #h=zqfenxi(0).fenxi_yysj()
-#h=zqfenxi(0).creat_mxk('一球')
+#h=zqfenxi(0).creat_mxk('半球')
 
