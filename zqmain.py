@@ -6,6 +6,7 @@ from getzqClass import getzqClass
 from tooth_day import tooth_dayClass
 from buqisjClass import buqisj
 from zqfenxi import zqfenxi
+from fenxi2 import fenxi2
 
 class zqmain(object):
 	"""docstring for zqmain"""
@@ -109,6 +110,7 @@ class zqmain(object):
 			print('	6、生成模型    					   <6>')
 			print('	7、模型匹配  							<7>')
 			print('	8、已有数据生成模型  					<8>')
+			print('	91、取数据库，生成csv/菠菜公司  		<91>')
 			print('	99、退出<99>\n')
 			print('--请输入你的选择:')
 			cc=input()
@@ -139,6 +141,9 @@ class zqmain(object):
 			if cc=='8':
 				print('	8、已有数据生成模型  		<8>')
 				kk.fenxi_yysj()
+			if cc=='91':
+				kf=fenxi2(0).get_ouzhi_to_csv()
+
 			if cc=='99':
 				print('	退出<99>')
 				break

@@ -94,6 +94,10 @@ def t():
 	df['cp']=-1000
 	df1=df.iloc[0,5]
 	print(df)
+
+	for index,row in df.iterrows():
+		print(row.values.tolist().count(-1000))
+		
 	print(df1)
 
 

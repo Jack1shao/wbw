@@ -368,6 +368,7 @@ class zqfenxi(object):
 		kk=zqconfigClass(0)
 
 		for cp in list_yp:
+			#获取需要的菠菜公司并去重
 			list_bcgs=self.list_qc(df_r_mxk[df_r_mxk.xh13==cp].xh14.values.tolist())
 			print(cp,list_bcgs,len(list_bcgs))
 		
@@ -378,16 +379,44 @@ class zqfenxi(object):
 			df_mx3=uu.get_mx(df)
 			print(df_mx3.head())
 			print(len(df_mx3))
+			#再次读取模型库
+			iii_lr=0
 
 			for files in list_bcgs:
 				if files=='Bet365.csv':continue
 				print(files)
+				#读取数据文件.csv
 				df=kk.select(path_f+files)
 				df=df[df.cp==cp]
+				#模型库数据
 
-				df_mx2=uu.get_mx(df)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
-				print(df_mx2.head())
+				#生成模型
+				df_mx21=uu.get_mx(df)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
+				print(df_mx21.head())
+				#再次读模型库，为添加冷热情况
+				
+				df_mxk=self.read_mxk()
+				df_mxk_lr=df_mxk[(df_mxk.xh13==cp)&(df_mxk.xh14==files)]
+				#增加模型库的信息
+				df_mx2=pd.merge(df_mx21,df_mxk_lr,how='left',left_on='c_klmx',right_on='xh2')	
+				df_mx2=df_mx2[['idnm','bcgs','c_klmx','xh15','c_fh','j_klmx']]
+				
+				#合并模型
 				df_mx3=pd.merge(df_mx3,df_mx2,how='left',on='idnm')	
+			#增加一列冷热情况，个位为冷的数量，百位为热的数量
+			list_lr=[]
+			for index,row in df_mx3.iterrows():
+				lr=[]
+				lr.append(row.idnm)
+				i2=row.values.tolist().count(2)
+				i1=row.values.tolist().count(1)
+				ii=i2*100+i1
+				lr.append(ii)
+				list_lr.append(lr)
+			#print(list_lr)
+			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_lr'])
+			#print(df_lr)
+			df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
 			files='e:/{}.csv'.format(cp.replace('/','-'))
 			print(files)
 			df_mx3.to_csv(files,encoding="utf_8_sig")
@@ -442,7 +471,7 @@ class zqfenxi(object):
 			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
 			df_bet365['sg']=-1000
 			#循环
-
+			iii_lr=0
 			for bcgs in list_bcgs2:
 				if bcgs=='Bet365':continue
 				df_ddd=df_q[df_q.bcgs==bcgs]
@@ -466,9 +495,13 @@ class zqfenxi(object):
 					else:
 						d_index = list(df_mxk2.columns).index('xh15')
 						df_mx2['c_zz']=df_mxk2.iloc[0,d_index]
+						if df_mxk2.iloc[0,d_index]==2:iii_lr+=1
+						if df_mxk2.iloc[0,d_index]==1:iii_lr+=100
+
 				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
-	
+			#增加一列冷热情况，个位为冷的数量，百位为热的数量
+			df_bet365['count_lr']=iii_lr
 			files='e:/{}.csv'.format(cp.replace('/','-'))
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
@@ -498,6 +531,7 @@ class zqfenxi(object):
 	
 #获取完场数据
 #h=zqfenxi(0).read_mxk()
+
 #h=zqfenxi(0).fenxi_yysj()
-#h=zqfenxi(0).creat_mxk('半球')
+h=zqfenxi(0).creat_mxk('半球')
 

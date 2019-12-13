@@ -114,7 +114,7 @@ class fenxi2(object):
 		list_r.append(lsxi)
 		list_r.append(fc)
 		return list_r
-
+	#从数据库中获取各欧赔公司的数据，to_csv get_ouzhi_to_csv import fenxi2 
 	def get_ouzhi_to_csv(self):
 		#从数据库中获取各欧赔公司的数据，to_csv
 		list_bcgs=self.get_bcgs()
@@ -228,8 +228,8 @@ class fenxi2(object):
 		#print(df_lj[['idnm','cp_x']])
 		df_mx3.to_csv('e:/mx33.csv',encoding="utf_8_sig")
 
-uu=fenxi2(0)
-uu.qingli()
+#uu=fenxi2(0)
+#uu.qingli()
 #uu.lisan([3766,3302,2955,2821])
 #uu.count('')
 #uu.get_bssj_from_csv()
