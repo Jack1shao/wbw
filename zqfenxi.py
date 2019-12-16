@@ -533,5 +533,5 @@ class zqfenxi(object):
 #h=zqfenxi(0).read_mxk()
 
 #h=zqfenxi(0).fenxi_yysj()
-h=zqfenxi(0).creat_mxk('半球')
+#h=zqfenxi(0).creat_mxk('半球')
 
