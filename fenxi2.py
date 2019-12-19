@@ -158,11 +158,6 @@ class fenxi2(object):
 				list_lsd.insert(0,sss+sss1)
 				print(list_lsd)
 		return 0
-
-	def d_fx(self,df,mx,yp):
-		df1=df[(df.c_klmx==mx)&(df.cp==yp)]
-		pass
-
 	def test2(self):
 		list_mx=[31,32,11,12,101,102]
 		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
@@ -183,7 +178,7 @@ class fenxi2(object):
 
 				for x in list_mx:
 
-					sss='c_klmx:{}'.format(x)
+					sss='{}'.format(x)
 					df1=df[df.c_klmx==x]
 					if df1.empty:
 						print('kong')

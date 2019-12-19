@@ -207,5 +207,22 @@ class zqfenxi_gz(object):
 		df=DataFrame(list_mx,columns=columns)
 		#print(df.he)
 		return df
+	#计算离散度
+	def jslsd(self,list_sg):
+	
+		list_r=[]
+		cc=self.count(list_sg)
+		lll=cc.values[0]
+		li=[]
+		li.append(lll[0]+lll[1])
+		li.append(lll[2])
+		li.append(lll[3])
+		lsxi,fc=self.lisan(li)
+		list_r.extend(lll)
+		list_r.append('-')
+		list_r.extend(li)
+		list_r.append(lsxi)
+		list_r.append(fc)
+		return list_r
 			
 		

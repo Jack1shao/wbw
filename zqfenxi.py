@@ -306,7 +306,7 @@ class zqfenxi(object):
 		list_r.append(lsxi)
 		list_r.append(fc)
 		return list_r
-	#计算各菠菜公司的离散度	
+	#计算各菠菜公司的离散度,生产模型库MXK.CSV	
 	def lsd_liebiao(self):
 		list_mx=[31,32,11,12,101,102]
 		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
@@ -335,7 +335,6 @@ class zqfenxi(object):
 
 				for x in list_mx:
 
-					sss='c_klmx:{}'.format(x)
 					df1=df[df.c_klmx==x]
 					if df1.empty:
 						print('kong')
@@ -345,7 +344,7 @@ class zqfenxi(object):
 					if(list_lsd[9]==0.2):continue
 					if list_lsd[5]+list_lsd[6]+list_lsd[7]<8:continue
 					#[0, 0, 0, 1, '-', 0, 0, 1, 1.4142, 0.2]
-					list_lsd.insert(0,sss)
+					list_lsd.insert(0,x)
 					list_lsd.append(yp)
 					list_lsd.append(files)
 					list_to_csv.append(list_lsd)
@@ -400,7 +399,11 @@ class zqfenxi(object):
 				#增加模型库的信息
 				df_mx2=pd.merge(df_mx21,df_mxk_lr,how='left',left_on='c_klmx',right_on='xh2')	
 				df_mx2=df_mx2[['idnm','bcgs','c_klmx','xh15','c_fh','j_klmx']]
-				
+				bcgsss=df_mx2.iloc[0,1]
+				#print(bcgsss)
+				df_mx2.rename(columns={'xh15':'lenre_{}'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'c_klmx':'c_klmx_{}'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'c_fh':'c_fh_{}'.format(bcgsss)},inplace = True)
 				#合并模型
 				df_mx3=pd.merge(df_mx3,df_mx2,how='left',on='idnm')	
 			#增加一列冷热情况，个位为冷的数量，百位为热的数量
@@ -411,10 +414,11 @@ class zqfenxi(object):
 				i2=row.values.tolist().count(2)
 				i1=row.values.tolist().count(1)
 				ii=i2*100+i1
-				lr.append(ii)
+				lr.append(i2)
+				lr.append(i1)
 				list_lr.append(lr)
 			#print(list_lr)
-			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_lr'])
+			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_len','count_re'])
 			#print(df_lr)
 			df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
 			files='e:/{}.csv'.format(cp.replace('/','-'))
@@ -471,7 +475,8 @@ class zqfenxi(object):
 			df_bet365=uu.get_mx(df_q[df_q.bcgs=='Bet365'])
 			df_bet365['sg']=-1000
 			#循环
-			iii_lr=0
+			iii_len=0
+			iii_re=0
 			for bcgs in list_bcgs2:
 				if bcgs=='Bet365':continue
 				df_ddd=df_q[df_q.bcgs==bcgs]
@@ -495,13 +500,14 @@ class zqfenxi(object):
 					else:
 						d_index = list(df_mxk2.columns).index('xh15')
 						df_mx2['c_zz']=df_mxk2.iloc[0,d_index]
-						if df_mxk2.iloc[0,d_index]==2:iii_lr+=1
-						if df_mxk2.iloc[0,d_index]==1:iii_lr+=100
+						if df_mxk2.iloc[0,d_index]==2:iii_len+=1
+						if df_mxk2.iloc[0,d_index]==1:iii_re+=1
 
 				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
 			#增加一列冷热情况，个位为冷的数量，百位为热的数量
-			df_bet365['count_lr']=iii_lr
+			df_bet365['count_len']=iii_len
+			df_bet365['count_re']=iii_re
 			files='e:/{}.csv'.format(cp.replace('/','-'))
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
@@ -533,5 +539,5 @@ class zqfenxi(object):
 #h=zqfenxi(0).read_mxk()
 
 #h=zqfenxi(0).fenxi_yysj()
-#h=zqfenxi(0).creat_mxk('半球')
+#h=zqfenxi(0).creat_mxk('受半球')
 

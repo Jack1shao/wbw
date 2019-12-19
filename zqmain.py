@@ -7,7 +7,7 @@ from tooth_day import tooth_dayClass
 from buqisjClass import buqisj
 from zqfenxi import zqfenxi
 from fenxi2 import fenxi2
-
+from zqfenxi import zqfenxi
 class zqmain(object):
 	"""docstring for zqmain"""
 
@@ -111,6 +111,8 @@ class zqmain(object):
 			print('	7、模型匹配  							<7>')
 			print('	8、已有数据生成模型  					<8>')
 			print('	91、取数据库，生成csv/菠菜公司  		<91>')
+			print('	92、取(csv/菠菜公司)，生成mxk.csv 		<92>')
+			print('	93、保存同步mxk.csv 		<93>')
 			print('	99、退出<99>\n')
 			print('--请输入你的选择:')
 			cc=input()
@@ -143,6 +145,10 @@ class zqmain(object):
 				kk.fenxi_yysj()
 			if cc=='91':
 				kf=fenxi2(0).get_ouzhi_to_csv()
+			if cc=='92':
+				kf=zqfenxi(0).lsd_liebiao()
+			if cc=='93':
+				kf=zqfenxi(0).read_mxk()
 
 			if cc=='99':
 				print('	退出<99>')
