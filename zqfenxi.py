@@ -451,6 +451,7 @@ class zqfenxi(object):
 			#获取初盘
 			cp=df_yapan.cp.values.tolist()[0]
 			#根据初盘从模型库中获取筛选出来的欧赔菠菜公司，并去重
+			if cp not in ['半球','受半球']:print('---非非非半球---',cp);continue
 			list_bcgs=self.list_qc(df_mxk[df_mxk.xh13==cp].xh14.values.tolist())
 			#整理欧赔菠菜公司名称，去除(.csv)后缀
 			list_bcgs2=[]
@@ -480,7 +481,7 @@ class zqfenxi(object):
 			for bcgs in list_bcgs2:
 				if bcgs=='Bet365':continue
 				df_ddd=df_q[df_q.bcgs==bcgs]
-				print(df_ddd)
+				print('取模型',bcgs)
 				df_mx2=uu.get_mx(df_ddd)[['idnm','bcgs','c_klmx','c_zz','c_fh','j_klmx']]
 				#取单值,判断在模型库中的情况
 				if df_mx2.empty:
@@ -490,11 +491,11 @@ class zqfenxi(object):
 						print('{}不存在'.format(bcgs))
 					else:
 						bcgs_csv="{}.csv".format(df_mx2.loc[0,'bcgs'])
-						c_klmx_1="c_klmx:{}".format(df_mx2.loc[0,'c_klmx'])
+						c_klmx_1=df_mx2.loc[0,'c_klmx']
 						print(bcgs_csv,c_klmx_1)
 						df_mxk=self.read_mxk()
 						df_mxk2=df_mxk[(df_mxk.xh2==c_klmx_1)&(df_mxk.xh13==cp)&(df_mxk.xh14==bcgs_csv)]
-						#print(df_mxk2)
+						print('mxk:',df_mxk2)
 					if df_mxk2.empty:
 						df_mx2['c_zz']=-1
 					else:
@@ -508,6 +509,7 @@ class zqfenxi(object):
 			#增加一列冷热情况，个位为冷的数量，百位为热的数量
 			df_bet365['count_len']=iii_len
 			df_bet365['count_re']=iii_re
+			print(df_bet365)
 			files='e:/{}.csv'.format(cp.replace('/','-'))
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
