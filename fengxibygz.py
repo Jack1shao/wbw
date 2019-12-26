@@ -11,10 +11,7 @@ class fengxibygz(object):
 		self.arg = arg
 		self.file1='e:/半球.csv'
 	def __list_gz(self):
-		list_gz=[
-					['count_len','要',6,7,8,9]
-
-				]
+		list_gz=['半球','规则1',	['count_len','要',6,7,8,9],['count_len','要']]
 
 		return list_gz
 	def __get_df(self):

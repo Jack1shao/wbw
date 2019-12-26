@@ -411,8 +411,8 @@ class zqfenxi(object):
 			for index,row in df_mx3.iterrows():
 				lr=[]
 				lr.append(row.idnm)
-				i2=row.values.tolist().count(2)
-				i1=row.values.tolist().count(1)
+				i2=row.values.tolist().count(2345)
+				i1=row.values.tolist().count(1234)
 				ii=i2*100+i1
 				lr.append(i2)
 				lr.append(i1)
@@ -501,8 +501,8 @@ class zqfenxi(object):
 					else:
 						d_index = list(df_mxk2.columns).index('xh15')
 						df_mx2['c_zz']=df_mxk2.iloc[0,d_index]
-						if df_mxk2.iloc[0,d_index]==2:iii_len+=1
-						if df_mxk2.iloc[0,d_index]==1:iii_re+=1
+						if df_mxk2.iloc[0,d_index]==2345:iii_len+=1
+						if df_mxk2.iloc[0,d_index]==1234:iii_re+=1
 
 				#拼接
 				df_bet365=pd.merge(df_bet365,df_mx2,how='left',on='idnm')	
@@ -539,7 +539,11 @@ class zqfenxi(object):
 	
 #获取完场数据
 #h=zqfenxi(0).read_mxk()
-
 #h=zqfenxi(0).fenxi_yysj()
-#h=zqfenxi(0).creat_mxk('受半球')
+
+#生成模型库，mxk.csv
+#h=zqfenxi(0).lsd_liebiao()
+
+#根据模型库，生成单个分析文件
+#h=zqfenxi(0).creat_mxk('半球')
 
