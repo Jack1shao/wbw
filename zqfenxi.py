@@ -14,7 +14,7 @@ class zqfenxi(object):
 		self.arg = arg
 		self.idnm=int(arg)
 		self.files2='yhq_idnm_list.csv'#用于存放已经取数据的比赛信息
-		self.files_mxk_lsd='e:/mxk.xlsx'#用于存放手工筛选的模型库的离散度
+		self.files_mxk_lsd='e:/football/mxk.xlsx'#用于存放手工筛选的模型库的离散度
 		#self.files_
 	"""
 	#必发
@@ -313,7 +313,7 @@ class zqfenxi(object):
 		list_yp=self.list_qc(list_yp)
 		print(list_yp)
 
-		path_f='e:/csv/'
+		path_f='e:/football/csv/'
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
 		list_files=os.listdir(path_f)
@@ -350,7 +350,7 @@ class zqfenxi(object):
 					list_to_csv.append(list_lsd)
 					print(list_lsd)
 				df=DataFrame(list_to_csv)
-				df.to_csv('e:/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
+				df.to_csv('e:/football/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
 		return 0
 
 	#建立筛选库--mx
@@ -361,7 +361,7 @@ class zqfenxi(object):
 		list_yp=self.list_qc(list_yp)
 
 		df_r_mxk=self.read_mxk()
-		path_f='e:/csv/'
+		path_f='e:/football/csv/'
 		#print(df_r_mxk)
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
@@ -421,7 +421,7 @@ class zqfenxi(object):
 			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_len','count_re'])
 			#print(df_lr)
 			df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
-			files='e:/{}.csv'.format(cp.replace('/','-'))
+			files='e:/football/{}.csv'.format(cp.replace('/','-'))
 			print(files)
 			df_mx3.to_csv(files,encoding="utf_8_sig")
 			#end for list_yp
@@ -510,7 +510,7 @@ class zqfenxi(object):
 			df_bet365['count_len']=iii_len
 			df_bet365['count_re']=iii_re
 			print(df_bet365)
-			files='e:/{}.csv'.format(cp.replace('/','-'))
+			files='e:/football/{}.csv'.format(cp.replace('/','-'))
 			if os.path.exists(files):
 				print('\n-->增加到{}'.format(files))
 				df_bet365.to_csv(files,mode='a',header=False,encoding="utf_8_sig")

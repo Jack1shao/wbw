@@ -162,7 +162,7 @@ class fenxi2(object):
 		list_mx=[31,32,11,12,101,102]
 		list_yp=['球半', '半球', '两球', '一球', '受一球/球半', '一球', '平手/半球', '平手', '受半球/一球', '受球半', '受平手/半球', '受半球', '半球/一球', '受一球', '两球/两球半', '受两球', '球半/两球', '两球半', '受两球/两球半', '一球/球半', '三球/三球半', '三球', '受球半/两球', '两球半/三球', '受两球半', '三球半', '受两球半/三球']
 
-		path_f='e:/csv/'
+		path_f='e:/football/csv/'
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
 		list_files=os.listdir(path_f)
@@ -190,12 +190,12 @@ class fenxi2(object):
 					list_to_csv.append(list_lsd)
 					print(list_lsd)
 				df=DataFrame(list_to_csv)
-				df.to_csv('e:/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
+				df.to_csv('e:/football/mxk.csv',mode='a',header=False,encoding="utf_8_sig")
 		return 0
 	def test3(self):
 		list_files =['威廉希尔.csv','Iceland.csv','Bet365.csv']
 		list_files.sort()
-		path_f='e:/csv/'
+		path_f='e:/football/csv/'
 		uu=zqfenxi_gz()
 		kk=zqconfigClass(0)
 
@@ -221,7 +221,7 @@ class fenxi2(object):
 		#print(df_lj.columns.values)
 		#print(len(df_lj))
 		#print(df_lj[['idnm','cp_x']])
-		df_mx3.to_csv('e:/mx33.csv',encoding="utf_8_sig")
+		df_mx3.to_csv('e:/football/mx33.csv',encoding="utf_8_sig")
 
 #uu=fenxi2(0)
 #uu.qingli()
