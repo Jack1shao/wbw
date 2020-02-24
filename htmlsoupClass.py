@@ -56,6 +56,9 @@ class htmlsoup(object):
 		datalist=[]
 		soupdz=soup.find_all('a','hd_name')
 		#判断数据，返回空
+		#print(soupdz)
+		if soupdz[0].text.strip()=='':return datalist,0
+
 		if len(soupdz)!=3:return datalist,0
 		#创建比赛信息列表
 		bsxxlist=[]
