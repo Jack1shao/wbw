@@ -16,7 +16,11 @@ class fengxibygz(object):
 		list_gz1=['半球','规则1',	['count_len',0],['香港马会',11,12,31,32,101,102]]
 		list_gz2=['半球','规则2',	['Bet365',11]]
 		list_gz3=['半球','规则3',	['Bet365',31],['10BET',101]]
-		list_gz=['半球','规则4',	['Bet365',11,12,32,31,101,102],['利记',102]]
+		list_gz=['半球','规则4',	['Bet365',32,101],['18Bet',102],['Sweden',102],['18Bet',102]]
+		#'易胜博',['利记',102],['Sweden',102],['伟德',102],'威廉希尔',奥地利博彩,18Bet,香港马会,IFortuna.sk
+
+		list_gz=['半球','规则5',	['利记',32],['竞彩官方',31],['IFortuna.sk',32,101],['香港马会',11,12,31,32,101,102]]
+		list_gz102=['半球','规则6',	['易胜博',32],['Iceland',102]]
 		return list_gz
 	def __get_df(self):
 		df_idnm=zqconfigClass(0).select(self.file1)
@@ -53,10 +57,6 @@ class fengxibygz(object):
 
 			df_s=df_s[ df_s[cc].isin(gzlist)] #数据集筛选，选出在列表中的数据
 		return 1,df_s
-
-
-	
-
 
 	def t(self):
 
