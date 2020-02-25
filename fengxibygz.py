@@ -3,34 +3,70 @@
 #fengxibygz()
 from zqconfigClass import zqconfigClass
 from zqfenxi_gz import zqfenxi_gz
+from tooth_excle import tooth_excleClass
 import math
 class fengxibygz(object):
 	"""docstring for fengxibygz"""
 	def __init__(self, arg):
 		super(fengxibygz, self).__init__()
 		self.arg = arg
-		self.file1='e:/半球.csv'
+		self.file1='e:/football/半球.csv'
+		self.files2='e:/football/半球1213.xlsx'
 	def __list_gz(self):
-		list_gz=['半球','规则1',	['count_len','要',6,7,8,9],['count_len','要']]
-
+		list_gz1=['半球','规则1',	['count_len',0],['香港马会',11,12,31,32,101,102]]
+		list_gz2=['半球','规则2',	['Bet365',11]]
+		list_gz3=['半球','规则3',	['Bet365',31],['10BET',101]]
+		list_gz=['半球','规则4',	['Bet365',11,12,32,31,101,102],['利记',102]]
 		return list_gz
 	def __get_df(self):
 		df_idnm=zqconfigClass(0).select(self.file1)
 
 		return df_idnm
+	def __get_df_fromexcel(self):
+		hh=tooth_excleClass(self.files2)
+		df=hh.read()
+		return df
+	#对筛选的数据统计胜负结果
+	def __count_sg(self,df):
+		sg_list=list(df.sg.values)
+		kk_df=zqfenxi_gz().count(sg_list)
+		return kk_df
+	#根据规则筛选数据
+	def saixuan(self,df,gz):
+		if len(gz)==0:
+			print("规则错误09001")
+			return 0
+		if df.empty:
+			print("数据集为空012001")
+			return 0
+		df_s=df
+		bcgs=''
+		print(gz)
+		for gzrows in gz:
+
+			bcgs=gzrows[0] #分开规则
+			gzlist=gzrows[1:]
+			cc='c_klmx_'+bcgs #构造列名，用于数据筛选
+			colum_list=['count_len','count_re'] #冷热结果的特殊处理
+			if bcgs in colum_list:cc=bcgs
+			if bcgs=='Bet365':cc='c_klmx'
+
+			df_s=df_s[ df_s[cc].isin(gzlist)] #数据集筛选，选出在列表中的数据
+		return 1,df_s
+
+
 	
 
 
 	def t(self):
-		df=self.__get_df()
-		df=df[(df.count_len)==0]
-		kk=zqfenxi_gz()
-		listsg=list(df.sg.values)
-		print(kk.jslsd(listsg))
+
+		gz=self.__list_gz()[2:]
+		print(gz)
+		b,df=self.saixuan(self.__get_df(),gz)
 		print(df)
+		print(self.__count_sg(df))
 		return 0
 
 
-#k=fengxibygz(0)
-#print(int(4.1))
-#k.t()		
+k=fengxibygz(0)
+k.t()		
