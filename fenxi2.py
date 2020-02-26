@@ -120,7 +120,7 @@ class fenxi2(object):
 		list_bcgs=self.get_bcgs()
 		print(list_bcgs)
 		for bcgs in list_bcgs:
-			files='e:/csv/{}.csv'.format(bcgs)
+			files='e:/football/csv/{}.csv'.format(bcgs)
 			print(files)
 			df=self.get_bssj_from_db(bcgs)
 			#print(df.head())

@@ -89,18 +89,22 @@ class getzqClass(object):
 		#获取数据库中已有的比赛id，
 		#这些比赛不在从网页获取
 		sql="select idnm from scb_error where idnm between {0} and {1} union all select idnm from scb where  idnm between {0} and {1}".format(idstart,idend)
-		idlist=self._bsid_from_db(0,0,sql)
+		idlist=self._bsid_from_db(0,0,sql) #已有的比赛id
+		#整理成List
 		for idnmrow in idlist:
 			for idnm0 in idnmrow:
 				list1.append(idnm0)
-		#获取还未进入数据库的比赛
+		
+		id_out_list=[] #获取还未进入数据库的比赛
 		for x in range(idstart,idend+1):
 			if x not in list1:
-				iii=iii+1
-				self.getbs(x)
-				if iii>20:break
-				print(datetime.datetime.now(),'--->',iii,'<---')
-		print('<<<...',datetime.datetime.now(),'--->',iii,'<---')
+				id_out_list.append(x)#获取还未进入数据库的比赛
+		iii=1		
+		for id_out in id_out_list:
+			if self.getbs(id_out):
+				print ("-----获取比赛的数据成功-----")
+				iii+=1
+			if iii>50:break
 		return iii
 	#补齐之前整个联赛的比赛数据
 	def getbs_othor(self,ls,nd):
@@ -114,9 +118,11 @@ class getzqClass(object):
 		maxid=savedateClass().select(maxidnm_sql)
 		idstart=minid[0][0]
 		idend=maxid[0][0]
+		if idend-idstart>500:
+			idstart=idend-100
 		#print("补齐之前比赛的数据{}-{}".format(idstart,idend))
 		#print(minid[0][0],maxid[0][0])
-		iii=0
+		iii=1
 		if idstart and idend:
 			print("补齐比赛数据:{}{}赛季-->({}-{})<---".format(ls,nd,idstart,idend))
 			iii=self.getbsid(idstart,idend)

@@ -71,15 +71,11 @@ class zqmain(object):
 	def lswc_save(self):
 		zqdf=zqconfigClass('').cfg_select()
 		li=zqdf.values
-		ls=zqdf.ls.values
-		if '英超' not in ls :print('12234556');return 0
+		
 		if len(li)==0:return 0
 		iii=0
 		for idnm in li:
-			print(iii)
-			if iii>60:break
 			iii+=getzqClass('').getbs_othor(idnm[0],idnm[1])
-		print("--->{}<---".format(iii))
 		return 1
 		
 
@@ -102,15 +98,15 @@ class zqmain(object):
 			i+=1
 
 			print('\n<中文字幕:>\n')
-			print('	1、获取完场比赛数据（昨日、上周六/上周日）  <1>')
+			print('	1、@获取完场比赛数据（昨日、上周六/上周日）  <1>')
 			print('	2、分析未完场比赛数据                   <2>')
-			print('	3、获取比赛段完场比赛数据和补齐联赛数据 <3 -33>')
+			print('	3、@获取比赛段完场比赛数据和补齐联赛数据 <3 -33>')
 			print('	4、补齐必发数据					<18>')
 			print('	5、需获取比赛数据    					 <5>')
 			print('	6、生成模型    					   <6>')
 			print('	7、模型匹配  							<7>')
 			print('	8、已有数据生成模型  					<8>')
-			print('	91、取数据库，生成csv/菠菜公司  		<91>')
+			print('	91、@取数据库，生成csv/菠菜公司  		<91>')
 			print('	92、取(csv/菠菜公司)，生成mxk.csv 		<92>')
 			print('	93、保存同步mxk.csv 		<93>')
 			print('	99、退出<99>\n')
