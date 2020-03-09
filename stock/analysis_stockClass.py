@@ -13,12 +13,27 @@ class analysis_stock(object):
 		self.arg = arg
 		self.code = str(arg)
 		self.total=100
+		self.begin=0
+		self.end=0
 
 	def _getk(self):
 		k=getstock(self.code)
 		df=k.GET_KLINE(self.code,'D','2019-05-04','2019-05-04')
 		name=k.GET_BASE()
 		return df,name
+
+	def get(self,rows1):
+		colum=['open','high','close','low','vol']
+		list_r=[]
+		if rows1 not in colum:return [],0
+		df,name=self._getk()
+		list_r=df[rows1].values.tolist()
+		ll=len(list_r)
+		if ll<1:return [],0
+		if self.total>ll:return list_r[-self.total:]
+		else:
+			return list_r
+
 	#寻找分型
 	def find_fenxin(self,df,index1):
 		#容错
@@ -94,14 +109,18 @@ class analysis_stock(object):
 		return MINUS_DI,PLUS_DI,ADX,ADXR
 
 	def cci(self,df,index):
+		#def CCI(df, n):
+		#  PP = (df['high'] + df['low'] + df['close']) / 3
+		#CCI = pd.Series((PP - pd.rolling_mean(PP, n)) / pd.rolling_std(PP, n) / 0.015, name = 'CCI' + str(n))
+		#return CCI
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
-
 		return cci
+
 	def macd(self,df,index):
 		diff,dea,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
 		return diff,dea,macd3
 
-	def  boll(self,df,index):
+	def boll(self,df,index):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
 	def draw(self,listccc,k_list):
@@ -117,6 +136,7 @@ class analysis_stock(object):
 
 	def test3(self):
 		df1,name=self._getk()
+		print(df1[-4:])
 		index=619
 		N=14
 		df=df1
