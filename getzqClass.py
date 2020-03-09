@@ -21,12 +21,26 @@ class getzqClass(object):
 		return  sv
 
 	#获取单场信息
+	def insert_none_bs(self,id1):
+		print("无赛程")
+		scberrorsql="insert into scb_error values (%s,%s)"
+		liste=[]
+		listee=[]
+		liste.append(str(id1))
+		liste.append("无赛程")
+		listee.append(liste)
+		dates=savedateClass()
+		dates.insert(listee,scberrorsql)
+		return 0
 	def getbs(self,id1):
 		print('开始获取',id1)
 		dates=savedateClass()
 		hs=htmlsoup(id1)
 
 		scblist,bzsc,ozlist=hs.getscbandouzhi()
+
+		#print(scblist)
+		#return 0
 		if bzsc==0:
 			print("无赛程")
 			scberrorsql="insert into scb_error values (%s,%s)"
@@ -99,11 +113,23 @@ class getzqClass(object):
 		for x in range(idstart,idend+1):
 			if x not in list1:
 				id_out_list.append(x)#获取还未进入数据库的比赛
-		iii=1		
-		for id_out in id_out_list:
+		iii=1
+		id_in_list=[]	
+		for id_out in id_out_list :
+			if id_out in id_in_list:continue#增加如果是空值的简便处理方法
 			if self.getbs(id_out):
 				print ("-----获取比赛的数据成功-----")
+				id_in_list.append(id_out)
 				iii+=1
+			else:
+				id_in_list.append(id_out)
+				for x in range(2,30,2):#增加如果是空值的简便处理方法
+					id22=id_out+x
+					if id22 in id_out_list:
+						self.insert_none_bs(id22)#增加如果是空值的简便处理方法
+						id_in_list.append(id22)
+					iii+=1
+					if iii>50:break
 			if iii>50:break
 		return iii
 	#补齐之前整个联赛的比赛数据
@@ -118,6 +144,7 @@ class getzqClass(object):
 		maxid=savedateClass().select(maxidnm_sql)
 		idstart=minid[0][0]
 		idend=maxid[0][0]
+		if idend is None:return 0
 		if idend-idstart>500:
 			idstart=idend-100
 		#print("补齐之前比赛的数据{}-{}".format(idstart,idend))
@@ -169,7 +196,7 @@ class getzqClass(object):
 
 #h=getzqClass('').idnm_in([])
 
-#h=getzqClass('').getzq_main()
+#h=getzqClass('').getbs(877543)
 #print(h.bqbf(800355))
 
 #补齐必发数据，没有必发数据时，加入必发数据

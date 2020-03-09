@@ -352,5 +352,5 @@ class zqfenxi(object):
 #h=zqfenxi(0).lsd_liebiao()
 
 #根据模型库，生成单个分析文件
-h=zqfenxi(0).creat_mxk('半球')
+#h=zqfenxi(0).creat_mxk('半球')
 

@@ -12,6 +12,7 @@ class analysis_stock(object):
 		super(analysis_stock, self).__init__()
 		self.arg = arg
 		self.code = str(arg)
+		self.total=100
 
 	def _getk(self):
 		k=getstock(self.code)
@@ -55,9 +56,20 @@ class analysis_stock(object):
 		#if s101>s10 :return 0
 		if int(df.loc[index,'volume'])<int(df.loc[index-1,'volume']):return 0
 		return 1
-	def cci_ana(self,df,index):
-
-		pass
+	def cci_ana(self,ccilist):
+		total=self.total
+		cci1=ccilist.tolist()[-total:]
+		bz1=0
+		cci2=[]
+		for i in range(0, total):
+			if cci1[i]>100:bz1=1
+			if cci1[i]<-100:bz1=-1
+			if bz1>0:cci2.append(100)
+			else:
+				cci2.append(-100)
+			
+		#print(cci2)
+		return cci2
 	def dmi_ana(self,df,index):
 
 		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
@@ -83,16 +95,38 @@ class analysis_stock(object):
 
 	def cci(self,df,index):
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
+
 		return cci
 	def macd(self,df,index):
-		macd1,macd2,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
-		return macd1,macd2,macd3
+		diff,dea,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
+		return diff,dea,macd3
 
 	def  boll(self,df,index):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
-		
+	def draw(self,listccc,k_list):
+		fig = plt.figure()
+		X=3
+		Y=1
+		ax5=fig.add_subplot(X,Y,1)
+		ax2=fig.add_subplot(X,Y,2)
 
+		ax2.plot(listccc)
+		plt.show()
+		return 0
+
+	def test3(self):
+		df1,name=self._getk()
+		index=619
+		N=14
+		df=df1
+		i=self.total
+		cci2=self.cci_ana(self.cci(df,index))
+		cci1=self.cci(df,index)[-i:]
+		#print(cci1[-i:])
+		self.draw(cci1,0)
+		self.draw(cci2,0)
+		return 0
 	def test2(self):
 		df1,name=self._getk()
 		index=619
@@ -105,6 +139,7 @@ class analysis_stock(object):
 		ax5=fig.add_subplot(X,Y,1)
 		ax2=fig.add_subplot(X,Y,2)
 		ax3=fig.add_subplot(X,Y,3)		
+		
 
 		print(name,df.loc[index,'date'])
 
@@ -128,7 +163,7 @@ class analysis_stock(object):
 		zz=[1 if ADX.loc[x]<MINUS_DI.loc[x] and ADX.loc[x]<PLUS_DI.loc[x]  else 0 for x in range(l)]
 		print(zz)
 		ax3.plot(zz)
-		ax2.plot(PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k')
+		ax3.plot(PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k')
 		#ax2.plot(ADX.values.tolist(),'g',ADXR.values.tolist(),'b',PLUS_DI.values.tolist(),'y',MINUS_DI.values.tolist(),'k')
 		
 		#股价图
@@ -247,5 +282,5 @@ class analysis_stock(object):
 
 #
 
-k=analysis_stock('000062')
-k.test2()
+k=analysis_stock('600804')
+k.test3()
