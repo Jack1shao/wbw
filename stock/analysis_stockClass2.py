@@ -3,6 +3,7 @@ from getstockClass import getstock
 import talib
 import mpl_finance as mpf
 import matplotlib.pyplot as plt
+import numpy as np
 class analysis_stock(object):
 	"""docstring for analysis_stock
 		分析单只股票k线数据
@@ -37,8 +38,8 @@ class analysis_stock(object):
 		else:
 			return list_r
 
-
-	def cci_ana(self,ccilist):
+	#强弱分界点
+	def cci_ana_qrfj(self,ccilist):
 		total=self.total
 		cci1=ccilist.tolist()[-total:]
 		bz1=0
@@ -76,11 +77,16 @@ class analysis_stock(object):
 		ax5=fig.add_subplot(X,Y,1)
 		ax2=fig.add_subplot(X,Y,2)
 		#画K线
-		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values, closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
 		#画指标叠加
 		for l in listccc:
 			ax2.plot(l)
 		plt.show()
+		return 0
+	def cci_ana_updown(self,c1,c2,c3):
+
+		if c2>c1 and c2>c3:return 1
+		if c2<c1 and c2<c3:return -1
 		return 0
 
 	def test3(self):
@@ -89,32 +95,68 @@ class analysis_stock(object):
 		index=619
 		N=14
 		df=df1[-self.total:]
-		i=self.total
-		cci2=self.cci_ana(self.cci(df,index))
-		cci1=self.cci(df,index).tolist()[-i:]
-		#print(cci1[-i:])
+		#cci处理
+		cci_qrfj=self.cci_ana_qrfj(self.cci(df,index))#强弱分界点
+		cci_ht=self.cci(df,index).tolist()[-self.total:]#画cci线用的数据
+		print(len(cci_ht))
 		listccc=[]
-		listccc.append(cci1)
-		listccc.append(cci2)
-		
-		#self.draw(cci1,df)
+		listccc.append(cci_ht)
+		#listccc.append(cci_qrfj)
+
+		#顶点坐标
+		up_li=[]
+		dw_li=[]
+
+		up_li2=[]
+		dw_li2=[]
+
+		for i in range(2,self.total):
+
+			if self.cci_ana_updown(cci_ht[i],cci_ht[i-1],cci_ht[i-2])==1:
+				up_li.append([i-1,cci_ht[i-1]])
+			if self.cci_ana_updown(cci_ht[i],cci_ht[i-1],cci_ht[i-2])==-1:
+				dw_li.append([i-1,cci_ht[i-1]])
+		for u in range(2,len(up_li)):
+			i=up_li[u-1][0]
+			c1=up_li[u-2][1]
+			c2=up_li[u-1][1]
+			c3=up_li[u][1]
+			if self.cci_ana_updown(c1,c2,c3)==1:
+				up_li2.append([i,c2])
+		#
+
+
 		fig = plt.figure()
-		X=3
+		X=2
 		Y=1
 		ax5=fig.add_subplot(X,Y,1)
 		ax2=fig.add_subplot(X,Y,2)
 		#画K线
-		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values, closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
 		#画指标叠加
 		for l in listccc:
-			ax2.plot(l)
+			ax2.plot(l,'r')
 		c_text=[]
 		for i in range(3,self.total):
-			if cci1[i]<cci1[i-1] and cci1[i-1]>cci1[i-2] and cci1[i]>90:
-				c_text.append([i,cci1[i],'p'])
+			if cci_ht[i]<cci_ht[i-1] and cci_ht[i-1]>cci_ht[i-2] and cci_ht[i]>90:
+				c_text.append([i,cci_ht[i],'p'])
 		for x in c_text:
 			plt.text(x[0],x[1],x[2],size = 5,bbox = dict(facecolor = "r", alpha = 0.2))
-
+		x=np.linspace(48,self.total,10)
+		print(up_li2)
+		for i in range(1,len(up_li2)):
+			y1=up_li2[i-1][1]
+			y2=up_li2[i][1]
+			x1=up_li2[i-1][0]
+			x2=up_li2[i][0]
+			k=(y2-y1)/(x2-x1)
+			if k>0:continue
+			b=y2-k*x2
+			y=k*x+b
+			plt.plot(x,y,'-.y')
+		#画两点线
+		plt.axhline(y=100, color='b', linestyle=':')
+		plt.axhline(y=-100, color='b', linestyle=':')
 		plt.show()
 		
 		return 0
