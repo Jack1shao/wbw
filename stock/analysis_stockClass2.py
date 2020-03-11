@@ -98,10 +98,11 @@ class analysis_stock(object):
 		#cci处理
 		cci_qrfj=self.cci_ana_qrfj(self.cci(df,index))#强弱分界点
 		cci_ht=self.cci(df,index).tolist()[-self.total:]#画cci线用的数据
-		print(len(cci_ht))
+		
 		listccc=[]
 		listccc.append(cci_ht)
 		#listccc.append(cci_qrfj)
+		#listccc.clear()
 
 		#顶点坐标
 		up_li=[]
@@ -121,9 +122,10 @@ class analysis_stock(object):
 			c1=up_li[u-2][1]
 			c2=up_li[u-1][1]
 			c3=up_li[u][1]
-			if self.cci_ana_updown(c1,c2,c3)==1:
-				up_li2.append([i,c2])
-		#
+			if cci_qrfj[i]==-100:continue
+			if c3<c2:
+				up_li2.append([i,c2,i+1,c3])
+				u+=1
 
 
 		fig = plt.figure()
@@ -142,13 +144,18 @@ class analysis_stock(object):
 				c_text.append([i,cci_ht[i],'p'])
 		for x in c_text:
 			plt.text(x[0],x[1],x[2],size = 5,bbox = dict(facecolor = "r", alpha = 0.2))
-		x=np.linspace(48,self.total,10)
+		
+		iii=self.total-1
+		while cci_qrfj[iii]==100:
+			iii-=1
+		
+		x=np.linspace(iii,self.total,10)
 		print(up_li2)
-		for i in range(1,len(up_li2)):
-			y1=up_li2[i-1][1]
-			y2=up_li2[i][1]
-			x1=up_li2[i-1][0]
-			x2=up_li2[i][0]
+		for u in up_li2[-4:]:
+			y1=u[1]
+			y2=u[3]
+			x1=u[0]
+			x2=u[2]
 			k=(y2-y1)/(x2-x1)
 			if k>0:continue
 			b=y2-k*x2
