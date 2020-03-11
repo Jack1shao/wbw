@@ -13,7 +13,7 @@ class analysis_stock(object):
 		super(analysis_stock, self).__init__()
 		self.arg = arg
 		self.code = str(arg)
-		self.total=100
+		self.total=30
 		self.begin=0
 		self.end=0
 
@@ -54,7 +54,7 @@ class analysis_stock(object):
 		#print(cci2)
 		return cci2
 
-	def cci(self,df,index):
+	def cci(self,df):
 		#def CCI(df, n):
 		#  PP = (df['high'] + df['low'] + df['close']) / 3
 		#CCI = pd.Series((PP - pd.rolling_mean(PP, n)) / pd.rolling_std(PP, n) / 0.015, name = 'CCI' + str(n))
@@ -84,50 +84,53 @@ class analysis_stock(object):
 		plt.show()
 		return 0
 	def cci_ana_updown(self,c1,c2,c3):
-
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
-
-	def test3(self):
-		df1,name=self._getk()
-		print(df1[-4:])
-		index=619
-		N=14
-		df=df1[-self.total:]
-		#cci处理
-		cci_qrfj=self.cci_ana_qrfj(self.cci(df,index))#强弱分界点
-		cci_ht=self.cci(df,index).tolist()[-self.total:]#画cci线用的数据
-		
-		listccc=[]
-		listccc.append(cci_ht)
-		#listccc.append(cci_qrfj)
-		#listccc.clear()
-
-		#顶点坐标
+	def drow_line(self,k,b,):
+		return
+	#cci处理
+	def cci_cl(self,df):
+		cci1=self.cci(df)
+		cci_qrfj=self.cci_ana_qrfj(cci1)#强弱分界点
+		cci_ht=cci1.tolist()[-self.total:]#画cci线用的数据
+		return cci_ht,cci_qrfj[-self.total:]
+	#
+	def cci_draw_line(self,cci_ht,cci_qrfj):
 		up_li=[]
 		dw_li=[]
-
-		up_li2=[]
-		dw_li2=[]
-
 		for i in range(2,self.total):
 
 			if self.cci_ana_updown(cci_ht[i],cci_ht[i-1],cci_ht[i-2])==1:
 				up_li.append([i-1,cci_ht[i-1]])
 			if self.cci_ana_updown(cci_ht[i],cci_ht[i-1],cci_ht[i-2])==-1:
 				dw_li.append([i-1,cci_ht[i-1]])
-		for u in range(2,len(up_li)):
-			i=up_li[u-1][0]
-			c1=up_li[u-2][1]
-			c2=up_li[u-1][1]
-			c3=up_li[u][1]
-			if cci_qrfj[i]==-100:continue
-			if c3<c2:
-				up_li2.append([i,c2,i+1,c3])
-				u+=1
+		#print(up_li)
+		up_li2=[]
+		dw_li2=[]
+		cci_bz_l=0
+		u=1
+		for u in range(1,len(up_li)):
+			if up_li[u][1]<up_li[u-1][1]:
+				i=up_li[u-1][0]
+				c1=up_li[u-1][1]
+				up_li2.append([i,c1,up_li[u][0],up_li[u][1]])
+				break
 
 
+		return up_li2,dw_li2
+	def test3(self):
+		df1,name=self._getk()
+		
+		#cci处理
+		cci_ht,cci_qrfj=self.cci_cl(df1)	
+
+		df=df1[-self.total:]	
+
+		#顶点坐标
+		up_li2,dw_li2=self.cci_draw_line(cci_ht,cci_qrfj)
+		print(up_li2)
+		#return 0
 		fig = plt.figure()
 		X=2
 		Y=1
@@ -135,21 +138,21 @@ class analysis_stock(object):
 		ax2=fig.add_subplot(X,Y,2)
 		#画K线
 		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
-		#画指标叠加
-		for l in listccc:
-			ax2.plot(l,'r')
-		c_text=[]
-		for i in range(3,self.total):
-			if cci_ht[i]<cci_ht[i-1] and cci_ht[i-1]>cci_ht[i-2] and cci_ht[i]>90:
-				c_text.append([i,cci_ht[i],'p'])
-		for x in c_text:
-			plt.text(x[0],x[1],x[2],size = 5,bbox = dict(facecolor = "r", alpha = 0.2))
-		
+		#画cci指标
+		ax2.plot(cci_ht,'r')
+		#叠加文字
+		#c_text=[]
+		'''for i in range(3,self.total):
+									if cci_ht[i]<cci_ht[i-1] and cci_ht[i-1]>cci_ht[i-2] and cci_ht[i]>90:
+										c_text.append([i,cci_ht[i],'p'])
+								for x in c_text:
+									plt.text(x[0],x[1],x[2],size = 5,bbox = dict(facecolor = "r", alpha = 0.2))
+								'''
 		iii=self.total-1
 		while cci_qrfj[iii]==100:
 			iii-=1
 		
-		x=np.linspace(iii,self.total,10)
+		x=np.linspace(0,self.total,10)
 		print(up_li2)
 		for u in up_li2[-4:]:
 			y1=u[1]
@@ -215,5 +218,5 @@ class analysis_stock(object):
 	#分析当前k线上涨1、2或下跌-1，-2
 
 
-k=analysis_stock('600804')
+k=analysis_stock('002385')
 k.test3()
