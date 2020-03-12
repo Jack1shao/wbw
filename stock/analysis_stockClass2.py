@@ -218,5 +218,5 @@ class analysis_stock(object):
 	#分析当前k线上涨1、2或下跌-1，-2
 
 
-k=analysis_stock('002385')
+k=analysis_stock('002483')
 k.test3()
