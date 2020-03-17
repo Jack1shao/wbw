@@ -1,5 +1,6 @@
 #
 from getstockClass import getstock
+from stock_save import stock_saveClass
 import talib
 import mpl_finance as mpf
 import matplotlib.pyplot as plt
@@ -17,11 +18,22 @@ class analysis_stock(object):
 		self.begin=0
 		self.end=0
 
-	def _getk(self):
+	def _getk1(self):
 		k=getstock(self.code)
 		df=k.GET_KLINE(self.code,'D','2019-05-04','2019-05-04')
 		name=k.GET_BASE()
 		print("获取--{0}--".format(name))
+        
+		return df,name
+
+	def _getk(self):
+		k=getstock(self.code)
+		name=k.GET_BASE()
+		h=stock_saveClass(self.code)
+		df=h.stock_from_csv()
+		if df.empty:
+			h.stock_to_csv()
+			df=h.stock_from_csv()
 		return df,name
 
 	def get(self,rows1):
@@ -218,5 +230,5 @@ class analysis_stock(object):
 	#分析当前k线上涨1、2或下跌-1，-2
 
 
-k=analysis_stock('002483')
+k=analysis_stock('300313')
 k.test3()
