@@ -17,7 +17,7 @@ class analysis_stockClass(object):
 		super(analysis_stockClass, self).__init__()
 		self.arg = arg
 		self.code=arg
-		self.total=400
+		self.total=200
 		self.begin=0
 		self.end=0
 
@@ -60,9 +60,7 @@ class analysis_stockClass(object):
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
 		return cci.tolist()
 		#强弱分界点
-	def cci_ana_qrfj(self,ccilist):
-		
-		cci1=ccilist
+	def cci_ana_qrfj(self,cci1):
 		bz1=0
 		cciqrfj=[]
 		for i in range(0, self.total):
@@ -75,27 +73,97 @@ class analysis_stockClass(object):
 		#print(cci2)
 		return cciqrfj
 	#cci折角
-	def cci_ana_updown(self,c1,c2,c3):
+	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
 	#cci折角
-	def cci_ana_dd(self,ccilist):
+	def __cci_ana_dd(self,ccilist):
 		cci=ccilist
 		dd_li=[]
 		up_li=[]
 		dw_li=[]
+		#判断折角
+		dd_li.append('lx')#第一个cci线为连续
+
 		for i in range(2,self.total):
 			today=i
+
 			lastday=i-1
 			yesteday=i-2
-			zz=self.cci_ana_updown(cci[today],cci[lastday],cci[yesteday])
+			zz=self.__cci_ana_updown(cci[today],cci[lastday],cci[yesteday])
 			if zz==1:
-				dd_li.append([lastday,cci[lastday],'up'])
-			if zz==-1:
-				dd_li.append([lastday,cci[lastday],'dw'])
-		pass
+				dd_li.append('up')
+			elif zz==-1:
+				dd_li.append('dw')
+			else:
+				dd_li.append('lx')
+		dd_li.append('lx')#最后一个cci线为连续
+		
+		#判断相邻连续折角
+		lxzj_li=[]
+		lxzj_li.append(0)
+		for i in range(1,self.total):
+			if dd_li[i]=='lx':lxzj_li.append(0)
+			elif dd_li[i]!='lx':
+				kk=lxzj_li[i-1]+1
+				lxzj_li.append(kk)
+		#print(lxzj_li)
+		#去掉没用的折角
+		in_li=[]
+		for i in range(self.total-1,-1,-1):
+			if lxzj_li[i]==0:continue
+			if lxzj_li[i]==1 and i not in in_li:
+				in_li.append(i)
+				if dd_li[i]=='up':up_li.append(i)
+				if dd_li[i]=='dw':dw_li.append(i)
+			if lxzj_li[i]>1 and i not in in_li:
+				h=lxzj_li[i]
+				for p in range(0,h):
+					in_li.append(i-p)
+				if h==2:continue
+				if h==3:
+					if dd_li[i]=='up':up_li.append(i)
+					if dd_li[i]=='dw':dw_li.append(i)
+				if h>3 and h%2==1:
+					if dd_li[i]=='up':up_li.append(i)
+					if dd_li[i]=='dw':dw_li.append(i)
+				if h>3 and h%2==0:
+					if dd_li[i]=='up':
+						up_li.append(i)
+						dw_li.append(i-h-1)
+					if dd_li[i]=='dw':
+						
+						dw_li.append(i)
+						up_li.append(i-h-1)
+		#		
 
+
+		in_li.clear()
+		lxzj_li.clear()
+		dd_li.clear()
+		return up_li,dw_li
+	def draw_dd_up(self,cciqr,cci):
+		up_li,dw_li=self.__cci_ana_dd(cci)
+
+		zjd_li=[]
+		up_li2=[]
+		print(up_li)
+		bz=0
+		for i in range(0,self.total):
+			
+			if cciqr[i]<0:
+				#del zjd_li[:]
+				bz=0
+				continue
+			if cciqr[i]>0 and i in up_li and bz==0:
+				bz=i
+			elif cciqr[i]>0 and i in up_li and cci[i]<cci[bz]:
+						up_li2.append([bz,cci[bz],i,cci[i]])
+						bz=0
+			
+		#print(up_li2)
+		return up_li2
 	#卖点分析
 	def maidian(self):
 		
@@ -105,6 +173,9 @@ class analysis_stockClass(object):
 		df1,name=self._getk()
 		cci=self.cci(df1)[-self.total:]
 		cci_qr=self.cci_ana_qrfj(cci)
+		#print(cci_qr)
+		up_li2=self.draw_dd_up(cci_qr,cci)
+
 		#up,mid,lo=self.boll(df1)
 		df=df1[-self.total:]
 
@@ -114,6 +185,8 @@ class analysis_stockClass(object):
 		close_li=self.get(df,'close')
 
 		#计算数据区域
+		#
+
 		#<1>三条线都上涨的卖出条件M1
 		#z1=HIGH>BHIGH AND BHIGH>CHIGH AND CLOSE>BCLOSE AND BCLOSE>CCLOSE ;/*三连涨*/
 		for i in range(2,self.total):
@@ -153,8 +226,26 @@ class analysis_stockClass(object):
 		#ax5.plot(lo[-self.total:],'r')
 		#画cci指标
 		ax2.plot(cci,'r')
-		ax2.plot(cci_qr,'y')
+		ax2.plot(cci_qr,'g')
 		#画两点线
+		print(up_li2[-2:])
+		for u in up_li2[-2:]:
+			y1=u[1]
+			y2=u[3]
+			x1=u[0]
+			x2=u[2]
+			k=(y2-y1)/(x2-x1)
+			if k>0:continue
+			b=y2-k*x2
+			c1=(300-b)/k
+			c2=(-200-b)/k
+			if c2>self.total:
+				c2=self.total
+			if c1<0:
+				c1=0
+			x=np.linspace(c1,c2,10)
+			y=k*x+b
+			plt.plot(x,y,'-.y')
 		plt.axhline(y=100, color='b', linestyle=':')
 		plt.axhline(y=-100, color='b', linestyle=':')
 
@@ -167,7 +258,7 @@ class analysis_stockClass(object):
 		#print(high_li)
 		plt.show()
 		return 0
-
-k=analysis_stockClass('600120')
+#li=['300498','002385','300313']
+k=analysis_stockClass('002185')
 
 k.maidian()
