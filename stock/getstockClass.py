@@ -17,7 +17,7 @@ class getstock(object):
 
 		df = ts.get_stock_basics()
 		name=None
-		
+		if self.code=='today_all':return 'today_all'
 		for c,row in df.iterrows():
 			if str(c)==self.code:
 				name=row['name']
@@ -41,6 +41,10 @@ class getstock(object):
 					#end	#结束日期 ：	#format：YYYY-MM-DD 
 		'''
 		code=str(self.code)
+		if code=='today_all':return(self.__get_day_all())
+		if len(code)!=6:
+			print('股票代码错误')
+			return 0
 		datestart='2018-05-04' 
 		#起始日期 注：日期太早get_k_data会出现错误
 		now = datetime.datetime.now()
@@ -56,19 +60,22 @@ class getstock(object):
 		#df=ts.get_hist_data(code,start=datestart, end=dateend,ktype=ktypes)
 		df['code']=str(code)
 		df['ktype']=str(ktypes)
+		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
+		gxsj = datetime.datetime.now().strftime('%H:%M')
+		df['gxrq']=gxrq
+		df['gxsj']=gxsj
 		#容错
 		if len(df)==0:
 			print("没有数据")
 			return 0		
 		#print(df)
 		return df
+	#获取当天所有股票信息
+	def __get_day_all(self):
 
-
-#测试
-'''print("测试开始。。。")
-
-t=getstock(600635)
-#t.GET_KLINE('600635','M','2018-05-04','2019-05-04')
-print(t.GET_BASE())
-print(t.GET_KLINE(600635,'M','2018-05-04','2019-05-04'))
-'''
+		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
+		gxsj = datetime.datetime.now().strftime('%H:%M')
+		df=ts.get_today_all()
+		df['gxrq']=gxrq
+		df['gxsj']=gxsj
+		return df

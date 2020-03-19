@@ -62,12 +62,12 @@ class gupiaoClass(object):
 		filepath_today="e:/stock_k/today_all.csv"
 		
 		now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-		#print(now)
+
 		df=ts.get_today_all()
 		df['date']=now
 		df['name']=''
 		df.to_csv(filepath_today,encoding="gbk")
-		#print(df.head())
+
 		return 0
 
 	#存储K线

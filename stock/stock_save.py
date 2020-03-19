@@ -29,7 +29,7 @@ class stock_saveClass(object):
 	def stock_to_db(self,df):
 
 		pass
-
+	
 	def stock_from_csv(self):
 		
 		if os.path.exists(self.files1):
@@ -49,7 +49,7 @@ class stock_saveClass(object):
 		return 1	
 
 '''li=['300498','002385','300313']
-k=stock_saveClass('300313')
+k=stock_saveClass('today_all')
 k.stock_to_csv()
 df=k.stock_from_csv()
 print(df.head())'''
