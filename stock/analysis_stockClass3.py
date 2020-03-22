@@ -123,7 +123,8 @@ class analysis_stockClass(object):
 					in_li.append(i-p)
 				if h==2:continue
 				if h==3:
-					if dd_li[i]=='up':up_li.append(i)
+					if dd_li[i]=='up' and cci[i]>=cci[i-2]:up_li.append(i)
+					elif dd_li[i]=='up' and cci[i]<cci[i-2]:up_li.append(i-2)
 					if dd_li[i]=='dw':dw_li.append(i)
 				if h>3 and h%2==1:
 					if dd_li[i]=='up':up_li.append(i)
@@ -143,27 +144,52 @@ class analysis_stockClass(object):
 		lxzj_li.clear()
 		dd_li.clear()
 		return up_li,dw_li
+	#两点画线
+	def __line(self,x1,y1,x2,y2):
+		k=(y2-y1)/(x2-x1)
+		b=y2-k*x2
+
+		c1=(300-b)/k
+		c2=(-200-b)/k
+		if c2>self.total:
+			c2=self.total
+		if c1<0:
+			c1=0
+		return k,b,c1,c2
+	#选择顶点	
 	def draw_dd_up(self,cciqr,cci):
 		up_li,dw_li=self.__cci_ana_dd(cci)
 
 		zjd_li=[]
 		up_li2=[]
-		print(up_li)
+		line_li=[]
+
 		bz=0
 		for i in range(0,self.total):
 			
 			if cciqr[i]<0:
 				#del zjd_li[:]
+	
 				bz=0
 				continue
-			if cciqr[i]>0 and i in up_li and bz==0:
+			if i not in up_li:continue
+
+			if  bz==0:bz=i
+			if  cci[i]>=cci[bz]:
 				bz=i
-			elif cciqr[i]>0 and i in up_li and cci[i]<cci[bz]:
+			elif  cci[i]<cci[bz]:
 						up_li2.append([bz,cci[bz],i,cci[i]])
+
 						bz=0
-			
-		#print(up_li2)
-		return up_li2
+						k,b,c1,c2=self.__line(bz,cci[bz],i,cci[i])
+						line_li.append([k,b,c1,c2])
+
+
+		return up_li2,line_li
+
+
+
+					
 	#卖点分析
 	def maidian(self):
 		
@@ -174,7 +200,7 @@ class analysis_stockClass(object):
 		cci=self.cci(df1)[-self.total:]
 		cci_qr=self.cci_ana_qrfj(cci)
 		#print(cci_qr)
-		up_li2=self.draw_dd_up(cci_qr,cci)
+		up_li2,line_li=self.draw_dd_up(cci_qr,cci)
 
 		#up,mid,lo=self.boll(df1)
 		df=df1[-self.total:]
@@ -228,8 +254,8 @@ class analysis_stockClass(object):
 		ax2.plot(cci,'r')
 		ax2.plot(cci_qr,'g')
 		#画两点线
-		print(up_li2[-2:])
-		for u in up_li2[-2:]:
+		#print(up_li2[-2:])
+		for u in up_li2:
 			y1=u[1]
 			y2=u[3]
 			x1=u[0]
@@ -246,6 +272,8 @@ class analysis_stockClass(object):
 			x=np.linspace(c1,c2,10)
 			y=k*x+b
 			plt.plot(x,y,'-.y')
+
+
 		plt.axhline(y=100, color='b', linestyle=':')
 		plt.axhline(y=-100, color='b', linestyle=':')
 
@@ -259,6 +287,6 @@ class analysis_stockClass(object):
 		plt.show()
 		return 0
 #li=['300498','002385','300313']
-k=analysis_stockClass('002185')
+k=analysis_stockClass('002584')
 
 k.maidian()
