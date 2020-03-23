@@ -1,5 +1,6 @@
 #stock_save
 from getstockClass import getstock
+from savestockClass import savedateClass
 from pandas import read_csv
 import os
 from pandas.core.frame import DataFrame
@@ -26,9 +27,10 @@ class stock_saveClass(object):
 		print('-{}-{} 存入csv'.format(self.code,name))
 		return 1
 
-	def stock_to_db(self,df):
-
-		pass
+	def stock_to_db(self,df,tab1):
+		kk=savedateClass()
+		kk.insert_by_df(df,tab1)
+		return 1
 	
 	def stock_from_csv(self):
 		
@@ -48,8 +50,12 @@ class stock_saveClass(object):
 		df.to_csv(files1,mode='a',header=False)
 		return 1	
 
-'''li=['300498','002385','300313']
-k=stock_saveClass('today_all')
-k.stock_to_csv()
-df=k.stock_from_csv()
-print(df.head())'''
+#'''li=['300498','002385','300313']
+#k=stock_saveClass('today_all')
+#k.stock_to_csv()
+#df=k.stock_from_csv()
+#k.stock_to_db(df,'todayall')
+#for x in df['code'].values.tolist():
+	#print(x)
+#print(df['code'])
+#'''

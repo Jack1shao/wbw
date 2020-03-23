@@ -1,6 +1,7 @@
 #*************
 #获取股票信息
 #2017.04.07
+
 #sjk
 #*************
 from sqlalchemy import create_engine
@@ -10,16 +11,16 @@ import pandas as pd
 import pymysql;
 import datetime;
 import time;
-import matplotlib.pyplot as plt
-import matplotlib.finance as mpf
-from matplotlib.finance import quotes_historical_yahoo_ochl
+#import matplotlib as plt
+#import matplotlib.finance as mpf
+#from matplotlib.finance import quotes_historical_yahoo_ochl
 
 #函数：创建mysql链接
-
+#创建数据库连接引擎
 def mysql_create_engine():
 	try:
 		engine = create_engine("mysql+pymysql://root:123456@localhost:3306/stock?charset=utf8",encoding="utf-8", echo=True)
-		print('create_engine succeeded')
+		print('创建数据库连接引擎')
 	except Exception as e:
 		print(str(e))
 	return engine
@@ -27,42 +28,44 @@ def mysql_create_engine():
 
 #函数1：获取上市公司股票基本信息
 def download_stock_basic_info():
-#获取股票代码名称等基本信息，并写入数据库
-# code,代码
-# name,名称
-# industry,所属行业
-# area,地区
-# pe,市盈率
-# outstanding,流通股本
-# totals,总股本(万)
-# totalAssets,总资产(万)
-# liquidAssets,流动资产
-# fixedAssets,固定资产
-# reserved,公积金
-# reservedPerShare,每股公积金
-# eps,每股收益
-# bvps,每股净资
-# pb,市净率
-# timeToMarket,上市日期
+	#获取股票代码名称等基本信息，并写入数据库
+	# code,代码
+	# name,名称
+	# industry,所属行业
+	# area,地区
+	# pe,市盈率
+	# outstanding,流通股本
+	# totals,总股本(万)
+	# totalAssets,总资产(万)
+	# liquidAssets,流动资产
+	# fixedAssets,固定资产
+	# reserved,公积金
+	# reservedPerShare,每股公积金
+	# eps,每股收益
+	# bvps,每股净资
+	# pb,市净率
+	# timeToMarket,上市日期
 	try:
 		engine = mysql_create_engine()
+        
 		conn=engine.connect()#获取数据库链接，为执行sql准备
-		print('get conn succeeded')
+
 		sql='delete from stockbasic '#删除已获取股票代码（全部删除）。数据不多，简便方法，否则要用增量写入
 		cur=conn.execute(sql)
 		conn.close()
 		list1=[]
+        
 		df = ts.get_stock_basics()
-		max_timeToMarket=20170101
+		max_timeToMarket=20200101
 		for code,row in df.iterrows():
 			#判断未上市的公司
 			if row['timeToMarket']==0:
 				list1.append(code)
 		#删除未上市的公司记录
 		df2=df.drop(list1,axis=0)
-		print('create_engine succeeded')
+
 		df2.to_sql('stockbasic',engine,if_exists='append') #追加到数据库表中
-		print('stockbasic into mysql succeeded')
+
 	except Exception as e:
 		print(str(e));
 	return 0
@@ -79,33 +82,33 @@ def getSixDigitalStockCode(code):
 #函数 下载股票k线（日周月）get_hist_data（）
 
 def download_stock_k_lineH(code):
-#获取股票k线
-# 参数说明：
+	#获取股票k线
+	# 参数说明：
 
-# code：股票代码，即6位数字代码，或者指数代码（sh=上证指数 sz=深圳成指 hs300=沪深300指数 sz50=上证50 zxb=中小板 cyb=创业板）
-# start：开始日期，格式YYYY-MM-DD
-# end：结束日期，格式YYYY-MM-DD
-# ktype：数据类型，D=日k线 W=周 M=月 5=5分钟 15=15分钟 30=30分钟 60=60分钟，默认为D
-# retry_count：当网络异常后重试次数，默认为3
-# pause:重试时停顿秒数，默认为0、
+	# code：股票代码，即6位数字代码，或者指数代码（sh=上证指数 sz=深圳成指 hs300=沪深300指数 sz50=上证50 zxb=中小板 cyb=创业板）
+	# start：开始日期，格式YYYY-MM-DD
+	# end：结束日期，格式YYYY-MM-DD
+	# ktype：数据类型，D=日k线 W=周 M=月 5=5分钟 15=15分钟 30=30分钟 60=60分钟，默认为D
+	# retry_count：当网络异常后重试次数，默认为3
+	# pause:重试时停顿秒数，默认为0、
 
-# 返回值说明：
+	# 返回值说明：
 
-# date：日期
-# open：开盘价
-# high：最高价
-# close：收盘价
-# low：最低价
-# volume：成交量
-# price_change：价格变动
-# p_change：涨跌幅
-# ma5：5日均价
-# ma10：10日均价
-# ma20:20日均价
-# v_ma5:5日均量
-# v_ma10:10日均量
-# v_ma20:20日均量
-# turnover:换手率[注：指数无此项]
+	# date：日期
+	# open：开盘价
+	# high：最高价
+	# close：收盘价
+	# low：最低价
+	# volume：成交量
+	# price_change：价格变动
+	# p_change：涨跌幅
+	# ma5：5日均价
+	# ma10：10日均价
+	# ma20:20日均价
+	# v_ma5:5日均量
+	# v_ma10:10日均量
+	# v_ma20:20日均量
+	# turnover:换手率[注：指数无此项]
 	try:
 		engine = mysql_create_engine()
 		df=ts.get_hist_data(code)#日k线
@@ -181,8 +184,8 @@ def get_kline_maxdate(code,ktype):
 	
 	
 	#函数 增量获取历史K线 download_stock_k_line_zl
-def download_stock_k_line_zl(code,ktypes):
-	 #获取股票k线
+def download_stock_k_line_zl(engine,code,ktypes):
+	#获取股票k线
 	 	#获取历史数据（前复权）get_h_data
 	# 参数说明：
 		# code:string,股票代码 e.g. 600848
@@ -213,7 +216,7 @@ def download_stock_k_line_zl(code,ktypes):
 		df['code']=str(code)
 		df['ktype']=str(ktypes)
 		
-		engine = mysql_create_engine()
+		#engine = mysql_create_engine()
 		df.to_sql('stockklinehist',engine,if_exists='append')
 		time.sleep(1)
 		print('stockklinehist into mysql succeeded')
@@ -225,7 +228,7 @@ def download_stock_k_line_zl(code,ktypes):
 	
 #函数 取K线
 def down_all_kline():
-#函数 取公司的代码、名称、上市日期
+	#函数 取公司的代码、名称、上市日期
 	try:
 		start=''
 		engine = mysql_create_engine()
@@ -237,14 +240,18 @@ def down_all_kline():
 		datelist=cur.fetchall()
 		
 		# dateretun=[]
-		# list_ktyp=['w','d','m']
-		list_ktyp=['m']
-		for row in datelist: 
+		list_ktyp=['w','d','m']
+		#list_ktyp=['w']
+		print(datelist)
+		stock_li=['300106','603336','300414','002498','300011','002335','002483','600598','002385','603019','300179','600120','300316','000725','600745','300346','300377','002216','600143','600804','300048','300215','002519','300131','300040','300370','600405','601126','600359','002777','300360','300259','002296','300095']
+		for row in stock_li: 
 			for ty in list_ktyp:
-				#code=str(row[0])
-				download_stock_k_line_zl(row[0],ty[0])
-				#print(code)
+				code=str(row)
+				download_stock_k_line_zl(engine,code,ty[0])
+				print(code)
+
 			time.sleep(1)
+			
 		conn.close()
 		print('数据库链接关闭180052')
 	except Exception as e:
@@ -266,7 +273,7 @@ def get_kline_list():
 	return data_list
 #函数：画股票k线图
 def draw_kline(data_list):
-# 创建子图
+	# 创建子图
 	fig, ax = plt.subplots()
 	fig.subplots_adjust(bottom=0.2)
 	# 设置X轴刻度为日期时间

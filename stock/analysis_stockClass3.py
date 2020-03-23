@@ -287,6 +287,6 @@ class analysis_stockClass(object):
 		plt.show()
 		return 0
 #li=['300498','002385','300313']
-k=analysis_stockClass('002584')
+k=analysis_stockClass('002498')
 
 k.maidian()
