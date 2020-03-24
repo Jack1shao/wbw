@@ -32,26 +32,24 @@ class analysis_stockClass(object):
 		return df,name
 	def get(self,df,rows1):
 		colum=['open','high','close','low','volume']
-
 		list_r=[]
 		if rows1 not in colum:return [],0
 		df,name=self._getk()
-
-
 		list_r=df[rows1].values.tolist()
 		ll=len(list_r)
 		if ll<1:return [],0
 		if self.total>ll:return list_r[-self.total:]
 		else:
 			return list_r
-
+	#指标macd
 	def macd(self,df,index):
 		diff,dea,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
 		return diff,dea,macd3
-
+	#指标boll
 	def boll(self,df):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
+	#指标cci
 	def cci(self,df):
 		#def CCI(df, n):
 		#  PP = (df['high'] + df['low'] + df['close']) / 3
@@ -59,7 +57,7 @@ class analysis_stockClass(object):
 		#return CCI
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
 		return cci.tolist()
-		#强弱分界点
+	#强弱分界点
 	def cci_ana_qrfj(self,cci1):
 		bz1=0
 		cciqrfj=[]
@@ -137,9 +135,6 @@ class analysis_stockClass(object):
 						
 						dw_li.append(i)
 						up_li.append(i-h-1)
-		#		
-
-
 		in_li.clear()
 		lxzj_li.clear()
 		dd_li.clear()
@@ -159,11 +154,9 @@ class analysis_stockClass(object):
 	#选择顶点	
 	def draw_dd_up(self,cciqr,cci):
 		up_li,dw_li=self.__cci_ana_dd(cci)
-
 		zjd_li=[]
 		up_li2=[]
 		line_li=[]
-
 		bz=0
 		for i in range(0,self.total):
 			
@@ -183,12 +176,7 @@ class analysis_stockClass(object):
 						bz=0
 						k,b,c1,c2=self.__line(bz,cci[bz],i,cci[i])
 						line_li.append([k,b,c1,c2])
-
-
 		return up_li2,line_li
-
-
-
 					
 	#卖点分析
 	def maidian(self):
@@ -239,20 +227,19 @@ class analysis_stockClass(object):
 		high_li.clear()
 		low_li.clear()
 		#画线区域
-		fig = plt.figure()
-		X=2
-		Y=1
-		ax5=fig.add_subplot(X,Y,1)
-		ax2=fig.add_subplot(X,Y,2)
+
+		fig, ax = plt.subplots(2, 1, figsize=(16,8))
 		#画K线
-		mpf.candlestick2_ochl(ax=ax5,opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+		ax[0].set_title(self.code)
+		mpf.candlestick2_ochl(ax=ax[0],opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+		
 		#画boll
 		#ax5.plot(up[-self.total:],'r')
 		#ax5.plot(mid[-self.total:],'r')
 		#ax5.plot(lo[-self.total:],'r')
 		#画cci指标
-		ax2.plot(cci,'r')
-		ax2.plot(cci_qr,'g')
+		ax[1].plot(cci,'r')
+		ax[1].plot(cci_qr,'g')
 		#画两点线
 		#print(up_li2[-2:])
 		for u in up_li2:
@@ -284,9 +271,9 @@ class analysis_stockClass(object):
 			plt.text(x[0],x[1],x[2],size = 10)
 		
 		#print(high_li)
+
 		plt.show()
 		return 0
 #li=['300498','002385','300313']
-k=analysis_stockClass('002498')
-
+k=analysis_stockClass('603336')
 k.maidian()

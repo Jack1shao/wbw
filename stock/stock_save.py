@@ -51,9 +51,11 @@ class stock_saveClass(object):
 		return 1	
 
 #'''li=['300498','002385','300313']
-#k=stock_saveClass('today_all')
+#k=stock_saveClass('002385')
+#h=getstock('today_all')
 #k.stock_to_csv()
 #df=k.stock_from_csv()
+#df=h.get_day_all()
 #k.stock_to_db(df,'todayall')
 #for x in df['code'].values.tolist():
 	#print(x)

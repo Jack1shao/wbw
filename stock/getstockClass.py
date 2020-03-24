@@ -71,7 +71,7 @@ class getstock(object):
 		#print(df)
 		return df
 	#获取当天所有股票信息
-	def __get_day_all(self):
+	def get_day_all(self):
 
 		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
 		gxsj = datetime.datetime.now().strftime('%H:%M')
