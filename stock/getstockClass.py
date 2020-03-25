@@ -108,8 +108,33 @@ class getstock(object):
 		#删除未上市的公司记录
 		df2=df.drop(list1,axis=0)
 		return df2
-
-	def download_stock_k_line_hist(code,ktypes):
+	def get_kline_maxdate(self,code,ktype):
+		dateretun=[]
+		try:
+			engine = mysql_create_engine()
+			conn=engine.connect()
+			print('get conn succeeded')
+			sql2="select code,max(date) from stockklinehist where code=%s and ktype='%s' "%(str(code),str(ktype))
+			cur=conn.execute(sql2)
+			datelist=cur.fetchall()
+			conn.close()
+			#获取数据：code ktype max(date)
+			#这里还要判断当天未完成的数据不能写入数据库
+			
+			for row in datelist:
+				#返回空值判断
+				if row[0] is None:return 0
+				dateretun.append(code)
+				dateretun.append(ktype)
+				print(row[1])
+				datess=row[1]+datetime.timedelta(days =1)#加一天，根据函数的起始日期的要求
+				dateretun.append(datess.strftime('%Y-%m-%d'))#r日期格式化
+			print(dateretun)
+			#conn.close()
+		except Exception as e:
+			print(str(e));
+		return dateretun
+	def download_stock_k_line_hist(self,code,ktypes,datestart,dateend):
 		#获取股票k线
 		 	#获取历史数据（前复权）get_h_data
 		# 参数说明：
@@ -130,13 +155,18 @@ class getstock(object):
 			# amount : 成交金额
 			#df=ts.get_h_data(code,start='2011-01-01', end='2017-03-16')
 			#print(df)
-		datestart='1990-01-01' #起始日期  #end=time.strftime('%Y-%m-%d',time.localtime(time.time()))#结束日期
-		dateend=datetime.datetime.now().strftime('%Y-%m-%d')#结束日期
+		#datestart='1990-01-01' #起始日期  #end=time.strftime('%Y-%m-%d',time.localtime(time.time()))#结束日期
+		#dateend=datetime.datetime.now().strftime('%Y-%m-%d')#结束日期
 		#dateend='2017-03-16'#结束日期
-		if get_kline_maxdate(code,ktypes)!=0:
-			datestart=get_kline_maxdate(code,ktypes)[2]
-		print(datestart,dateend,code,ktypes)
+		#maxdate=self.get_kline_maxdate(code,ktypes)
+		#print(maxdate)
+		#if maxdate!=0:
+			#datestart=maxdate[2]
+		#print(datestart,dateend,code,ktypes)
 		df=ts.get_hist_data(code,ktype=ktypes,start=datestart,end=dateend)
 		df['code']=str(code)
 		df['ktype']=str(ktypes)
-		return d
+		return df
+#kk=getstock('300414')
+df=ts.get_k_data('603336',ktype='30')
+print(df[-20:])
