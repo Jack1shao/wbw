@@ -54,6 +54,8 @@ class gu_save(object):
 				df=self.get_k_from_api(code,'m')
 			else:
 				df=self.get_k_from_api(code,ktype1)
+
+			df.drop([len(df)-1],inplace=True)
 			self.save_to_csv(code,df,'')
 			return df#DataFrame([])
 		return df[df.ktype==ktype1]
@@ -77,46 +79,54 @@ class gu_save(object):
 		
 		#从本地取数的条件
 			#最后一条数据是今天的
+			#早上9点之前是前一天的数据
 		df_bd=self.get_k_from_db(code,ktype1)
 		if self.pd_last_k(df_bd)==1 and df_bd.empty is False:
 			return df_bd
 		#print(df_bd)
 		#否则 从接口取数
 		df_jk=self.get_k_from_api(code,ktype1)
+		#30分钟线不做存储
+		if ktype1=='30':
+			return df_jk
 
 		#写入数据库的条件
 			#判断时间已到到15：00
 			#判断最后一条数据是否今天的
 		#print(df_jk)
 		gxsj = datetime.datetime.now().strftime('%H%M')
+		bd_date_li=df_bd.date.values.tolist()
+		jk_date_li=df_jk.date.values.tolist()
+		if df_jk.empty:return 0
+		#最后一个时间删除，用于增量插入
+		if ktype1 in ['w','m'] and len(jk_date_li)>0:
+			jk_date_li.pop()
+		if (int(gxsj)<1500 and int(gxsj)>930) and ktype1=='D' :
+			jk_date_li.pop()
 		
-		if int(gxsj)>1500 or int(gxsj)<800 and ktype1!='30' and df_jk.empty is False:#不在交易时间做数据插入,30分钟线保存
-			#df_jk.date Not in df_bd.date
-			#插入本地
-			#判断最后一个时间一样
-			bd_date_li=df_bd.date.values.tolist()
-			jk_date_li=df_jk.date.values.tolist()
-			
-			list_not_in=[]
-			for d in jk_date_li:
-				if d not in bd_date_li:
-					list_not_in.append(d)
-			if len(list_not_in)>0:
-				print(list_not_in)
-				df=df_jk[df_jk.date.isin(list_not_in)]
-				print(df)
-				self.save_to_csv(code,df,'')
-			
-		
+		#插入本地
+		#判断最后一个时间一样
+
+		#接口的数据不在本地，增量插入数据
+		list_not_in=[]
+		for d in jk_date_li:
+			if d not in bd_date_li:
+				list_not_in.append(d)
+
+		if len(list_not_in)>0:
+			print(list_not_in)
+			df=df_jk[df_jk.date.isin(list_not_in)]
+			self.save_to_csv(code,df,'a')
+				
 		return df_jk
 
 
 
 
-kk=gu_save('0')
+#kk=gu_save('0')
 #df=kk.get_k_from_api('300414','m')
 #kk.save_to_csv('300414',df,'')
 #df2=kk.get_k_from_api('300414','w')
-df=kk.get_k('603336','m')
+#df=kk.get_k('603336','D')
 #df=df.append(df2)
-print(df)
+#print(df)
