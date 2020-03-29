@@ -29,11 +29,23 @@ class gu_zb(object):
 		bz1=0
 		cciqrfj=[]
 		total=len(cci1)
+		js_up=0
+		js_dw=0
 		for i in range(0, total):
-			if cci1[i]>100:bz1=1
-			if cci1[i]<-100:bz1=-1
-			if bz1>0:cciqrfj.append(1)
+			if cci1[i]>100:
+				bz1=1
+			if cci1[i]<-100:
+				bz1=-1
+			if bz1>0:
+				if js_up==1 and cci1[i]<100:
+					bz=-1
+					cciqrfj.pop()
+					cciqrfj.append(-100)
+				else:
+					js_up+=1
+					cciqrfj.append(js_up)
 			else:
+				
 				cciqrfj.append(-100)
 		return cciqrfj
 
@@ -94,7 +106,7 @@ class gu_zb(object):
 				h=lxzj_li[i]
 				for p in range(0,h):
 					in_li.append(i-p)
-				if h==2:continue
+				if h==2 or h==4:continue
 				
 				if h==3:
 					#3个角取值

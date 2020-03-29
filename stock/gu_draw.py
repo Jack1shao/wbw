@@ -148,7 +148,8 @@ class gu_draw(object):
 def main():
 	print('this message is from main function')
 	g=gu_draw('')
-	g.dr_cci2('600598','m')
+	g.dr_cci2('300414','D')
+	#g.dr_cci2('600804','w')
 
 if __name__ == '__main__':
 	main()
