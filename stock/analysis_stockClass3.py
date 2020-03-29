@@ -11,6 +11,7 @@ import mpl_finance as mpf
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas.core.frame import DataFrame
+from gu_save import gu_save
 class analysis_stockClass(object):
 	"""docstring for analysis_stockClass"""
 	def __init__(self, arg):
@@ -20,15 +21,11 @@ class analysis_stockClass(object):
 		self.total=200
 		self.begin=0
 		self.end=0
-
-	def _getk(self):
-		k=getstock(self.code)
+	#取数函数
+	def _getk(self,code1,ktype1):
+		k=gu_save('')
 		name=''
-		h=stock_saveClass(self.code)
-		df=h.stock_from_csv()
-		if df.empty:
-			h.stock_to_csv()
-			df=h.stock_from_csv()
+		df=k.get_k_from_api(code1,ktype1)
 		return df,name
 	def get(self,df,rows1):
 		colum=['open','high','close','low','volume']
@@ -179,14 +176,28 @@ class analysis_stockClass(object):
 		return up_li2,line_li
 					
 	#卖点分析
-	def maidian(self):
+	def main(self):
 		
 		#变量初始化区域
 		bz=[]
 		#取数据区域
-		df1,name=self._getk()
-		cci=self.cci(df1)[-self.total:]
-		cci_qr=self.cci_ana_qrfj(cci)
+		df_30,name=self._getk(self.code,'30')
+		df_d,name=self._getk(self.code,'D')
+		df_w,name=self._getk(self.code,'w')
+		df_m,name=self._getk(self.code,'m')
+		
+
+		cci_d=self.cci(df_d)[-self.total:]
+		cci_d_qr=self.cci_ana_qrfj(cci_d)
+
+		cci_30=self.cci(df_30)[-self.total:]
+		cci_30_qr=self.cci_ana_qrfj(cci_30)
+
+		cci_w=self.cci(df_w)[-self.total:]
+		cci_w_qr=self.cci_ana_qrfj(cci_w)
+
+		cci_m=self.cci(df_m)[-self.total:]
+		cci_m_qr=self.cci_ana_qrfj(cci_m)
 		#print(cci_qr)
 		up_li2,line_li=self.draw_dd_up(cci_qr,cci)
 

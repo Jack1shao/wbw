@@ -9,12 +9,41 @@ class gu_save(object):
 	def __init__(self, arg):
 		super(gu_save, self).__init__()
 		self.arg = arg
+		self.basc='basc'
 		
 
 	def get_csvmc(self,code):
 		csv_path='d:/stock_csv/{}.csv'.format(code)
 		return csv_path
+	def get_base_from_api(self):
+		df = ts.get_stock_basics()
+		list1=[]
+        
+		df = ts.get_stock_basics()
+		max_timeToMarket=20200101
+		for code,row in df.iterrows():
+			#判断未上市的公司
+			if row['timeToMarket']==0:
+				list1.append(code)
 
+		#删除未上市的公司记录
+		df2=df.drop(list1,axis=0)
+
+		#df2.to_sql('stockbasic',engine,if_exists='append') 
+		return df2
+
+	def get_base_from_db(self):
+		files1=self.get_csvmc(self.basc)
+		if os.path.exists(files1):
+			with open(files1,'r',encoding='utf-8') as csv_file:
+				df = read_csv(csv_file,index_col=0)#指定0列为index列
+		return df
+	def get_from_csv(self,files1):
+	
+		if os.path.exists(files1):
+			with open(files1,'r',encoding='utf-8') as csv_file:
+				df = read_csv(csv_file,index_col=0)#指定0列为index列
+		return df
 	#从接口取数
 	def get_k_from_api(self,code,ktype1):
 		k_li=['m','w','D','30']
@@ -55,7 +84,7 @@ class gu_save(object):
 			else:
 				df=self.get_k_from_api(code,ktype1)
 
-			df.drop([len(df)-1],inplace=True)
+			#df.drop([len(df)-1],inplace=True)
 			self.save_to_csv(code,df,'')
 			return df#DataFrame([])
 		return df[df.ktype==ktype1]
@@ -119,13 +148,33 @@ class gu_save(object):
 			self.save_to_csv(code,df,'a')
 				
 		return df_jk
+	def save_m(self):
+		files1=self.get_csvmc(self.basc)
+		df=self.get_base_from_api()
+		#print(df.head())
+		name=df.name.values
+		print(name)
+		code_li=df.index.values.tolist()
+		for co in code_li:
+			print(str(co))
+			df=self.get_k(str(co),'m')
+			#self.save_to_csv(str(co),df,'')
 
 
+def main():
+	print('单独执行开始')
+	kk=gu_save('0')
+	#df=kk.get_k('603336','D')
 
+	kk.save_m()
+
+
+if __name__ == '__main__':
+	main()
 
 #kk=gu_save('0')
 #df=kk.get_k_from_api('300414','m')
-#kk.save_to_csv('300414',df,'')
+#kk.save_to_csv('300414',df,'')吗
 #df2=kk.get_k_from_api('300414','w')
 #df=kk.get_k('603336','D')
 #df=df.append(df2)
