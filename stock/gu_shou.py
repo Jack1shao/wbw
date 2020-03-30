@@ -80,7 +80,7 @@ class gu_shou(object):
 		return k,b,c1,c2
 		#小钝角
 	def xdj(self,cci1,cci2,cci3):
-		print(cci1,cci2,cci3)
+		#print(cci1,cci2,cci3)
 		if cci1>cci2 and cci2>cci3:
 			x1=1
 			y1=cci1
@@ -89,12 +89,13 @@ class gu_shou(object):
 			x3=3
 			y3=cci3
 			k,b,c1,c2=self.line(x1,y1,x2,y2)
-			alf1=math.atan(k) * 180 / math.pi
-			alf3=math.atan(k3) * 180 / math.pi
-			if alf1>-45 and k3>-1:
-				print(k,k3)
+			k3,b3,c13,c23=self.line(x3,y3,x2,y2)
+			alf1=(math.atan(k) * 180 / math.pi)
+			alf3=(math.atan(k3) * 180 / math.pi)
+
+			if alf1<0 and alf3<0 and alf3-alf1>10:
+				#print(alf1,alf3)
 				return 1
-		
 		return 0
 
 	
@@ -154,28 +155,43 @@ class gu_shou(object):
 		df22.to_csv('ng_w.csv',mode='a',header=False)
 
 		return 1
-	def shou(self,code1,ktype1):
+	def shou_bc(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
 		df=kk.get_k_from_api(code1,ktype1)
 		cci=hh.cci(df)
 		self.bc(cci)
 		
-	def p_1(self,code1,ktype1):
+	def shou_xdj(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
 		df=kk.get_k_from_csv(code1,ktype1)
+		#print(df.head())
+		day=df.date.values.tolist()
 		cci=hh.cci(df)
-		c=cci[-4:]
-		self.xdj(c[0],c[1],c[2])
+		up_li,dw_li=hh.cci_ana_dd(cci)
+		#cci=cci[-10:]
+		d_ln=len(day)
+		ln=len(cci)
+		#print(d_ln,ln)
+		for i in range(2,ln):
+			if (i-2) in up_li:continue
+			xdj=self.xdj(cci[i-2],cci[i-1],cci[i])
+			if i+4>=ln:
+				pp=ln-1
+			else:pp=i+3
+			if xdj==1:
+				print(i,day[i],cci[i],df.loc[i]['high'],df.loc[pp]['high'])
+
+		return 0
 
 
 def main():
 	print('单独执行gu_shou收索，开始')
 	s=gu_shou('')
 	#s.w_tiaojian()
-	#s.p_1('600598','w')
-	s.shou('600598','w')
+	s.shou_xdj('600596','D')
+	#s.shou('600598','w')
 
 if __name__ == '__main__':
 	main()

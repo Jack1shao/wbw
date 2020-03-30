@@ -55,7 +55,7 @@ class gu_zb(object):
 		if c2<c1 and c2<c3:return -1
 		return 0
 	#cci折角
-	def __cci_ana_dd(self,ccilist):
+	def cci_ana_dd(self,ccilist):
 		cci=ccilist
 		dd_li=[]
 		up_li=[]
@@ -157,7 +157,7 @@ class gu_zb(object):
 	def draw_dd_up(self,cci):
 		total=len(cci)
 		cciqr=self.cci_ana_qrfj(cci)
-		up_li,dw_li=self.__cci_ana_dd(cci)
+		up_li,dw_li=self.cci_ana_dd(cci)
 		print(up_li)
 		zjd_li=[]
 		up_li2=[]
