@@ -235,7 +235,7 @@ def main():
 		if n>len(ktype1):
 			print('输入有误')
 			continue
-		#kk.pl_gx_all(ktype1[n])
+		kk.pl_gx_all(ktype1[n])
 		print('\n存入所有 <{}> K线 完毕\n'.format(ktype1[n]))
 	print('程序完成，退出')	
 

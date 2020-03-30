@@ -11,6 +11,12 @@ class gu_shou(object):
 	def __init__(self, arg):
 		super(gu_shou, self).__init__()
 		self.arg = arg
+	#补全代码	
+	def getSixDigitalStockCode(self,code):
+		strZero = ''
+		for i in range(len(str(code)), 6):
+			strZero += '0'
+		return strZero + str(code)
 	#cci连续向上
 	def cci_up_lx(self,cci):
 		c=cci[-3:]
@@ -37,16 +43,42 @@ class gu_shou(object):
 			return 1
 		return 0
 	#cci上个周期有背驰
+	def bc(self,cci):
+		kk=gu_zb('')
+		cciqr=kk.cci_ana_qrfj(cci)
+		up_li2,line_li=kk.draw_dd_up(cci)
+		#print(up_li2)
+		l_qr=len(cciqr)
+		qd=0
+		ii=0
+		#print(cciqr)
+		for i in range(l_qr-1,-1,-1):
+			if cciqr[i]==1:
+				qd=1
+			if qd==1 and cciqr[i]<0:
+				ii=i
+				break
+		for u in up_li2:
+			if u[0]<ii:continue
+			else:
+				print(u)
+				return 1
+		return 0
+		#print(i)
+			
 	#cci背驰线被穿越
 	#寻找第三波
+	#大顶：背驰线之上，股价创新高，cci下折
+
 	#小钝角：之后穿越背驰线，
-	#两点画线
+		#两点画线
 	def line(self,x1,y1,x2,y2):
 		k=(y2-y1)/(x2-x1)
 		b=y2-k*x2
 		c1=(300-b)/k
 		c2=(-200-b)/k
 		return k,b,c1,c2
+		#小钝角
 	def xdj(self,cci1,cci2,cci3):
 		print(cci1,cci2,cci3)
 		if cci1>cci2 and cci2>cci3:
@@ -65,10 +97,9 @@ class gu_shou(object):
 		
 		return 0
 
-	#大顶：背驰线之上，股价创新高，cci下折
+	
 
-
-	def  m_tiaojian(self):
+	def m_tiaojian(self):
 		ng_li=[]
 		kk=gu_save('')
 		hh=gu_zb('')
@@ -92,11 +123,6 @@ class gu_shou(object):
 		df33=kk.get_from_csv('ng.csv')
 		print(df33)
 		return 1
-	def getSixDigitalStockCode(self,code):
-		strZero = ''
-		for i in range(len(str(code)), 6):
-			strZero += '0'
-		return strZero + str(code)
 	def w_tiaojian(self):
 		kk=gu_save('')
 		df33=kk.get_from_csv('ng.csv')
@@ -128,8 +154,13 @@ class gu_shou(object):
 		df22.to_csv('ng_w.csv',mode='a',header=False)
 
 		return 1
-	def shou(self,codelist,ktype1):
-		pass
+	def shou(self,code1,ktype1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_api(code1,ktype1)
+		cci=hh.cci(df)
+		self.bc(cci)
+		
 	def p_1(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
@@ -143,7 +174,8 @@ def main():
 	print('单独执行gu_shou收索，开始')
 	s=gu_shou('')
 	#s.w_tiaojian()
-	s.p_1('600598','w')
+	#s.p_1('600598','w')
+	s.shou('600598','w')
 
 if __name__ == '__main__':
 	main()

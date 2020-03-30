@@ -29,7 +29,7 @@ class gu_zb(object):
 		bz1=0
 		cciqrfj=[]
 		total=len(cci1)
-		js_up=0
+		js_up=1
 		js_dw=0
 		for i in range(0, total):
 			if cci1[i]>100:
@@ -37,13 +37,13 @@ class gu_zb(object):
 			if cci1[i]<-100:
 				bz1=-1
 			if bz1>0:
-				if js_up==1 and cci1[i]<100:
-					bz=-1
-					cciqrfj.pop()
-					cciqrfj.append(-100)
-				else:
-					js_up+=1
-					cciqrfj.append(js_up)
+				'''if js_up==1 and cci1[i]<100:
+																	bz=-1
+																	cciqrfj.pop()
+																	cciqrfj.append(-100)
+																else:'''
+				
+				cciqrfj.append(js_up)
 			else:
 				
 				cciqrfj.append(-100)
@@ -163,6 +163,7 @@ class gu_zb(object):
 		up_li2=[]
 		line_li=[]
 		bz=0
+		#print(len(cciqr))
 		for i in range(0,total):
 			#弱势下不画线
 			if cciqr[i]<0:
@@ -179,8 +180,5 @@ class gu_zb(object):
 			elif  cci[i]<cci[bz]:
 						up_li2.append([bz,cci[bz],i,cci[i]])
 						bz=0
-						#k,b,c1,c2=self.__line(bz,cci[bz],i,cci[i])
-						#line_li.append([k,b,c1,c2])
 		return up_li2,line_li
-
 	#
