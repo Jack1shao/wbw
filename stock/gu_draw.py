@@ -80,7 +80,7 @@ def main():
 			print('代码错误')
 			continue
 		for  k in ktype:
-			bz=g.dr_cci2('600598',k)
+			bz=g.dr_cci2(code,k)
 			if bz==0:
 				print('该代码无数据')
 				break

@@ -223,6 +223,7 @@ def main():
 		print('1--获取所有 <日K线>')
 		print('2--获取所有 <周K线>')
 		print('3--获取所有 <月K线>')
+		print('4--获取基础数据存入csv')
 		print('99--退出<99>')
 		print('--')
 		print('--')
@@ -234,6 +235,10 @@ def main():
 		#print(cc,n)
 		if n>len(ktype1):
 			print('输入有误')
+			continue
+		if n==4:
+			df=kk.get_base_from_api()
+			kk.save_to_csv('basc',df,'')
 			continue
 		kk.pl_gx_all(ktype1[n])
 		print('\n存入所有 <{}> K线 完毕\n'.format(ktype1[n]))

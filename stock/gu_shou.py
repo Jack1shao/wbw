@@ -42,6 +42,25 @@ class gu_shou(object):
 		if c[0]<c[1] and c[1]>c[2]:
 			return 1
 		return 0
+	#从后向前第几个强势周期
+	def qszq(self,cciqr,x):
+		ln=len(cciqr)
+		q,i1,i2=0
+		zhq_li=[]
+		s=0
+		r_li=[]
+		for i in range(0,ln):
+			if cciqr[i]<0:continue
+			if cciqr[i]>0:
+				zhq_li.append(i)
+			if i>1 and cciqr[i-1]>0 and cciqr[i]<0:
+				ln=len(zhq_li)
+				i1=zhq_li[0]
+				i2=zhq_li[ln-1]
+				r_li.append([i1,i2,ln])
+				del zhq_li[:]
+		print(r_li)
+		return r_li[-x:]
 	#cci上个周期有背驰
 	def bc(self,cci):
 		kk=gu_zb('')
@@ -51,13 +70,15 @@ class gu_shou(object):
 		l_qr=len(cciqr)
 		qd=0
 		ii=0
-		#print(cciqr)
+	
 		for i in range(l_qr-1,-1,-1):
 			if cciqr[i]==1:
 				qd=1
 			if qd==1 and cciqr[i]<0:
 				ii=i
 				break
+
+
 		for u in up_li2:
 			if u[0]<ii:continue
 			else:
@@ -65,7 +86,6 @@ class gu_shou(object):
 				return 1
 		return 0
 		#print(i)
-			
 	#cci背驰线被穿越
 	#寻找第三波
 	#大顶：背驰线之上，股价创新高，cci下折
@@ -98,70 +118,13 @@ class gu_shou(object):
 				return 1
 		return 0
 
-	
-
-	def m_tiaojian(self):
-		ng_li=[]
-		kk=gu_save('')
-		hh=gu_zb('')
-		df=kk.get_base_from_api()
-		code_li=df.index.values.tolist()
-		for co in code_li:
-			code=str(co)
-			df=kk.get_k_from_db(code,'m')
-			if self.cci_up_2(code,df)>0:
-				ng_li.append(code)
-		ng_lli=[]
-		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
-		gxsj = datetime.datetime.now().strftime('%H%M')
-		for co2 in ng_li:
-			ng_lli.append([co2,'m'])
-		df22=DataFrame(ng_lli)
-		df22['gxrq']=gxrq
-		df22['gxsj']=gxsj
-		df22.to_csv('ng.csv',mode='a',header=False)
-		
-		df33=kk.get_from_csv('ng.csv')
-		print(df33)
-		return 1
-	def w_tiaojian(self):
-		kk=gu_save('')
-		df33=kk.get_from_csv('ng.csv')
-		#ng_li=df33[].tolist()
-		#print(df33.head())
-		#df33.columns(['code','ktype','gxrq','gxsj'])
-		#print(df33.code.values.tolist())
-		ng_li_m=df33.code.values.tolist()
-		ng_li_z=[]
-		for co2 in ng_li_m:
-			code=self.getSixDigitalStockCode(co2)
-			print(code)
-			df=kk.get_k_from_db(code,'w')
-			if df.empty:
-				df=kk.get_k_from_api(code,'w')
-				kk.save_to_csv(code,df,'a')
-				df=kk.get_k_from_db(code,'w')
-			if self.cci_up_2(code,df)>0:
-				ng_li_z.append(code)
-		print(ng_li_z,len(ng_li_z))
-		ng_lli=[]
-		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
-		gxsj = datetime.datetime.now().strftime('%H%M')
-		for co2 in ng_li_z:
-			ng_lli.append([co2,'w'])
-		df22=DataFrame(ng_lli)
-		df22['gxrq']=gxrq
-		df22['gxsj']=gxsj
-		df22.to_csv('ng_w.csv',mode='a',header=False)
-
-		return 1
 	def shou_bc(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
 		df=kk.get_k_from_api(code1,ktype1)
 		cci=hh.cci(df)
-		self.bc(cci)
-		
+		return self.bc(cci)
+
 	def shou_xdj(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
@@ -182,7 +145,6 @@ class gu_shou(object):
 			else:pp=i+3
 			if xdj==1:
 				print(i,day[i],cci[i],df.loc[i]['high'],df.loc[pp]['high'])
-
 		return 0
 
 
@@ -190,7 +152,7 @@ def main():
 	print('单独执行gu_shou收索，开始')
 	s=gu_shou('')
 	#s.w_tiaojian()
-	s.shou_xdj('600596','D')
+	#s.shou_xdj('600596','D')
 	#s.shou('600598','w')
 
 if __name__ == '__main__':
