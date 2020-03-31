@@ -56,9 +56,27 @@ class gu_save(object):
 				return row[0]
 		print('未找到股票名字')	
 		return ''
+		#收索市值大小
+	def get_sz(self,code1):
+		
+		df=self.get_k_from_csv(code1,'D')
+		high=df[-1:].high.values.tolist()
+		#print(high)
+		df2=self.get_base_from_db()
+		totals=df2.loc[int(code1)].totals
+		sz=totals*high[0]
+		#print(float('%.2f' % sz),'亿')#小数位数
+		return float('%.2f' % sz)
+	#上市时间
+	def get_timeToMarket(self,code1):
+	
+		df2=self.get_base_from_db()
+		time=df2.loc[int(code1)].timeToMarket
+		return time
 
 	#从接口取数
 	def get_k_from_api(self,code,ktype1):
+		print('从api取-{}-'.format(code))
 		k_li=['m','w','D','30']
 		if ktype1 not in k_li:
 			print("k线类型错误")
@@ -76,6 +94,7 @@ class gu_save(object):
 		return df
 	#从本地取数
 	def get_k_from_csv(self,code,ktype1):
+		print('从本地取-{}-'.format(code))
 		files1=self.get_csvmc(code+ktype1)
 		if os.path.exists(files1):
 			with open(files1,'r',encoding='utf-8') as csv_file:
@@ -193,13 +212,27 @@ class gu_save(object):
 	#更新全部
 	def pl_gx_all(self,ktype1):
 		files1=self.get_csvmc(self.basc)
-		df=self.get_base_from_api()
+		df=self.get_base_from_db()
 		#print(df.head())
 		name=df.name.values
 		print(name)
 		code_li=df.index.values.tolist()
 		self.pl_chunru(code_li,ktype1)
 		return 1
+
+	##去除St的股票和上市一年的股票
+	def get_code_list(self):
+		df=self.get_base_from_db()
+		#name_li=df.name.values.tolist()
+		n_li=[]
+		for code,row in df.iterrows():
+			#print(len(row),row[14])
+			if row[0].find('ST')<0 and row[14]<20190101:
+				#print(self.getSixDigitalStockCode(code),row[0])	
+				n_li.append(self.getSixDigitalStockCode(code))
+		print(len(n_li))
+		return n_li
+
 	#按列表批量存入数据
 	def pl_chunru(self,list1,ktype1):
 		if len(list1)==0:
@@ -215,6 +248,7 @@ def main():
 	print('	\n单独执行股票取数，开始...')
 	kk=gu_save('0')
 	#print(kk.get_name('300414'))
+	#kk.get_code_list()
 	ktype1=['30','D','w','m']
 	i=0
 	while i<10:
