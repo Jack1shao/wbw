@@ -70,7 +70,8 @@ class gu_shou(object):
 		return 0,bz
 	
 	#cci背驰线被穿越
-	#寻找第三波
+	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。
+	
 	#大顶：背驰线之上，股价创新高，cci下折
 
 	#小钝角：之后穿越背驰线，
@@ -145,7 +146,7 @@ class gu_shou(object):
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou.csv')
 		return c_li
-
+	#
 def main():
 	print('单独执行gu_shou收索，开始')
 	s=gu_shou('')

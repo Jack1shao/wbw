@@ -75,8 +75,9 @@ class gu_save(object):
 		return time
 
 	#从接口取数
-	def get_k_from_api(self,code,ktype1):
-		print('从api取-{}-'.format(code))
+	def get_k_from_api(self,code1,ktype1):
+		print('从api取-{}-'.format(code1))
+		code=str(code1)
 		k_li=['m','w','D','30']
 		if ktype1 not in k_li:
 			print("k线类型错误")
@@ -217,7 +218,11 @@ class gu_save(object):
 		name=df.name.values
 		print(name)
 		code_li=df.index.values.tolist()
-		self.pl_chunru(code_li,ktype1)
+		co_li=[]
+		for code in code_li:
+			co=self.getSixDigitalStockCode(code)
+			co_li.append(co)
+		self.pl_chunru(co_li,ktype1)
 		return 1
 
 	##去除St的股票和上市一年的股票
@@ -280,5 +285,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
 
 
