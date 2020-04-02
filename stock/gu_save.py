@@ -76,7 +76,7 @@ class gu_save(object):
 
 	#从接口取数
 	def get_k_from_api(self,code1,ktype1):
-		print('从api取-{}-'.format(code1))
+		print('从api取-{0}-{1}'.format(code1,ktype1))
 		code=str(code1)
 		k_li=['m','w','D','30']
 		if ktype1 not in k_li:
@@ -95,7 +95,7 @@ class gu_save(object):
 		return df
 	#从本地取数
 	def get_k_from_csv(self,code,ktype1):
-		print('从本地取-{}-'.format(code))
+		print('从本地取-{0}-{1}'.format(code,ktype1))
 		files1=self.get_csvmc(code+ktype1)
 		if os.path.exists(files1):
 			with open(files1,'r',encoding='utf-8') as csv_file:
