@@ -73,6 +73,37 @@ class gu_shou(object):
 	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。
 	
 	#大顶：背驰线之上，股价创新高，cci下折
+	def jddd(self,df):
+		high_li=df.high.values.tolist()
+		close_li=df.close.values.tolist()
+		open_li=df.open.values.tolist()
+		kk=gu_zb('')
+		cci=kk.cci(df)
+		ln=len(cci)
+		jddd_li=[]
+		for i in range(2,ln):
+			cn1=high_li[i-2]<high_li[i-1] and high_li[i-1]<high_li[i]
+			cn2=close_li[i]>close_li[i-1] and close[i-1]>close_li[i-2]
+			cn3=close_li[i]>open_li[i] and close_li[i-1]>open_li[i-1] and close_li[i-2]>open_li[i-2]
+			if cn1 and cn2 and cn3:
+				jddd_li.append([i,'大顶'])
+		open_li.clear()
+		close_li.clear()
+		high_li.clear()
+		return jddd_li
+	#到拐点的距离
+	def gzjl(self,cci)：
+		kk=gu_zb('')
+		up_li,dw_li=kk.cci_ana_dd(cci)
+		ln=len(cci)
+		gd_li=[]
+		gd_li.append([0,0])
+		for i in range(1,ln)
+			if i in up_li or i in dw_li:
+				s=i-gd_li[-1][0]
+				gd_li.append([i,s])
+		return gd_li
+
 
 	#小钝角：之后穿越背驰线，
 		#两点画线

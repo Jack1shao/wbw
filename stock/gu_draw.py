@@ -12,6 +12,41 @@ class gu_draw(object):
 		super(gu_draw, self).__init__()
 		self.arg = arg
 		self.total=120
+		#大顶：背驰线之上，股价创新高，cci下折
+	def jddd(self,df):
+		high_li=df.high.values.tolist()
+		close_li=df.close.values.tolist()
+		open_li=df.open.values.tolist()
+		kk=gu_zb('')
+		cci=kk.cci(df)
+		ln=len(cci)
+		jddd_li=[]
+		for i in range(2,ln):
+			cn1=high_li[i-2]<high_li[i-1] and high_li[i-1]<high_li[i]
+			cn2=close_li[i]>close_li[i-1] and close_li[i-1]>close_li[i-2]
+			cn3=close_li[i]>open_li[i] and close_li[i-1]>open_li[i-1] and close_li[i-2]>open_li[i-2]
+			cn4=cci[i]<cci[i-1]
+			if cn1 and cn2 and cn3 and cn4:
+				jddd_li.append([i,'d'])
+		open_li.clear()
+		close_li.clear()
+		high_li.clear()
+		return jddd_li
+	#到拐点的距离
+	def gdjl(self,cci):
+		kk=gu_zb('')
+		up_li,dw_li=kk.cci_ana_dd(cci)
+		ln=len(cci)
+		gd_li=[]
+		gd_li.append([0,0])
+		for i in range(1,ln):
+			if i in up_li or i in dw_li:
+				s=i-gd_li[-1][0]
+				gd_li.append([i,s])
+		s=ln-gd_li[-1][0]
+		gd_li.append([ln,s])
+		return gd_li
+
 	def dr_cci2(self,code,ktype):
 		kk=gu_save('')
 		hh=gu_zb(0)
@@ -21,6 +56,7 @@ class gu_draw(object):
 		if df.empty:
 			return 0
 		cci=hh.cci(df)[-self.total:]
+		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
 		fig, ax = plt.subplots(2, 1, figsize=(16,8))
@@ -58,6 +94,14 @@ class gu_draw(object):
 		
 		ax[1].axhline(y=100, color='b', linestyle=':')
 		ax[1].axhline(y=-100, color='b', linestyle=':')
+		#文字
+		gd_li=self.gdjl(cci)
+		jddd_li=self.jddd(df)
+		for x in gd_li:
+			plt.text(x[0],0,x[1],size = 10)
+		for x in jddd_li:
+			plt.text(x[0],200,x[1],size = 12)
+
 		plt.show()
 		return 1
 
