@@ -39,12 +39,11 @@ class gu_shou(object):
 		print(r_li[-x:])
 		return r_li[-x:]
 	#cci上个周期有背驰
-	def bc(self,cci,df):
+	def bc(self,df):
 		kk=gu_zb('')
+		cci=kk.cci(df)
 		cciqr=kk.cci_ana_qrfj(cci)
-		up_li2,line_li=kk.draw_dd_up(cci)
-		print(up_li2)
-		high_li=df.high.values.tolist()
+		up_li2,line_li=kk.gjbc(cci)
 
 		r_li=self.qszq(cciqr,2)
 		#print(len(r_li))
