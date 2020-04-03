@@ -181,4 +181,14 @@ class gu_zb(object):
 						up_li2.append([bz,cci[bz],i,cci[i]])
 						bz=0
 		return up_li2,line_li
-	#
+	#cci 股价同时背驰
+	def gjbc(self,df):
+		cci=self.cci(df)
+		up_li2,line_li=self.draw_dd_up(cci)
+		high_li=df.high.values.tolist()
+		up_li=[]
+		for u in up_li2:
+			if high_li[u[0]]<high_li[u[2]]:
+				print(u)
+				up_li.append(u)
+		return up_li,[]

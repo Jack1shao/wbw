@@ -32,17 +32,37 @@ class gu_draw(object):
 		close_li.clear()
 		high_li.clear()
 		return jddd_li
+	#无效k线
+	def wxkx(self,df):
+		high_li=df.high.values.tolist()
+		low_li=df.low.values.tolist()
+		wx_li=[]
+		ln=len(high_li)
+		for i in range(0,ln):
+			cn1=high_li[i]<=high_li[i-1]
+			cn2=low_li[i]<=low_li[i-1]
+			if cn1 and cn2:
+				wx_li.append(i)
+		return wx_li
+
+	
 	#到拐点的距离
-	def gdjl(self,cci):
+	def gdjl(self,df):
 		kk=gu_zb('')
+		cci=kk.cci(df)
 		up_li,dw_li=kk.cci_ana_dd(cci)
+		wx_li=self.wxkx(df)
 		ln=len(cci)
 		gd_li=[]
 		gd_li.append([0,0])
+		wx=0
 		for i in range(1,ln):
+			if i in wx_li:wx+=1
 			if i in up_li or i in dw_li:
-				s=i-gd_li[-1][0]
+				s=i-gd_li[-1][0]-wx+1
+				wx=0
 				gd_li.append([i,s])
+
 		s=ln-gd_li[-1][0]
 		gd_li.append([ln,s])
 		return gd_li
@@ -56,6 +76,7 @@ class gu_draw(object):
 		if df.empty:
 			return 0
 		cci=hh.cci(df)[-self.total:]
+		df=df[-self.total:]
 		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
@@ -63,7 +84,7 @@ class gu_draw(object):
 		ax[0].set_title(code+'--'+ktype)
 		ax[1].plot(cci,'r')
 		#取顶点
-		up_li2,line_li=hh.draw_dd_up(cci)
+		up_li2,line_li=hh.gjbc(df)
 		print(up_li2)
 		if len(up_li2)>3:
 			up=up_li2[-3:]
@@ -89,18 +110,18 @@ class gu_draw(object):
 
 		#画K线
 		
-		df=df[-self.total:]
+		
 		mpf.candlestick2_ochl(ax=ax[0],opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
 		
 		ax[1].axhline(y=100, color='b', linestyle=':')
 		ax[1].axhline(y=-100, color='b', linestyle=':')
 		#文字
-		gd_li=self.gdjl(cci)
+		gd_li=self.gdjl(df)
 		jddd_li=self.jddd(df)
 		for x in gd_li:
 			plt.text(x[0],0,x[1],size = 10)
 		for x in jddd_li:
-			plt.text(x[0],200,x[1],size = 12)
+			plt.text(x[0],250,x[1],size = 12)
 
 		plt.show()
 		return 1

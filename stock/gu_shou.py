@@ -39,12 +39,17 @@ class gu_shou(object):
 		print(r_li[-x:])
 		return r_li[-x:]
 	#cci上个周期有背驰
-	def bc(self,cci):
+	def bc(self,cci,df):
 		kk=gu_zb('')
 		cciqr=kk.cci_ana_qrfj(cci)
 		up_li2,line_li=kk.draw_dd_up(cci)
-		#print(up_li2)
+		print(up_li2)
+		high_li=df.high.values.tolist()
+
 		r_li=self.qszq(cciqr,2)
+		#print(len(r_li))
+		if len(r_li)<2:
+			return 0,''
 		ln=len(cciqr)
 		x1=0
 		x2=0
@@ -58,16 +63,19 @@ class gu_shou(object):
 			cont=r_li[1][2]
 		bz=''
 		print(x1,x2)
+		#背驰个数
+		bcgs=0
 		for u in up_li2:
 			if u[0]<x2 and u[0]>x1:
-				if x2==ln+1:
-					bz='本周期存在背驰'
-					print('本周期存在背驰')
-				else:
-					bz='上周期存在背驰'
-					print('上周期存在背驰')
-				return 1,bz
-		return 0,bz
+				bcgs+=1
+		if x2==ln-1:
+			bz='本周期存在背驰'
+			print('本周期存在背驰')
+		else:
+			bz='上周期存在背驰'
+			print('上周期存在背驰')
+		return bcgs,bz
+		
 	
 	#cci背驰线被穿越
 	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。
@@ -91,18 +99,7 @@ class gu_shou(object):
 		close_li.clear()
 		high_li.clear()
 		return jddd_li
-	#到拐点的距离
-	def gzjl(self,cci)：
-		kk=gu_zb('')
-		up_li,dw_li=kk.cci_ana_dd(cci)
-		ln=len(cci)
-		gd_li=[]
-		gd_li.append([0,0])
-		for i in range(1,ln)
-			if i in up_li or i in dw_li:
-				s=i-gd_li[-1][0]
-				gd_li.append([i,s])
-		return gd_li
+
 
 
 	#小钝角：之后穿越背驰线，
@@ -140,7 +137,6 @@ class gu_shou(object):
 		hh=gu_zb('')
 		df=kk.get_k_from_csv(code1,ktype1)
 		cci=hh.cci(df)
-
 		return self.bc(cci)
 
 	def shou_xdj(self,code1,ktype1):
@@ -177,6 +173,41 @@ class gu_shou(object):
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou.csv')
 		return c_li
+	def test(self):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv('300598','D')
+		cci=hh.cci(df)
+		#cciqr=hh.cci_ana_qrfj(cci)
+		#zq=self.qszq(cciqr,2)
+		dd=hh.draw_dd_up(cci)
+		print(dd)
+		return 0
+	def shou_bc_all(self):
+		c_li=[]
+		kk=gu_save('')
+		code_list=kk.get_from_csv('shou.csv').code.values.tolist()
+		#周
+		code_list=[]
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			f,bz=s.shou_bc(co,'w')
+			if f==1:
+				c_li.append([co,bz])
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('shou_w.csv')
+		#首日先 
+		code_list=kk.get_from_csv('shou_w.csv').code.values.tolist()
+		#code_list=[]
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			f,bz=s.shou_bc(co,'D')
+			if f==1:
+				c_li.append([co,bz])
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('shou_d.csv')
+		c_li.clear()
+		return 0
 	#
 def main():
 	print('单独执行gu_shou收索，开始')
@@ -185,19 +216,8 @@ def main():
 	#s.shou_xdj('600596','D')
 	#s.shou_bc('600598','D')
 	#code_list=s.shou_sz(100,2000)
-	c_li=[]
-	kk=gu_save('')
-	code_list=kk.get_from_csv('shou.csv').code.values.tolist()
-	print(len(code_list))
-	for code in code_list:
-		co=(kk.getSixDigitalStockCode(code))
-		f,bz=s.shou_bc(co,'D')
-		if f==1:
-			c_li.append([co,bz])
-	df=DataFrame(c_li,columns=[ 'code', 'name'])
-	df.to_csv('shou2.csv')
-
-	#if s.get_timeToMarket('600598')>20191231:print('dddddd')
+	#s.shou_bc_all()
+	s.test()
 
 if __name__ == '__main__':
 	main()
