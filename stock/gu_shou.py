@@ -77,8 +77,36 @@ class gu_shou(object):
 		
 	
 	#cci背驰线被穿越
-	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。
-	
+	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。#
+	#底背驰
+	def d_bc(self,code,ktype1):
+		#底顶点
+		#判断背驰
+		
+		return 0
+	#搜索2根小阴线，在100之上，每天2个点之内，高点都在boll上轨之上
+	def two_little(self,code,ktype1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code,ktype1)
+		cci=hh.cci(df)
+		up,mid,lo=hh.boll(df)
+		#print(up.tolist())
+		high_li=df.high.values.tolist()
+		open_li=df.open.values.tolist()
+		close_li=df.close.values.tolist()
+		ln=len(cci)
+		ttt_li=[]
+		for i in range(2,ln):
+			cn1=cci[i]>100 and cci[i-1]>100 and cci[i]<cci[i-1]
+			cn2=high_li[i]>up[i] and high_li[i-1]>up[i-1]
+			cn3=open_li[i]>close_li[i] and open_li[i-1]>close_li[i-1] 
+			cn4=open_li[i-2]<close_li[i-2] and close_li[i]<close_li[i-1] and  close_li[i-1]<close_li[i-2] 
+			if cn1 and cn2 and cn3 and cn4:
+				print(code,i,df.loc[i].date)
+				ttt_li.append([code,i,df.loc[i].date])
+
+		return len(ttt_li),ttt_li
 	#大顶：背驰线之上，股价创新高，cci下折
 	def jddd(self,df):
 		high_li=df.high.values.tolist()
@@ -159,6 +187,7 @@ class gu_shou(object):
 			if xdj==1:
 				print(i,day[i],cci[i],df.loc[i]['high'],df.loc[pp]['high'])
 		return 0
+	#市值收索
 	def shou_sz(self,x1,x2):
 		kk=gu_save('')
 		code_list=kk.get_code_list()
@@ -172,6 +201,14 @@ class gu_shou(object):
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou.csv')
 		return c_li
+	#底背离
+	def dbl(self,df):
+		hh=gu_zb('')
+		low_li=df.low.values.tolist()
+		diff,dea,macd3=hh.macd(df)
+		return 1
+
+
 	def test(self):
 		kk=gu_save('')
 		hh=gu_zb('')
@@ -182,6 +219,18 @@ class gu_shou(object):
 		dd=hh.draw_dd_up(cci)
 		print(dd)
 		return 0
+
+	def shou_tt_all(self):
+		c_li=[]
+		kk=gu_save('')
+		code_list=kk.get_from_csv('shou.csv').code.values.tolist()
+		for co in code_list:
+			code=(kk.getSixDigitalStockCode(co))
+			f,ttt_li=self.two_little(code,'D')
+			if f:
+				print(ttt_li)
+		return 0
+
 	def shou_bc_all(self):
 		c_li=[]
 		kk=gu_save('')
@@ -216,7 +265,7 @@ def main():
 	#s.shou_bc('600598','D')
 	#code_list=s.shou_sz(100,2000)
 	#s.shou_bc_all()
-	s.test()
+	s.shou_tt_all()
 
 if __name__ == '__main__':
 	main()

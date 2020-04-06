@@ -11,26 +11,70 @@ class gu_draw(object):
 	def __init__(self, arg):
 		super(gu_draw, self).__init__()
 		self.arg = arg
-		self.total=120
-		#大顶：背驰线之上，股价创新高，cci下折
+		self.total=220
+
+	#大顶：背驰线之上，股价创新高，cci下折
 	def jddd(self,df):
 		high_li=df.high.values.tolist()
 		close_li=df.close.values.tolist()
 		open_li=df.open.values.tolist()
+		low_li=df.low.values.tolist()
 		kk=gu_zb('')
 		cci=kk.cci(df)
 		ln=len(cci)
+		wxkx_li=self.wxkx(df)
+		print(wxkx_li,'无效k线')
 		jddd_li=[]
-		for i in range(2,ln):
-			cn1=high_li[i-2]<high_li[i-1] and high_li[i-1]<high_li[i]
-			cn2=close_li[i]>close_li[i-1] and close_li[i-1]>close_li[i-2]
-			cn3=close_li[i]>open_li[i] and close_li[i-1]>open_li[i-1] and close_li[i-2]>open_li[i-2]
-			cn4=cci[i]<cci[i-1]
-			if cn1 and cn2 and cn3 and cn4:
+		#队列
+		dl_li=[]
+		for i in range(0,ln):
+			if i in wxkx_li :
+				print('无效k线',i)
+				print(high_li[i],low_li[i],'\n')
+				continue
+			if len(dl_li)==3:
+				dl_li.pop(0)
+			else:
+				dl_li.append([high_li[i],close_li[i],open_li[i],low_li[i],cci[i]])
+				continue
+
+			
+			#处理无效的k线
+			if i in wxkx_li :
+
+				continue
+			else:
+				dl_li.append([high_li[i],close_li[i],open_li[i],low_li[i],cci[i]])
+			#三根k线处理
+			high1=dl_li[0][0];high2=dl_li[1][0];high3=dl_li[2][0]
+			close1=dl_li[0][1];close2=dl_li[1][1];close3=dl_li[2][1]
+			open1=dl_li[0][2];open2=dl_li[1][2];open3=dl_li[2][2]
+			low1=dl_li[0][3];low2=dl_li[1][3];low3=dl_li[2][3]
+			cci1=dl_li[0][4]; cci2=dl_li[1][4];cci3=dl_li[2][4]
+			#条件
+			#1，2，3三连涨冲顶之势
+			cn1=high1<high2 and high3>high2 
+			cn2=close3>close2 and close2>close1
+			cn3=close3>open3 and close2>open2 and close1>open1
+			#cci下折
+			cn4=cci3<cci2
+				
+			if cn1 and cn2 and cn3 and cn4:#三连涨冲顶之势
 				jddd_li.append([i,'d'])
+			#下跌收阴，包括假阳线
+			cn5=close2>close3 #收阴
+			if cn1 and cn4 and cn5:#高点新高阴线之顶
+				jddd_li.append([i,'D'])
+			##笔的形成
+			cn6=low3<low2 and  low1<low2 and open1<close1
+			cn7=cci2>100
+			if cn6 and cn7 and cn5 and cn4 : 
+				if jddd_li[-1][0]!=i:
+					jddd_li.append([i,'s'])#笔的形成
 		open_li.clear()
 		close_li.clear()
 		high_li.clear()
+		low_li.clear()
 		return jddd_li
 	#无效k线
 	def wxkx(self,df):
@@ -40,7 +84,7 @@ class gu_draw(object):
 		ln=len(high_li)
 		for i in range(0,ln):
 			cn1=high_li[i]<=high_li[i-1]
-			cn2=low_li[i]<=low_li[i-1]
+			cn2=low_li[i]>=low_li[i-1]
 			if cn1 and cn2:
 				wx_li.append(i)
 		return wx_li
@@ -126,11 +170,19 @@ class gu_draw(object):
 		plt.show()
 		return 1
 
+	def dr_macd(self,code,ktype):
+		kk=gu_save('')
+		hh=gu_zb(0)
+		#取4个类型的df
+		df=kk.get_k_from_csv(code,ktype)
+		pass
+
 def main():
 	print('this message is from main function')
 	g=gu_draw('')
 	i=0
-	ktype=['30','D','w','m']
+	#ktype=['30','D','w','m']
+	ktype=['D']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')

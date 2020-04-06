@@ -11,7 +11,7 @@ class gu_zb(object):
 
 	def macd(self,df):
 		diff,dea,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
-		return diff,dea,macd3
+		return 2
 	#指标boll
 	def boll(self,df):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
@@ -188,7 +188,7 @@ class gu_zb(object):
 		high_li=df.high.values.tolist()
 		up_li=[]
 		for u in up_li2:
-			if high_li[u[0]]<high_li[u[2]]:
+			if high_li[u[0]]<=high_li[u[2]]:
 				print(u)
 				up_li.append(u)
 		return up_li,[]
