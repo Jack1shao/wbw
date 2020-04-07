@@ -11,7 +11,7 @@ class gu_draw(object):
 	def __init__(self, arg):
 		super(gu_draw, self).__init__()
 		self.arg = arg
-		self.total=220
+		self.total=150
 
 	#大顶：背驰线之上，股价创新高，cci下折
 	def jddd(self,df):
@@ -23,14 +23,14 @@ class gu_draw(object):
 		cci=kk.cci(df)
 		ln=len(cci)
 		wxkx_li=self.wxkx(df)
-		print(wxkx_li,'无效k线')
+		#print(wxkx_li,'无效k线')
 		jddd_li=[]
 		#队列
 		dl_li=[]
 		for i in range(0,ln):
 			if i in wxkx_li :
-				print('无效k线',i)
-				print(high_li[i],low_li[i],'\n')
+				#print('无效k线',i)
+				#print(high_li[i],low_li[i],'\n')
 				continue
 			if len(dl_li)==3:
 				dl_li.pop(0)
@@ -68,9 +68,9 @@ class gu_draw(object):
 			##笔的形成
 			cn6=low3<low2 and  low1<low2 and open1<close1
 			cn7=cci2>100
-			if cn6 and cn7 and cn5 and cn4 : 
-				if jddd_li[-1][0]!=i:
-					jddd_li.append([i,'s'])#笔的形成
+			#if cn6 and cn7 and cn5 and cn4 : 
+				#if jddd_li[-1][0]!=i:
+					#jddd_li.append([Si,'s'])#笔的形成
 		open_li.clear()
 		close_li.clear()
 		high_li.clear()
@@ -114,6 +114,8 @@ class gu_draw(object):
 	def dr_cci2(self,code,ktype):
 		kk=gu_save('')
 		hh=gu_zb(0)
+		name=kk.get_name(code)
+		print(name+code)
 		#取4个类型的df
 		df=kk.get_k_from_api(code,ktype)
 		#取4个类型的CCi
@@ -124,17 +126,25 @@ class gu_draw(object):
 		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
+
 		fig, ax = plt.subplots(2, 1, figsize=(16,8))
-		ax[0].set_title(code+'--'+ktype)
+		ax[0].set_title(name+code+'--'+ktype,fontproperties = 'SimHei',fontsize = 20)
 		ax[1].plot(cci,'r')
 		#取顶点
-		up_li2,line_li=hh.gjbc(df)
-		print(up_li2)
+		up_li2=hh.gjbc(df)
+		dw_li2=hh.gj_d_bl(df)
+		print(dw_li2)
 		if len(up_li2)>3:
 			up=up_li2[-3:]
 		else:
 			up=up_li2
-		for u in up_li2:
+
+		if len(dw_li2)>3:
+			dw=dw_li2[-3:]
+		else:
+			dw=dw_li2
+		#up=[]
+		for u in up:
 			y1=u[1]
 			y2=u[3]
 			x1=u[0]
@@ -151,7 +161,23 @@ class gu_draw(object):
 			l_x=np.linspace(c1,c2,10)
 			y=k*l_x+b
 			ax[1].plot(l_x,y,'-.y')
-
+		for u in dw:
+			y1=u[1]
+			y2=u[3]
+			x1=u[0]
+			x2=u[2]
+			k=(y2-y1)/(x2-x1)
+			if k<0:continue
+			b=y2-k*x2
+			c1=(200-b)/k
+			c2=(-350-b)/k
+			if c1>self.total:
+				c1=self.total
+			if c2<0:
+				c2=0
+			l_x=np.linspace(c1,c2,10)
+			y=k*l_x+b
+			ax[1].plot(l_x,y,'-.y')
 		#画K线
 		
 		
@@ -160,12 +186,12 @@ class gu_draw(object):
 		ax[1].axhline(y=100, color='b', linestyle=':')
 		ax[1].axhline(y=-100, color='b', linestyle=':')
 		#文字
-		gd_li=self.gdjl(df)
+		##gd_li=self.gdjl(df)
 		jddd_li=self.jddd(df)
-		for x in gd_li:
-			plt.text(x[0],0,x[1],size = 10)
+		#for x in gd_li:
+			#plt.text(x[0],0,x[1],size = 10)
 		for x in jddd_li:
-			plt.text(x[0],250,x[1],size = 12)
+			plt.text(x[0],250,x[1],size = 7)
 
 		plt.show()
 		return 1
@@ -182,7 +208,7 @@ def main():
 	g=gu_draw('')
 	i=0
 	#ktype=['30','D','w','m']
-	ktype=['D']
+	ktype=['30','D']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')

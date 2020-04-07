@@ -43,7 +43,7 @@ class gu_shou(object):
 		kk=gu_zb('')
 		cci=kk.cci(df)
 		cciqr=kk.cci_ana_qrfj(cci)
-		up_li2,line_li=kk.gjbc(cci)
+		up_li2=kk.gjbc(df)
 
 		r_li=self.qszq(cciqr,2)
 		#print(len(r_li))
@@ -78,11 +78,21 @@ class gu_shou(object):
 	
 	#cci背驰线被穿越
 	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。#
-	#底背驰
-	def d_bc(self,code,ktype1):
+	#底背驰.返回最后一个背驰
+	def d_bc(self,df):
+		kk=gu_zb('')
+		cci=kk.cci(df)
+		cciqr=kk.cci_ana_qrfj(cci)
+		dw_li=kk.gj_d_bl(df)
+		up_li=kk.gjbc(df)
+		ln=len(cci)
+		for i in range(ln-1,-1,-1)
+			if i == dw_li[-1][0]:
+				return -1
+			if i==up_li[-1][0]:
+				return 1
 		#底顶点
 		#判断背驰
-		
 		return 0
 	#搜索2根小阴线，在100之上，每天2个点之内，高点都在boll上轨之上
 	def two_little(self,code,ktype1):
@@ -256,7 +266,10 @@ class gu_shou(object):
 		df.to_csv('shou_d.csv')
 		c_li.clear()
 		return 0
-	#
+	#搜索底背驰
+	def shou_dibc_all(self):
+
+		return 0
 def main():
 	print('单独执行gu_shou收索，开始')
 	s=gu_shou('')
