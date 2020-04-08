@@ -207,8 +207,8 @@ def main():
 	print('this message is from main function')
 	g=gu_draw('')
 	i=0
-	#ktype=['30','D','w','m']
-	ktype=['30','D']
+	ktype=['30','D','w','m']
+	#ktype=['30','D']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')
