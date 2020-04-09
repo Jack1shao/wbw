@@ -202,6 +202,39 @@ class gu_draw(object):
 		#取4个类型的df
 		df=kk.get_k_from_csv(code,ktype)
 		pass
+	def draw_cci3(self,code,ktype):
+		kk=gu_save('')
+		hh=gu_zb(0)
+		name=kk.get_name(code)
+		print(name+code)
+		#取4个类型的df
+		df=kk.get_k_from_api(code,ktype)
+		#取4个类型的CCi
+		if df.empty:
+			return 0
+		cci=hh.cci(df)[-self.total:]
+		df=df[-self.total:]
+		up,dw=hh.cci_ana_dd2(cci)
+		cciii=[]
+		for i in range(0,self.total):
+			if i in dw:
+				cciii.append(cci[i])
+			else:
+				cciii.append(0)
+
+		#画出最后3条线
+		fig, ax = plt.subplots(2, 1, figsize=(16,8))
+		ax[0].set_title(name+code+'--'+ktype,fontproperties = 'SimHei',fontsize = 20)
+		mpf.candlestick2_ochl(ax=ax[0],opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+		
+		ax[1].axhline(y=100, color='b', linestyle=':')
+		ax[1].axhline(y=-100, color='b', linestyle=':')
+		ax[1].plot(cci,'r')
+		ax[1].plot(cciii,'b')
+
+		plt.show()
+
+		return 0
 
 def main():
 	print('this message is from main function')

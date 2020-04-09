@@ -220,7 +220,7 @@ class gu_zb(object):
 					in_li.append(i-p)
 				if h==2 or h==4 or h==6:continue
 			
-				if h==3 or h==5:
+				if h==3 or h==5 or h==7:
 					#3个角取值
 					if dd_li[i]=='up':
 						if cci[i]>=cci[i-2]:
@@ -238,7 +238,7 @@ class gu_zb(object):
 				up_li.append(i)
 			if dd_li[i]=='dw':
 				dw_li.append(i)
-		#print(dw_li,up_li)
+		print(dw_li,up_li)
 		in_li.clear()
 		lxzj_li.clear()
 		dd_li.clear()
@@ -248,7 +248,7 @@ class gu_zb(object):
 	def sel_dd_dw(self,cci):
 		total=len(cci)
 		cciqr=self.cci_ana_qrfj(cci)
-		up_li,dw_li=self.cci_ana_dd(cci)
+		up_li,dw_li=self.cci_ana_dd2(cci)
 		
 		bz=0
 		dw_li2=[]
@@ -274,11 +274,12 @@ class gu_zb(object):
 	def gj_d_bl(self,df):
 		cci=self.cci(df)
 		dw_li2=self.sel_dd_dw(cci)
+		print(dw_li2)
 		low_li=df.low.values.tolist()
 		dw_li=[]
 		for u in dw_li2:
 			if low_li[u[0]]>=low_li[u[2]]:
-				print(u)
+				#print(u)
 				dw_li.append(u)
 		return dw_li
 
@@ -321,3 +322,4 @@ class gu_zb(object):
 				#print(u)
 				up_li.append(u)
 		return up_li
+	#底背驰优化

@@ -75,22 +75,31 @@ class gu_shou(object):
 			print('上周期存在背驰')
 		return bcgs,bz
 		
-	
-	#cci背驰线被穿越
-	#寻找第三波：当前阶段为强势阶段并有背驰，然后等待第三波。#
+	#买点1、2次底背驰后的大幅调整。（顶底背驰交错出现是什么情况）
+	def buy_1(self,df):
+		#连续2次底背驰
+		pass
+	#买点2、cci第一次顶背驰线后，准备穿越。（穿越前会形成同级别的底背驰吗，均线之上会更好些）
+	def buy2(self,df):
+		#一次顶背驰
+		pass
+	#买点3、cci第2次顶背驰线后，准备穿越。寻找第三波：当前阶段为强势阶段并有背驰？？，然后等待第三波。
+			#
+	def buy_3(self,df):
+
+		#连续两次顶背驰
+		pass
 	#底背驰.返回最后一个背驰
 	def d_bc(self,df):
 		kk=gu_zb('')
 		cci=kk.cci(df)
 		cciqr=kk.cci_ana_qrfj(cci)
 		dw_li=kk.gj_d_bl(df)
-		up_li=kk.gjbc(df)
+		#up_li=kk.gjbc(df)
 		ln=len(cci)
-		for i in range(ln-1,-1,-1)
-			if i == dw_li[-1][0]:
-				return -1
-			if i==up_li[-1][0]:
-				return 1
+		for i in range(ln-1,-1,-1):
+			if i == dw_li[-1][2]:#返回背离点
+				return i
 		#底顶点
 		#判断背驰
 		return 0
@@ -117,7 +126,7 @@ class gu_shou(object):
 				ttt_li.append([code,i,df.loc[i].date])
 
 		return len(ttt_li),ttt_li
-	#大顶：背驰线之上，股价创新高，cci下折
+	#标记大顶：背驰线之上，股价创新高，cci下折
 	def jddd(self,df):
 		high_li=df.high.values.tolist()
 		close_li=df.close.values.tolist()
@@ -175,7 +184,7 @@ class gu_shou(object):
 		df=kk.get_k_from_csv(code1,ktype1)
 		cci=hh.cci(df)
 		return self.bc(cci)
-
+	#小钝角
 	def shou_xdj(self,code1,ktype1):
 		kk=gu_save('')
 		hh=gu_zb('')
@@ -222,11 +231,11 @@ class gu_shou(object):
 	def test(self):
 		kk=gu_save('')
 		hh=gu_zb('')
-		df=kk.get_k_from_csv('300598','D')
-		cci=hh.cci(df)
+		df=kk.get_k_from_csv('002498','D')
+		#cci=hh.cci(df)
 		#cciqr=hh.cci_ana_qrfj(cci)
 		#zq=self.qszq(cciqr,2)
-		dd=hh.draw_dd_up(cci)
+		dd=self.d_bc(df)
 		print(dd)
 		return 0
 
@@ -278,7 +287,7 @@ def main():
 	#s.shou_bc('600598','D')
 	#code_list=s.shou_sz(100,2000)
 	#s.shou_bc_all()
-	s.shou_tt_all()
+	#s.shou_tt_all()
 
 if __name__ == '__main__':
 	main()
