@@ -11,7 +11,7 @@ class gu_draw(object):
 	def __init__(self, arg):
 		super(gu_draw, self).__init__()
 		self.arg = arg
-		self.total=150
+		self.total=250
 
 	#大顶：背驰线之上，股价创新高，cci下折
 	def jddd(self,df):
@@ -121,8 +121,13 @@ class gu_draw(object):
 		#取4个类型的CCi
 		if df.empty:
 			return 0
-		cci=hh.cci(df)[-self.total:]
-		df=df[-self.total:]
+		cci=hh.cci(df)
+		ln=len(cci)
+		total=self.total
+		if ln<self.total:
+			total=ln
+		df=df[-total:]
+		cci=cci[-total:]
 		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
@@ -133,7 +138,7 @@ class gu_draw(object):
 		#取顶点
 		up_li2=hh.gjbc(df)
 		dw_li2=hh.gj_d_bl(df)
-		print(dw_li2)
+		#print(dw_li2)
 		if len(up_li2)>3:
 			up=up_li2[-3:]
 		else:
@@ -154,8 +159,8 @@ class gu_draw(object):
 			b=y2-k*x2
 			c1=(300-b)/k
 			c2=(-200-b)/k
-			if c2>self.total:
-				c2=self.total
+			if c2>total:
+				c2=total
 			if c1<0:
 				c1=0
 			l_x=np.linspace(c1,c2,10)
@@ -171,8 +176,8 @@ class gu_draw(object):
 			b=y2-k*x2
 			c1=(200-b)/k
 			c2=(-350-b)/k
-			if c1>self.total:
-				c1=self.total
+			if c1>total:
+				c1=total
 			if c2<0:
 				c2=0
 			l_x=np.linspace(c1,c2,10)

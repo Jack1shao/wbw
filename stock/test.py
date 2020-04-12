@@ -13,7 +13,9 @@ hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 #取4个类型的df
-#df=kk.get_k_from_api('300316','D')
-ddd.draw_cci3('300316','D')
+df=kk.get_k_from_csv('300316','D')
+#ddd.draw_cci3('300316','D')
+
+rr.buy_3(df)
 
 

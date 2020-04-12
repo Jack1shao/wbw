@@ -86,23 +86,44 @@ class gu_shou(object):
 	#买点3、cci第2次顶背驰线后，准备穿越。寻找第三波：当前阶段为强势阶段并有背驰？？，然后等待第三波。
 			#
 	def buy_3(self,df):
-
 		#连续两次顶背驰
-		pass
+		a=1
+		ii=0
+		cu=''
+		while a!=0 and ii<10 :
+			
+			a,b,c=self.d_bc(df)
+			if a<0:
+				cu='b'+cu
+				ii+=1
+			if a>0:
+				cu='s'+cu
+				ii+=1
+			if a!=0:
+				df=df[:b]
+		print(cu)
+		if cu.find('ssbb')>0:
+			print('buy_3')
+		return cu
+
+	#中枢
+	#def 
 	#底背驰.返回最后一个背驰
 	def d_bc(self,df):
 		kk=gu_zb('')
 		cci=kk.cci(df)
 		cciqr=kk.cci_ana_qrfj(cci)
 		dw_li=kk.gj_d_bl(df)
-		#up_li=kk.gjbc(df)
+		up_li=kk.gjbc(df)
 		ln=len(cci)
 		for i in range(ln-1,-1,-1):
 			if i == dw_li[-1][2]:#返回背离点
-				return i
+				return -1,dw_li[-1][0],i
+			if i == up_li[-1][2]:#返回背离点
+				return 1,up_li[-1][0],i
 		#底顶点
 		#判断背驰
-		return 0
+		return 0,0,0
 	#搜索2根小阴线，在100之上，每天2个点之内，高点都在boll上轨之上
 	def two_little(self,code,ktype1):
 		kk=gu_save('')
