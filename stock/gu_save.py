@@ -58,7 +58,6 @@ class gu_save(object):
 		return ''
 		#收索市值大小
 	def get_sz(self,code1):
-		
 		df=self.get_k_from_csv(code1,'D')
 		high=df[-1:].high.values.tolist()
 		#print(high)
@@ -132,92 +131,9 @@ class gu_save(object):
 			print('- 覆盖存入csv-{}'.format(files1))
 		return 1
 
-	'''#
-				def get_k_from_db(self,code,ktype1):
-					files1=self.get_csvmc(code)
-					if os.path.exists(files1):
-						with open(files1,'r',encoding='utf-8') as csv_file:
-							df = read_csv(csv_file,index_col=0)#指定0列为index列
-					else:
-						print('未找到股票数据，请先载入')
-						if ktype1=='30':
-							df=self.get_k_from_api(code,'m')
-						else:
-							df=self.get_k_from_api(code,ktype1)
-			
-						#df.drop([len(df)-1],inplace=True)
-						self.save_to_csv(code,df,'')
-						return df#DataFrame([])
-					return df[df.ktype==ktype1]
-				#判断最后一条数据是否今天的
-				def pd_last_k(self,df):
-					#640  2020-03-25  14.550  14.300  14.600  ...   300414      D  2020-03-25  2349
-					#210  2020-03-25  12.710  14.300  14.640  ...   300414      w  2020-03-25  2350
-					#50  2020-03-25  12.370  14.300  15.370  ...   300414      m  2020-03-25  2350
-					if df.empty:
-						print("获取的数据 -Df-是空")
-						return 0
-					d_today = datetime.datetime.now().strftime('%Y-%m-%d')
-					#如果是周六日，取周五
-					df=df[-1:]
-					d_last=df.values.tolist()[0][0]#最后一条记录的日期
-					
-					if d_today==d_last:
-						return 1
-					return 0
-				def get_k(self,code,ktype1):
-					
-					#从本地取数的条件
-						#最后一条数据是今天的
-						#早上9点之前是前一天的数据
-					df_bd=self.get_k_from_db(code,ktype1)
-					if self.pd_last_k(df_bd)==1 and df_bd.empty is False:
-						return df_bd
-					#print(df_bd)
-					#否则 从接口取数
-					df_jk=self.get_k_from_api(code,ktype1)
-					#30分钟线不做存储
-					if ktype1=='30':
-						return df_jk
-			
-					#写入数据库的条件
-						#判断时间已到到15：00
-						#判断最后一条数据是否今天的
-					#print(df_jk)
-					gxsj = datetime.datetime.now().strftime('%H%M')
-					bd_date_li=df_bd.date.values.tolist()
-					jk_date_li=df_jk.date.values.tolist()
-					if df_jk.empty:return 0
-					#最后一个时间删除，用于增量插入
-					if ktype1 in ['w','m'] and len(jk_date_li)>0:
-						jk_date_li.pop()
-					if (int(gxsj)<1500 and int(gxsj)>930) and ktype1=='D' :
-						jk_date_li.pop()
-					
-					#插入本地
-					#判断最后一个时间一样
-			
-					#接口的数据不在本地，增量插入数据
-					list_not_in=[]
-					for d in jk_date_li:
-						if d not in bd_date_li:
-							list_not_in.append(d)
-			
-					if len(list_not_in)>0:
-						print(list_not_in)
-						df=df_jk[df_jk.date.isin(list_not_in)]
-						self.save_to_csv(code,df,'a')
-							
-					return df_jk
-				'''
 	#更新全部
 	def pl_gx_all(self,ktype1):
-		files1=self.get_csvmc(self.basc)
-		df=self.get_base_from_db()
-		#print(df.head())
-		name=df.name.values
-		print(name)
-		code_li=df.index.values.tolist()
+		code_li=self.get_from_csv('sv_sz.csv').code.values.tolist()
 		co_li=[]
 		for code in code_li:
 			co=self.getSixDigitalStockCode(code)
@@ -227,24 +143,50 @@ class gu_save(object):
 
 	##去除St的股票和上市一年的股票
 	def get_code_list(self):
+		print('--去除St的股票和2019年后上市的股票--')
 		df=self.get_base_from_db()
-		#name_li=df.name.values.tolist()
 		n_li=[]
 		for code,row in df.iterrows():
-			#print(len(row),row[14])
 			if row[0].find('ST')<0 and row[14]<20190101:
-				#print(self.getSixDigitalStockCode(code),row[0])	
 				n_li.append(self.getSixDigitalStockCode(code))
-		print(len(n_li))
 		return n_li
+	#去除St的股票和上市一年的股票的大名单
+	def dmd1(self):
+		li_df=[]
+		n_li=self.get_code_list()
+		for co in n_li:
+			li_df.append([co,'除St的股票和2019年后大名单'])
+		df=DataFrame(li_df,columns=[ 'code', 'name'])
+		df.to_csv('sv_dmd1.csv')
+		return 0
 
+	#流通市值在50-2000亿
+	def sz_50_2000(self):
+		x1=50
+		x2=2000
+		code_li=self.get_from_csv('sv_dmd1.csv').code.values.tolist()
+		co_li=[]
+		for code in code_li:
+			co=self.getSixDigitalStockCode(code)
+			co_li.append(co)
+		c_li=[]
+		for code  in co_li:
+			sz=self.get_sz(code)
+			if sz>x1 and sz<x2:
+				c_li.append([code,'市值在{0}-{1}之间'.format(x1,x2)])
+
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('sv_sz.csv')
+		return 0
 	#按列表批量存入数据
 	def pl_chunru(self,list1,ktype1):
 		if len(list1)==0:
 			print('股票列表为ikon——pl_churu')
 			return 0
+		iii=0
 		for code in list1:
-			print(code)
+			print('---{0}---{1}---'.format(iii,code))
+			iii+=1
 			df=self.get_k_from_api(code,ktype1)
 			self.save_k_to_csv(code,df,'',ktype1)
 		return 1
@@ -252,8 +194,7 @@ class gu_save(object):
 def main():
 	print('	\n单独执行股票取数，开始...')
 	kk=gu_save('0')
-	#print(kk.get_name('300414'))
-	#kk.get_code_list()
+
 	ktype1=['30','D','w','m']
 	i=0
 	while i<10:
@@ -263,6 +204,9 @@ def main():
 		print('2--获取所有 <周K线>')
 		print('3--获取所有 <月K线>')
 		print('4--获取基础数据存入csv')
+		print('91--大名单')
+		print('92--市值在50-2000亿')
+		print('93--热门')
 		print('99--退出<99>')
 		print('--')
 		print('--')
@@ -270,6 +214,12 @@ def main():
 		if cc=='99':
 			print('	退出<99>')
 			break
+		if cc=='91':
+			kk.dmd1()
+			print('---	91大名单---')
+		if cc=='92':
+			kk.sz_50_2000()
+			print('---	92市值在50-2000亿---')
 		n=int(cc)
 		#print(cc,n)
 		if n>len(ktype1):

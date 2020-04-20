@@ -240,29 +240,11 @@ class gu_shou(object):
 			sz=kk.get_sz(code)
 			if sz>x1 and sz<x2:
 				c_li.append([code,'市值在{0}-{1}之间'.format(x1,x2)])
-				#break
-		#print(len(c_li))
+
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou.csv')
 		return c_li
-	#底背离
-	def dbl(self,df):
-		hh=gu_zb('')
-		low_li=df.low.values.tolist()
-		diff,dea,macd3=hh.macd(df)
-		return 1
 
-
-	def test(self):
-		kk=gu_save('')
-		hh=gu_zb('')
-		df=kk.get_k_from_csv('002498','D')
-		#cci=hh.cci(df)
-		#cciqr=hh.cci_ana_qrfj(cci)
-		#zq=self.qszq(cciqr,2)
-		dd=self.d_bc(df)
-		print(dd)
-		return 0
 
 	def shou_tt_all(self):
 		c_li=[]
@@ -301,18 +283,45 @@ class gu_shou(object):
 		c_li.clear()
 		return 0
 	#搜索底背驰
-	def shou_dibc_all(self):
+	def shou_di_bc_30(self):
 
+		return 0
+	def shou_ding_bc_30_8(self):
+
+		return 0
+	def shou_dibc_D(self):
 		return 0
 def main():
 	print('单独执行gu_shou收索，开始')
-	s=gu_shou('')
-	#s.w_tiaojian()
-	#s.shou_xdj('600596','D')
-	#s.shou_bc('600598','D')
-	#code_list=s.shou_sz(100,2000)
-	#s.shou_bc_all()
-	#s.shou_tt_all()
+	sh=gu_shou('')
+	i=0
+	pr=['0--30分钟底背驰','1--30分钟顶背驰<间距8>','2--日线买点【1】',\
+		'3--日线买点【2】','4--日线买点【3】','99--退出<99>']
+	while i<10:
+		i+=1
+		print('--')
+		print('0--30分钟底背驰')
+		print('1--30分钟顶背驰<间距8>')
+		print('2--日线买点【1】')
+		print('3--日线买点【2】')
+		print('4--日线买点【3】')
+		print('99--退出<99>')
+		print('--')
+		print('--')
+		cc=input()
+		if cc=='99':
+			print('	退出<99>')
+			break
+		n=int(cc)
+		#print(cc,n)
+		if n>len(pr) and n<0:
+			print('输入有误')
+			continue
+		if n==0:
+			#shou_bc_30(code,'30')
+			pass
+		
+	print('程序完成，退出')	
 
 if __name__ == '__main__':
 	main()
