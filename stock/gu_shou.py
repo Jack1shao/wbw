@@ -84,14 +84,21 @@ class gu_shou(object):
 		#一次顶背驰
 		pass
 	#买点3、cci第2次顶背驰线后，准备穿越。寻找第三波：当前阶段为强势阶段并有背驰？？，然后等待第三波。
-			#
+		#
 	def buy_3(self,df):
-		#连续两次顶背驰
+		cu=self.__buy_0(df)
+		print(cu)
+		if cu.find('ssbb')>0:
+			print('buy_3')
+		return 3
+	#输出字符串，顶底背驰，顶为S，底为B	
+	def __buy_0(self,df):
+		
 		a=1
 		ii=0
 		cu=''
 		while a!=0 and ii<10 :
-			
+
 			a,b,c=self.d_bc(df)
 			if a<0:
 				cu='b'+cu
@@ -101,9 +108,6 @@ class gu_shou(object):
 				ii+=1
 			if a!=0:
 				df=df[:b]
-		print(cu)
-		if cu.find('ssbb')>0:
-			print('buy_3')
 		return cu
 
 	#中枢

@@ -62,35 +62,14 @@ class gu_zb(object):
 				cciqrfj.append(-100)
 		return cciqrfj
 
-	#cci折角
+	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
-	#cci折角
+	#cci折角3去除无用顶点
 	def cci_ana_dd(self,ccilist):
-		cci=ccilist
-		dd_li=[]
-		up_li=[]
-		dw_li=[]
-		#判断折角
-		dd_li.append('lx')#第一个cci线为连续
-		total=len(cci)
-		for i in range(2,total):
-			today=i
-
-			lastday=i-1
-			yesteday=i-2
-			zz=self.__cci_ana_updown(cci[today],cci[lastday],cci[yesteday])
-			if zz==1:
-				dd_li.append('up')
-			elif zz==-1:
-				dd_li.append('dw')
-			else:
-				dd_li.append('lx')
-		dd_li.append('lx')#最后一个cci线为连续
-		#for i in range(0,total):
-			#print(i,dd_li[i],cci[i])
+		dd_li=self.cci_dd(ccilist)
 		#判断相邻连续折角,根据缠论
 		lxzj_li=[]
 		lxzj_li.append(0)
@@ -158,6 +137,30 @@ class gu_zb(object):
 		dd_li.clear()
 
 		return up_li,dw_li
+	#cci折角2、所有的顶点
+	def cci_dd(self,ccilist):
+		cci=ccilist
+		dd_li=[]
+		#判断折角
+		dd_li.append('lx')#第一个cci线为连续
+		total=len(cci)
+		for i in range(2,total):
+			today=i
+			lastday=i-1
+			yesteday=i-2
+			zz=self.__cci_ana_updown(cci[today],cci[lastday],cci[yesteday])
+			if zz==1:
+				dd_li.append('up')
+			elif zz==-1:
+				dd_li.append('dw')
+			else:
+				dd_li.append('lx')
+		dd_li.append('lx')#最后一个cci线为连续
+
+		#for i in range(0,total):
+			#print(i,dd_li[i],cci[i])
+		return dd_li
+		
 
 	#两点画线
 	def line(self,x1,y1,x2,y2):
@@ -274,7 +277,7 @@ class gu_zb(object):
 	def gj_d_bl(self,df):
 		cci=self.cci(df)
 		dw_li2=self.sel_dd_dw(cci)
-		print(dw_li2)
+		#print(dw_li2)
 		low_li=df.low.values.tolist()
 		dw_li=[]
 		for u in dw_li2:
@@ -287,6 +290,7 @@ class gu_zb(object):
 	def sel_dd_up(self,cci):
 		total=len(cci)
 		cciqr=self.cci_ana_qrfj(cci)
+		#print(cci)
 		up_li,dw_li=self.cci_ana_dd(cci)
 		#print(up_li)
 		#zjd_li=[]
@@ -315,6 +319,7 @@ class gu_zb(object):
 	def gjbc(self,df):
 		cci=self.cci(df)
 		up_li2=self.sel_dd_up(cci)
+		print('Lp1',up_li2)
 		high_li=df.high.values.tolist()
 		up_li=[]
 		for u in up_li2:

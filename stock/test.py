@@ -13,9 +13,14 @@ hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 #取4个类型的df
-df=kk.get_k_from_csv('300316','D')
+#list11=['002498']
+#kk.pl_chunru(list11,'30')
+df=kk.get_k_from_csv('002498','30')
+bc=hh.gjbc(df)
+#print(bc)
 #ddd.draw_cci3('300316','D')
-
-rr.buy_3(df)
+#print(df.loc[454])
+#print(df.loc[475])
+#rr.buy_3(df)
 
 

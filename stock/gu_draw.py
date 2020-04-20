@@ -138,7 +138,7 @@ class gu_draw(object):
 		#取顶点
 		up_li2=hh.gjbc(df)
 		dw_li2=hh.gj_d_bl(df)
-		#print(dw_li2)
+		print(up_li2)
 		if len(up_li2)>3:
 			up=up_li2[-3:]
 		else:
@@ -245,8 +245,8 @@ def main():
 	print('this message is from main function')
 	g=gu_draw('')
 	i=0
-	ktype=['30','D','w','m']
-	#ktype=['30','D']
+	#ktype=['30','D','w','m']
+	ktype=['30']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')
