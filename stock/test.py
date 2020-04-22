@@ -15,14 +15,14 @@ ddd=gu_draw('')
 #取4个类型的df
 #list11=['002498']
 #kk.pl_chunru(list11,'30')
-#df=kk.get_k_from_csv('002498','30')
-#bc=hh.gjbc(df)
-#print(bc)
+df=kk.get_k_from_csv('002498','30')
+up,dw=hh.gj_bl(df)
+print(up)
 #ddd.draw_cci3('300316','D')
 #print(df.loc[454])
 #print(df.loc[475])
 #rr.buy_3(df)
-kk.sz_50_2000()
+#kk.sz_50_2000()
 #print(code_li)
 
 

@@ -136,16 +136,17 @@ class gu_draw(object):
 		ax[0].set_title(name+code+'--'+ktype,fontproperties = 'SimHei',fontsize = 20)
 		ax[1].plot(cci,'r')
 		#取顶点
-		up_li2=hh.gjbc(df)
-		dw_li2=hh.gj_d_bl(df)
+		#up_li2=hh.gjbc(df)
+		#dw_li2=hh.gj_d_bl(df)
+		up_li2,dw_li2=hh.gj_bl(df)
 		print(up_li2)
-		if len(up_li2)>3:
-			up=up_li2[-3:]
+		if len(up_li2)>4:
+			up=up_li2[-4:]
 		else:
 			up=up_li2
 
-		if len(dw_li2)>3:
-			dw=dw_li2[-3:]
+		if len(dw_li2)>4:
+			dw=dw_li2[-4:]
 		else:
 			dw=dw_li2
 		#up=[]
@@ -201,12 +202,7 @@ class gu_draw(object):
 		plt.show()
 		return 1
 
-	def dr_macd(self,code,ktype):
-		kk=gu_save('')
-		hh=gu_zb(0)
-		#取4个类型的df
-		df=kk.get_k_from_csv(code,ktype)
-		pass
+
 	def draw_cci3(self,code,ktype):
 		kk=gu_save('')
 		hh=gu_zb(0)

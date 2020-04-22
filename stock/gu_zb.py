@@ -38,7 +38,7 @@ class gu_zb(object):
 				bz1=-1
 			if bz1>0:
 				#去除偶然性
-				if i>3:
+				'''if i>3:
 					cn1=cciqrfj[i-2]<0
 					cn2=cci1[i]<100 and cci1[i-1]>100 and cci1[i-2]<100
 					if cn1 and cn2:
@@ -46,11 +46,11 @@ class gu_zb(object):
 						cciqrfj.pop()
 						cciqrfj.append(-100)
 						cciqrfj.append(-100)
-						continue
+						continue'''
 				cciqrfj.append(js_up)
 			else:
 				#去除偶然性
-				if i>3:	
+				'''	if i>3:	
 					cn3=cciqrfj[i-2]>0
 					cn4=cci1[i]>-100 and cci1[i-1]<-100 and cci1[i-2]>-100
 					if cn3 and cn4:
@@ -58,7 +58,7 @@ class gu_zb(object):
 						cciqrfj.pop()
 						cciqrfj.append(js_up)
 						cciqrfj.append(js_up)
-						continue
+						continue'''
 				cciqrfj.append(-100)
 		return cciqrfj
 
@@ -67,12 +67,16 @@ class gu_zb(object):
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
-	#cci折角3去除无用顶点
+	#cci折角3、去除无用顶点
 	def cci_ana_dd(self,ccilist):
 		dd_li=self.cci_dd(ccilist)
 		#判断相邻连续折角,根据缠论
+		up_li=[]
+		dw_li=[]
 		lxzj_li=[]
 		lxzj_li.append(0)
+		cci=ccilist
+		total=len(cci)
 		for i in range(1,total):
 			if dd_li[i]=='lx':lxzj_li.append(0)
 			elif dd_li[i]!='lx':
@@ -156,9 +160,6 @@ class gu_zb(object):
 			else:
 				dd_li.append('lx')
 		dd_li.append('lx')#最后一个cci线为连续
-
-		#for i in range(0,total):
-			#print(i,dd_li[i],cci[i])
 		return dd_li
 		
 
@@ -263,6 +264,7 @@ class gu_zb(object):
 			#是折点的
 			if i not in dw_li:continue
 			#bz为堆栈，选择两个顶点
+			#其中一个顶点在100和-100之外
 			#压栈
 			if  bz==0:bz=i
 			if  cci[i]<=cci[bz]:
@@ -273,6 +275,62 @@ class gu_zb(object):
 		up_li.clear()
 		dw_li.clear()
 		return dw_li2
+	#股价底背离
+	def gj_bl(self,df):
+		up_li=[]
+		dw_li=[]
+		low_li=df.low.values.tolist()
+		high_li=df.high.values.tolist()
+
+		cci=self.cci(df)
+		cciqr=self.cci_ana_qrfj(cci)
+		dd_li=self.cci_dd(cci)
+		total=len(cci)
+		for i in range(0,total):
+			if dd_li[i]=='up':
+				up_li.append(i)
+			if dd_li[i]=='dw':
+				dw_li.append(i)
+		#底顶点背驰		
+		dw_li2=[]
+		up_li2=[]
+		bz=0
+		for i in range(0,total):
+			#强势下不画线
+			if cciqr[i]>0:
+				bz=0
+				continue
+			#是折点的
+			if i not in dw_li:continue
+			#bz为堆栈，选择两个顶点
+			#其中一个顶点在100和-100之外
+			#压栈
+			if  bz==0:bz=i
+			if  cci[i]<=cci[bz]:
+				bz=i
+			elif  cci[i]>cci[bz]:
+				if low_li[i]<low_li[bz]:
+					dw_li2.append([bz,cci[bz],i,cci[i]])
+				bz=0
+		#顶顶点背驰
+		bz=0
+		for i in range(0,total):
+			#弱势下不画线
+			if cciqr[i]<0:
+				bz=0
+				continue
+			if i not in up_li:continue#是顶点的
+			#bz为堆栈，选择两个顶点，其中一个顶点在100和-100之外
+			if  bz==0:bz=i#压栈
+			if  cci[i]>=cci[bz]:
+				bz=i
+			elif  cci[i]<cci[bz]:
+				if high_li[i]>high_li[bz]:
+						up_li2.append([bz,cci[bz],i,cci[i]])
+				bz=0
+
+		return up_li2,dw_li2
+		
 	#股价底背离
 	def gj_d_bl(self,df):
 		cci=self.cci(df)
@@ -290,14 +348,11 @@ class gu_zb(object):
 	def sel_dd_up(self,cci):
 		total=len(cci)
 		cciqr=self.cci_ana_qrfj(cci)
-		#print(cci)
+
 		up_li,dw_li=self.cci_ana_dd(cci)
-		#print(up_li)
-		#zjd_li=[]
+	
 		up_li2=[]
-		#line_li=[]
 		bz=0
-		#print(len(cciqr))
 		for i in range(0,total):
 			#弱势下不画线
 			if cciqr[i]<0:
