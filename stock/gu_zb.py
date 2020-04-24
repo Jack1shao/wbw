@@ -161,7 +161,7 @@ class gu_zb(object):
 				dd_li.append('lx')
 		dd_li.append('lx')#最后一个cci线为连续
 		return dd_li
-		
+
 
 	#两点画线
 	def line(self,x1,y1,x2,y2):

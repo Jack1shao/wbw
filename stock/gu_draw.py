@@ -198,7 +198,7 @@ class gu_draw(object):
 			#plt.text(x[0],0,x[1],size = 10)
 		for x in jddd_li:
 			plt.text(x[0],250,x[1],size = 7)
-
+		plt.style.use('ggplot')
 		plt.show()
 		return 1
 
