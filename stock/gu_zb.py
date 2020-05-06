@@ -37,28 +37,8 @@ class gu_zb(object):
 			if cci1[i]<-100:
 				bz1=-1
 			if bz1>0:
-				#去除偶然性
-				'''if i>3:
-					cn1=cciqrfj[i-2]<0
-					cn2=cci1[i]<100 and cci1[i-1]>100 and cci1[i-2]<100
-					if cn1 and cn2:
-						bz=-1
-						cciqrfj.pop()
-						cciqrfj.append(-100)
-						cciqrfj.append(-100)
-						continue'''
 				cciqrfj.append(js_up)
 			else:
-				#去除偶然性
-				'''	if i>3:	
-					cn3=cciqrfj[i-2]>0
-					cn4=cci1[i]>-100 and cci1[i-1]<-100 and cci1[i-2]>-100
-					if cn3 and cn4:
-						bz=1
-						cciqrfj.pop()
-						cciqrfj.append(js_up)
-						cciqrfj.append(js_up)
-						continue'''
 				cciqrfj.append(-100)
 		return cciqrfj
 
