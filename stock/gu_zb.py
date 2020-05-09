@@ -11,7 +11,7 @@ class gu_zb(object):
 
 	def macd(self,df):
 		diff,dea,macd3=talib.MACD(df['close'],fastperiod=12, slowperiod=26, signalperiod=9)
-		return 2
+		return diff,dea,macd3
 	#指标boll
 	def boll(self,df):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)

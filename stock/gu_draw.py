@@ -72,6 +72,7 @@ class gu_draw(object):
 				#if jddd_li[-1][0]!=i:
 					#jddd_li.append([Si,'s'])#笔的形成
 		open_li.clear()
+		
 		close_li.clear()
 		high_li.clear()
 		low_li.clear()
