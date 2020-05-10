@@ -136,17 +136,46 @@ class gu_shou(object):
 		c_li=[]
 		kk=gu_save('')
 		code_list=kk.get_from_csv('sv_sz.csv').code.values.tolist()
-
-		#周
-		#code_list=[]
 		for code in code_list:
 			co=(kk.getSixDigitalStockCode(code))
 			print(co)
 			f=self.shou_Macd_M_H(co)
 			if f==1:
-				c_li.append([co,'bz'])
+				c_li.append([co,'月线Macd红柱'])
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
-		df.to_csv('shou_1.csv')
+		df.to_csv('shou_m.csv')
+		c_li.clear()
+		#周
+		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			print(co)
+			f=self.shou_Macd_w_0z(co)
+			if f==1:
+				c_li.append([co,'周线macd的Dea在0轴之上'])
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('shou_w.csv')
+		c_li.clear()
+		return 0
+	def shou_all_cci_d(self):
+		kk=gu_save('')
+		c_li=[]
+		c_li2=[]
+		code_list=kk.get_from_csv('shou_w.csv').code.values.tolist()
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			print(co)
+			f=self.shou_cci_D_qrs(co)
+			if f==1:
+				c_li.append([co,'强势、cci 0+'])
+			if f==2:
+				c_li2.append([co,'弱势、cci-100-'])
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('shou_d1.txt')
+		df=DataFrame(c_li2,columns=[ 'code', 'name'])
+		df.to_csv('shou_d2.txt')
+		c_li.clear()
+		c_li2.clear()
 		return 0
 	
 	#搜月Macd为红柱，cci拐头向上。
@@ -161,33 +190,45 @@ class gu_shou(object):
 		macd=macd3.tolist()
 		cn1=macd[-1]>0#Macd为红柱
 
+		if cn1 :
+			return 1#Macd为红柱
+		return 0
+	#搜周Macd-dea为在0轴上
+	def shou_Macd_w_0z(self,code1):
+		kk=gu_save('')
+		hh=gu_zb('')
 		#搜周Macd-dea为在0轴上
 		df=kk.get_k_from_csv(code1,'w')
 		diff,dea3,macd3=hh.macd(df)
 		dea=dea3.tolist()
 		cn2=dea[-1]>0#dea 0轴之上
-
-		#搜日线 cci 弱势时 cci<-100;强势时 cci>0
-		df=kk.get_k_from_csv(code1,'D')
-		cci=hh.cci(df)
-		cciqrfj=hh.cci_ana_qrfj(cci)
-		#print(cciqrfj[-1],cci[-1])
-		cn31=cciqrfj[-1]>0 and cci[-1]>0
-		cn41=cciqrfj[-1]<1 and cci[-1]<-100
-		cn3= cn31 or cn41
-		#print(cn41,cn31,cn3)
-		if cn1 and cn2  and cn3:
-			return 1#Macd为红柱
-		
+		if cn2:
+			return 1
 		return 0
 
 	#搜日线 cci 弱势时 cci<-100;强势时 cci>0
+	def shou_cci_D_qrs(self,code1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code1,'D')
+		cci=hh.cci(df)
+		cciqrfj=hh.cci_ana_qrfj(cci)
+		cn4=cciqrfj[-1]>0 and cci[-1]>0
+		cn5=cciqrfj[-1]<1 and cci[-1]<-100
+		
+		if cn4 :
+			return 1
+		if cn5:
+			return 2
+		return 0
+		
 
 
 def main():
 	print('单独执行gu_shou收索，开始')
 	sh=gu_shou('')
-	sh.shou_all_Macd_M_H()
+	#sh.shou_all_Macd_M_H()
+	sh.shou_all_cci_d()
 
 
 
