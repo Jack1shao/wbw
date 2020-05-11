@@ -133,8 +133,19 @@ class gu_save(object):
 
 	#更新全部
 	def pl_gx_all(self,ktype1):
-		code_li=self.get_from_csv('sv_sz.csv').code.values.tolist()
 		co_li=[]
+		shou_fil=''
+		files1=['sv_sz.csv','shou_m.csv','shou_w.csv']
+
+		if ktype1=='m':
+			shou_fil=files1[0]
+		if ktype1=='w':
+			shou_fil=files1[1]
+		if ktype1=='D':
+			shou_fil=files1[2]
+
+		code_li=self.get_from_csv( shou_fil).code.values.tolist()
+		
 		for code in code_li:
 			co=self.getSixDigitalStockCode(code)
 			co_li.append(co)
