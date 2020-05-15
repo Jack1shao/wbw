@@ -1,8 +1,6 @@
 #gu_zb.py
 import talib
-import mpl_finance as mpf
-import matplotlib.pyplot as plt
-import numpy as np
+
 class gu_zb(object):
 	"""docstring for gu_zb"""
 	def __init__(self, arg):
@@ -16,6 +14,11 @@ class gu_zb(object):
 	def boll(self,df):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
+	#指标ma
+	def ma(self,df):
+		closed=df['close'].values
+		sma=talib.MA(closed,timeperiod=34,matype=0)
+		return sma.tolist()
 	#指标cci
 	def cci(self,df):
 		#def CCI(df, n):
@@ -30,7 +33,7 @@ class gu_zb(object):
 		cciqrfj=[]
 		total=len(cci1)
 		js_up=1
-		js_dw=0
+
 		for i in range(0, total):
 			if cci1[i]>100:
 				bz1=1
