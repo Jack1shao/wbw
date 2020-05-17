@@ -131,7 +131,7 @@ class gu_shou(object):
 		df.to_csv('shou.csv')
 		return c_li
 
-	#第一次搜
+	#第一次搜，月
 	def shou_all_Macd_M_H(self):
 		c_li=[]
 		kk=gu_save('')
@@ -144,7 +144,20 @@ class gu_shou(object):
 				c_li.append([co,'月线Macd红柱'])
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou_m.csv')
+		if len(df)>590:
+			df1=df[:590]
+			df1.to_csv('shou_m1.txt')
+			df1=df[591:]
+			df1.to_csv('shou_m2.txt')
+		else:
+			df.to_csv('shou_m1.txt')
+
 		c_li.clear()
+		return 0
+	#第二次搜，周
+	def shou_all_Macd_w(self):
+		c_li=[]
+		kk=gu_save('')
 		#周
 		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
 		for code in code_list:
@@ -155,8 +168,17 @@ class gu_shou(object):
 				c_li.append([co,'周线macd的Dea在0轴之上'])
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou_w.csv')
+		if len(df)>590:
+			df1=df[:590]
+			df1.to_csv('shou_w1.txt')
+			df1=df[591:]
+			df1.to_csv('shou_w2.txt')
+		else:
+			df.to_csv('shou_w1.txt')
 		c_li.clear()
 		return 0
+
+	#第三次搜，日
 	def shou_all_cci_d(self):
 		kk=gu_save('')
 		c_li=[]
@@ -228,10 +250,9 @@ def main():
 	print('单独执行gu_shou收索，开始')
 	sh=gu_shou('')
 	#sh.shou_all_Macd_M_H()
-	sh.shou_all_cci_d()
-
-
-
+	sh.shou_all_Macd_w()
+	#sh.shou_all_cci_d()
+	return 0
 if __name__ == '__main__':
 	main()
 		
