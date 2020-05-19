@@ -76,7 +76,7 @@ class gu_shou(object):
 		return bcgs,bz
 		
 	#输出字符串，顶底背驰，顶为S，底为B	
-	def __buy_0(self,df):
+	def buy_0(self,df):
 		
 		a=1
 		ii=0
@@ -117,6 +117,14 @@ class gu_shou(object):
 		df=kk.get_k_from_csv(code1,ktype1)
 		cci=hh.cci(df)
 		return self.bc(cci)
+	#最后一个背驰是顶背驰
+	def shou_din_bc(self,code1,ktype1):
+		#
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code1,ktype1)
+		cci=hh.cci(df)
+		pass
 	#市值收索
 	def shou_sz(self,x1,x2):
 		kk=gu_save('')

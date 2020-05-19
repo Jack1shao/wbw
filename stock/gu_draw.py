@@ -137,9 +137,9 @@ class gu_draw(object):
 		ax[0].set_title(name+code+'--'+ktype,fontproperties = 'SimHei',fontsize = 20)
 		ax[1].plot(cci,'r')
 		#取顶点
-		#up_li2=hh.gjbc(df)
-		#dw_li2=hh.gj_d_bl(df)
-		up_li2,dw_li2=hh.gj_bl(df)
+		up_li2=hh.gjbc(df)
+		dw_li2=hh.gj_d_bl(df)
+		#up_li2,dw_li2=hh.gj_bl(df)
 		print(up_li2)
 		if len(up_li2)>4:
 			up=up_li2[-4:]
@@ -243,7 +243,7 @@ def main():
 	g=gu_draw('')
 	i=0
 	#ktype=['30','D','w','m']
-	ktype=['30']
+	ktype=['D','w']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')

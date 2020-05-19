@@ -45,6 +45,15 @@ class gu_zb(object):
 				cciqrfj.append(-100)
 		return cciqrfj
 
+	def cci_qsqy(self,cci1):
+		qsqy=[]
+		rsqy=[]
+		qr=self.cci_ana_qrfj(cci1)
+		ln=len(qr)
+		for i in range(0,ln):
+			if 1:
+				pass
+		return 
 	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
@@ -333,21 +342,23 @@ class gu_zb(object):
 		cciqr=self.cci_ana_qrfj(cci)
 
 		up_li,dw_li=self.cci_ana_dd(cci)
-	
+		#print(up_li)
 		up_li2=[]
 		bz=0
 		for i in range(0,total):
 			#弱势下不画线
 			if cciqr[i]<0:
 				bz=0
+				#print(i)
 				continue
 			#是顶点的
 			if i not in up_li:continue
 			#bz为堆栈，选择两个顶点
 			#压栈
 			if  bz==0:bz=i
-
+			
 			if  cci[i]>=cci[bz]:
+
 				bz=i
 			elif  cci[i]<cci[bz]:
 						up_li2.append([bz,cci[bz],i,cci[i]])
@@ -357,7 +368,7 @@ class gu_zb(object):
 	def gjbc(self,df):
 		cci=self.cci(df)
 		up_li2=self.sel_dd_up(cci)
-		print('Lp1',up_li2)
+		#print('Lp1',up_li2)
 		high_li=df.high.values.tolist()
 		up_li=[]
 		for u in up_li2:
