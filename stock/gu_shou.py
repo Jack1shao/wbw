@@ -92,7 +92,7 @@ class gu_shou(object):
 				ii+=1
 			if a!=0:
 				df=df[:b]
-		return cu
+		return 'k'+cu
 
 	#底背驰.返回最后一个背驰
 	def d_bc(self,df):
@@ -103,8 +103,12 @@ class gu_shou(object):
 		up_li=kk.gjbc(df)
 		ln=len(cci)
 		for i in range(ln-1,-1,-1):
+			if len(dw_li)==0:
+				continue
 			if i == dw_li[-1][2]:#返回背离点
 				return -1,dw_li[-1][0],i
+			if len(up_li)==0:
+				continue
 			if i == up_li[-1][2]:#返回背离点
 				return 1,up_li[-1][0],i
 		#底顶点
@@ -191,10 +195,22 @@ class gu_shou(object):
 		kk=gu_save('')
 		c_li=[]
 		c_li2=[]
+		c_li3=[]
+		c_li4=[]
 		code_list=kk.get_from_csv('shou_w.csv').code.values.tolist()
 		for code in code_list:
 			co=(kk.getSixDigitalStockCode(code))
-			print(co)
+			f=self.shou_bc_last_s(co)
+			if f==1:
+				c_li3.append([co,'最后一个是顶背驰'])
+				c_li4.append(co)
+		print(c_li3)
+		for code in code_list:
+
+			co=(kk.getSixDigitalStockCode(code))
+			if co in c_li4:
+				continue
+			#print(co)
 			f=self.shou_cci_D_qrs(co)
 			if f==1:
 				c_li.append([co,'强势、cci 0+'])
@@ -204,6 +220,9 @@ class gu_shou(object):
 		df.to_csv('shou_d1.txt')
 		df=DataFrame(c_li2,columns=[ 'code', 'name'])
 		df.to_csv('shou_d2.txt')
+
+		df=DataFrame(c_li3,columns=[ 'code', 'name'])
+		df.to_csv('shou_d3.txt')
 		c_li.clear()
 		c_li2.clear()
 		return 0
@@ -251,14 +270,47 @@ class gu_shou(object):
 		if cn5:
 			return 2
 		return 0
-		
-
+	#	搜日线最后一个背驰为顶背驰，只有主动背驰，才有主动上涨
+	def shou_bc_last_s(self,code1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code1,'D')
+		li_last_s=self.buy_0(df)[-1]
+		if li_last_s=='s':
+			return 1
+		return 0
 
 def main():
 	print('单独执行gu_shou收索，开始')
 	sh=gu_shou('')
+	i=0
+	while i<10:
+		i+=1
+	
+		print('1--搜 <日K线>')
+		print('2--搜 <周K线>周线macd的Dea在0轴之上')
+		print('3--搜 <月K线>月线Macd红柱')
+
+		print('99--退出<99>')
+		print('--')
+		print('--')
+		cc=input()
+		if cc=='99':
+			print('	退出<99>')
+			break
+		if cc=='3':
+			sh.shou_all_Macd_M_H()
+			print('---	月线Macd红柱---')
+		if cc=='2':
+			sh.shou_all_Macd_w()
+			print('---	周线macd的Dea在0轴之上---')
+		if cc=='1':
+			sh.shou_all_cci_d()
+			print('---	日K线---')
+
+	print('程序完成，退出')	
 	#sh.shou_all_Macd_M_H()
-	sh.shou_all_Macd_w()
+	#sh.shou_all_Macd_w()
 	#sh.shou_all_cci_d()
 	return 0
 if __name__ == '__main__':

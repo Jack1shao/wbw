@@ -234,7 +234,7 @@ class gu_zb(object):
 				up_li.append(i)
 			if dd_li[i]=='dw':
 				dw_li.append(i)
-		print(dw_li,up_li)
+		#print(dw_li,up_li)
 		in_li.clear()
 		lxzj_li.clear()
 		dd_li.clear()

@@ -4,6 +4,7 @@ import datetime
 import os
 from pandas import read_csv
 from pandas.core.frame import DataFrame
+
 class gu_save(object):
 	"""docstring for gu_save"""
 	def __init__(self, arg):
@@ -133,6 +134,8 @@ class gu_save(object):
 
 	#更新全部
 	def pl_gx_all(self,ktype1):
+		
+
 		co_li=[]
 		shou_fil=''
 		files1=['sv_sz.csv','shou_m.csv','shou_w.csv']
@@ -141,8 +144,10 @@ class gu_save(object):
 			shou_fil=files1[0]
 		if ktype1=='w':
 			shou_fil=files1[1]
+		
 		if ktype1=='D':
 			shou_fil=files1[2]
+	
 
 		code_li=self.get_from_csv( shou_fil).code.values.tolist()
 		
