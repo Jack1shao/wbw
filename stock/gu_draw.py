@@ -146,8 +146,8 @@ class gu_draw(object):
 		else:
 			up=up_li2
 
-		if len(dw_li2)>4:
-			dw=dw_li2[-4:]
+		if len(dw_li2)>2:
+			dw=dw_li2[-2:]
 		else:
 			dw=dw_li2
 		#up=[]

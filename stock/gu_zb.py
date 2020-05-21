@@ -44,16 +44,75 @@ class gu_zb(object):
 			else:
 				cciqrfj.append(-100)
 		return cciqrfj
-
+	#强弱势区域
 	def cci_qsqy(self,cci1):
 		qsqy=[]
 		rsqy=[]
+		qs=[]
+		rs=[]
+		
 		qr=self.cci_ana_qrfj(cci1)
 		ln=len(qr)
 		for i in range(0,ln):
-			if 1:
-				pass
-		return 
+			if qr[i]>0:
+				qsqy.append(i)
+			if qr[i]<0 and len(qsqy)>0:
+				qs.append([qsqy[0],qsqy[-1]])
+				qsqy.clear()
+			if qr[i]<0:
+				rsqy.append(i)
+			if qr[i]>0 and len(rsqy)>0:
+				rs.append([rsqy[0],rsqy[-1]])
+				rsqy.clear()	
+		if len(qsqy)>0:
+			qs.append([qsqy[0],qsqy[-1]])
+		if len(rsqy)>0:
+			rs.append([rsqy[0],rsqy[-1]])
+		#print(qs[-4:])
+		return qs,rs
+	#判断区域大级别背驰。
+	def cci_qy_dd(self,cci1,list_qy):
+		if len(list_qy)!=2:
+			print('error 1001010')
+			return 0
+		start=list_qy[0]
+		end=list_qy[-1]
+		all_dd=self.cci_dd(cci1)
+
+		d1=[]
+		d2=[]
+		for i in range(start,end):
+			if all_dd[i]=='up':
+				d1.append(i)
+		ln=len(d1)
+		if ln <2:
+			return []
+		if ln==2:
+			return [d1[0],cci[d1[0]],d1[1],cci[d1[1]]]
+		
+		#判段第一个点是否顶	
+		zz=self.__cci_ana_updown(100,cci[d1[0]],cci[d1[1]])
+		if zz==1:
+			d2.append(d1[0])
+
+		#中间有顶
+		for x in rang(2,ln):
+			if ln<3:
+				break
+			today=d1[x]
+			lastday=d1[x-1]
+			yesteday=d1[x-2]
+			zz=self.__cci_ana_updown(cci[today],cci[lastday],cci[yesteday])
+			if zz==1:
+				d2.append(d1[x-1])
+		#判段最后一个点是否顶		
+		zz=self.__cci_ana_updown(cci[d1[-2]],cci[d1[-1]],-100)
+		if zz==1:
+			d2.append(d1[-1])
+		if len(d2)>1:
+			return d2
+		else:
+			return []
 	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
@@ -74,9 +133,7 @@ class gu_zb(object):
 			elif dd_li[i]!='lx':
 				kk=lxzj_li[i-1]+1
 				lxzj_li.append(kk)
-		#for i in range(0,total):
-			#print(i,lxzj_li[i])
-		#print(lxzj_li)
+
 		#去掉没用的折角
 		in_li=[]
 		zz_li=[]
@@ -133,7 +190,7 @@ class gu_zb(object):
 		dd_li.clear()
 
 		return up_li,dw_li
-	#cci折角2、所有的顶点
+	#cci折角、所有的顶点
 	def cci_dd(self,ccilist):
 		cci=ccilist
 		dd_li=[]
@@ -154,15 +211,6 @@ class gu_zb(object):
 		dd_li.append('lx')#最后一个cci线为连续
 		return dd_li
 
-
-	#两点画线
-	def line(self,x1,y1,x2,y2):
-		k=(y2-y1)/(x2-x1)
-		b=y2-k*x2
-		c1=(300-b)/k
-		c2=(-200-b)/k
-		return k,b,c1,c2
-	#cci折角2
 	def cci_ana_dd2(self,ccilist):
 		cci=ccilist
 		dd_li=[]
@@ -194,9 +242,7 @@ class gu_zb(object):
 			elif dd_li[i]!='lx':
 				kk=lxzj_li[i-1]+1
 				lxzj_li.append(kk)
-		#for i in range(0,total):
-			#print(i,lxzj_li[i])
-		#print(lxzj_li)
+
 		#去掉没用的折角
 		in_li=[]
 		zz_li=[]
@@ -234,7 +280,7 @@ class gu_zb(object):
 				up_li.append(i)
 			if dd_li[i]=='dw':
 				dw_li.append(i)
-		#print(dw_li,up_li)
+	
 		in_li.clear()
 		lxzj_li.clear()
 		dd_li.clear()
@@ -244,7 +290,7 @@ class gu_zb(object):
 	def sel_dd_dw(self,cci):
 		total=len(cci)
 		cciqr=self.cci_ana_qrfj(cci)
-		up_li,dw_li=self.cci_ana_dd2(cci)
+		up_li,dw_li=self.cci_ana_dd(cci)
 		
 		bz=0
 		dw_li2=[]
@@ -356,9 +402,7 @@ class gu_zb(object):
 			#bz为堆栈，选择两个顶点
 			#压栈
 			if  bz==0:bz=i
-			
 			if  cci[i]>=cci[bz]:
-
 				bz=i
 			elif  cci[i]<cci[bz]:
 						up_li2.append([bz,cci[bz],i,cci[i]])
@@ -368,7 +412,7 @@ class gu_zb(object):
 	def gjbc(self,df):
 		cci=self.cci(df)
 		up_li2=self.sel_dd_up(cci)
-		#print('Lp1',up_li2)
+		print('Lp1',up_li2)
 		high_li=df.high.values.tolist()
 		up_li=[]
 		for u in up_li2:

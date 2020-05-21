@@ -208,8 +208,8 @@ class gu_shou(object):
 		for code in code_list:
 
 			co=(kk.getSixDigitalStockCode(code))
-			if co in c_li4:
-				continue
+			#if co in c_li4:
+				#continue
 			#print(co)
 			f=self.shou_cci_D_qrs(co)
 			if f==1:
