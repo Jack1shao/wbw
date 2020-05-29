@@ -14,6 +14,13 @@ class gu_zb(object):
 	def boll(self,df):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
+	#指标dmi
+	def dmi(self,df):
+		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
+		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
+		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=6)
+		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=6)
+		return MINUS_DI,PLUS_DI,ADX,ADXR
 	#指标ma
 	def ma(self,df):
 		closed=df['close'].values

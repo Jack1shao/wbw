@@ -127,15 +127,26 @@ class gu_draw(object):
 		total=self.total
 		if ln<self.total:
 			total=ln
+		MINUS_DI,PLUS_DI,ADX,ADXR=hh.dmi(df)
 		df=df[-total:]
 		cci=cci[-total:]
+		MINUS_DI=MINUS_DI.tolist()[-total:]
+		PLUS_DI=PLUS_DI.tolist()[-total:]
+		ADX=ADX.tolist()[-total:]
+		ADXR=ADXR.tolist()[-total:]
 		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
 
-		fig, ax = plt.subplots(2, 1, figsize=(16,8))
+		fig, ax = plt.subplots(3, 1, figsize=(16,8))
 		ax[0].set_title(name+code+'--'+ktype,fontproperties = 'SimHei',fontsize = 20)
 		ax[1].plot(cci,'r')
+		ax[2].plot(ADX,'r')
+		ax[2].plot(PLUS_DI,'y')
+		ax[2].plot(MINUS_DI,'b')
+		ax[2].plot(ADXR,'g')
+		ax[2].axhline(y=50, color='b', linestyle=':')
+		ax[2].axhline(y=20, color='b', linestyle=':')
 		#取顶点
 		up_li2=hh.gjbc(df)
 		dw_li2=hh.gj_d_bl(df)
