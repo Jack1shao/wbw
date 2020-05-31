@@ -189,7 +189,10 @@ class gu_shou(object):
 			df.to_csv('shou_w1.txt')
 		c_li.clear()
 		return 0
-
+	#
+	def shou_all_d(self):
+		self.shou_all_dmi_d()
+		return 0
 	#第三次搜，日
 	def shou_all_cci_d(self):
 		kk=gu_save('')
@@ -227,6 +230,33 @@ class gu_shou(object):
 		c_li2.clear()
 		return 0
 	
+	#dmi搜，日
+	def shou_all_dmi_d(self):
+		kk=gu_save('')
+		c_li=[]
+		c_li2=[]
+		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			f=self.shou_dmi_d(co)
+			if f==1:
+				c_li.append([co,'趋势增强'])
+			if f==2:
+				c_li2.append([co,'趋势减弱'])
+		df=DataFrame(c_li,columns=[ 'code', 'name'])
+		df.to_csv('shou_d1.txt')
+		df=DataFrame(c_li2,columns=[ 'code', 'name'])
+		df.to_csv('shou_d2.txt')
+		return 0
+
+	def shou_dmi_d(self,code1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code1,'D')
+		x_dmi=hh.sel_dmi(df)
+		return x_dmi
+
+
 	#搜月Macd为红柱，cci拐头向上。
 	def shou_Macd_M_H(self,code1):
 		kk=gu_save('')
@@ -305,7 +335,7 @@ def main():
 			sh.shou_all_Macd_w()
 			print('---	周线macd的Dea在0轴之上---')
 		if cc=='1':
-			sh.shou_all_cci_d()
+			sh.shou_all_d()
 			print('---	日K线---')
 
 	print('程序完成，退出')	

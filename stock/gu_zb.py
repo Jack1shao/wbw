@@ -1,4 +1,4 @@
-#gu_zb.py
+ #gu_zb.py
 import talib
 
 class gu_zb(object):
@@ -20,7 +20,24 @@ class gu_zb(object):
 		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
 		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=6)
 		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=6)
-		return MINUS_DI,PLUS_DI,ADX,ADXR
+		return PLUS_DI.tolist(),MINUS_DI.tolist(),ADX.tolist(),ADXR.tolist()
+	#判断dmi
+	def sel_dmi(self,df):
+		PDI,MDI,ADX,ADXR=self.dmi(df)
+		
+		a2dx=ADX[-2:]
+
+		n1=MDI[-1]<20
+		n2=a2dx[0]<a2dx[1]
+		n3=a2dx[0]>=a2dx[1]
+		n4=PDI[-1]>21
+
+		if n1 and n4 and n2:
+			return 1
+		if n1 and n4 and n3:
+			return 2
+		return 0
+
 	#指标ma
 	def ma(self,df):
 		closed=df['close'].values

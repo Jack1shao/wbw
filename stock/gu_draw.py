@@ -127,13 +127,13 @@ class gu_draw(object):
 		total=self.total
 		if ln<self.total:
 			total=ln
-		MINUS_DI,PLUS_DI,ADX,ADXR=hh.dmi(df)
+		PLUS_DI,MINUS_DI,ADX,ADXR=hh.dmi(df)
 		df=df[-total:]
 		cci=cci[-total:]
-		MINUS_DI=MINUS_DI.tolist()[-total:]
-		PLUS_DI=PLUS_DI.tolist()[-total:]
-		ADX=ADX.tolist()[-total:]
-		ADXR=ADXR.tolist()[-total:]
+		MINUS_DI=MINUS_DI[-total:]
+		PLUS_DI=PLUS_DI[-total:]
+		ADX=ADX[-total:]
+		ADXR=ADXR[-total:]
 		#df=df[-self.total:]
 		#4个类型的顶点
 		#画出最后3条线
@@ -253,8 +253,8 @@ def main():
 	print('this message is from main function')
 	g=gu_draw('')
 	i=0
-	#ktype=['30','D','w','m']
-	ktype=['D','w']
+	ktype=['30','D','w','m']
+	#ktype=['D','w']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')
