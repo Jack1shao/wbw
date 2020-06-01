@@ -58,6 +58,7 @@ class gu_save(object):
 		print('未找到股票名字')	
 		return ''
 		#收索市值大小
+	#市值，根据日线
 	def get_sz(self,code1):
 		df=self.get_k_from_csv(code1,'D')
 		high=df[-1:].high.values.tolist()
