@@ -156,13 +156,13 @@ class gu_shou(object):
 				c_li.append([co,'月线Macd红柱'])
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou_m.csv')
-		if len(df)>590:
-			df1=df[:590]
-			df1.to_csv('shou_m1.txt')
-			df1=df[591:]
-			df1.to_csv('shou_m2.txt')
-		else:
-			df.to_csv('shou_m1.txt')
+		'''if len(df)>590:
+									df1=df[:590]
+									df1.to_csv('shou_m1.txt')
+									df1=df[591:]
+									df1.to_csv('shou_m2.txt')
+								else:
+									df.to_csv('shou_m1.txt')'''
 
 		c_li.clear()
 		return 0
@@ -191,6 +191,8 @@ class gu_shou(object):
 		return 0
 	#
 	def shou_all_d(self):
+		self.shou_all_Macd_M_H()
+		self.shou_all_cci_d()
 		self.shou_all_dmi_d()
 		return 0
 	#第三次搜，日
@@ -200,14 +202,14 @@ class gu_shou(object):
 		c_li2=[]
 		c_li3=[]
 		c_li4=[]
-		code_list=kk.get_from_csv('shou_w.csv').code.values.tolist()
+		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
 		for code in code_list:
 			co=(kk.getSixDigitalStockCode(code))
 			f=self.shou_bc_last_s(co)
 			if f==1:
 				c_li3.append([co,'最后一个是顶背驰'])
 				c_li4.append(co)
-		print(c_li3)
+		#print(c_li3)
 		for code in code_list:
 
 			co=(kk.getSixDigitalStockCode(code))
@@ -220,12 +222,12 @@ class gu_shou(object):
 			if f==2:
 				c_li2.append([co,'弱势、cci-100-'])
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
-		df.to_csv('shou_d1.txt')
+		df.to_csv('shou_d1_cci.txt')
 		df=DataFrame(c_li2,columns=[ 'code', 'name'])
-		df.to_csv('shou_d2.txt')
+		df.to_csv('shou_d2_cci.txt')
 
 		df=DataFrame(c_li3,columns=[ 'code', 'name'])
-		df.to_csv('shou_d3.txt')
+		df.to_csv('shou_d3_cci.txt')
 		c_li.clear()
 		c_li2.clear()
 		return 0
@@ -235,18 +237,35 @@ class gu_shou(object):
 		kk=gu_save('')
 		c_li=[]
 		c_li2=[]
+		c_li3=[]
+
+		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
+		gxsj = datetime.datetime.now().strftime('%H%M')
 		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
+		#计算增加部分
+		code_list2=kk.get_from_csv('shou_d1.txt').code.values.tolist()
+		c_l=[]
+		for code in code_list2:
+			co=(kk.getSixDigitalStockCode(code))
+			c_l.append(co)
+
 		for code in code_list:
 			co=(kk.getSixDigitalStockCode(code))
 			f=self.shou_dmi_d(co)
 			if f==1:
-				c_li.append([co,'趋势增强'])
+				c_li.append([co,'趋势增强'+gxrq+gxsj])
+				if co not in c_l:
+					c_li3.append([co,'新增'+gxrq+gxsj])
 			if f==2:
 				c_li2.append([co,'趋势减弱'])
+
+
 		df=DataFrame(c_li,columns=[ 'code', 'name'])
 		df.to_csv('shou_d1.txt')
 		df=DataFrame(c_li2,columns=[ 'code', 'name'])
 		df.to_csv('shou_d2.txt')
+		df=DataFrame(c_li3,columns=[ 'code', 'name'])
+		df.to_csv('shou_d3.txt',mode='a',header=False)
 		return 0
 
 	def shou_dmi_d(self,code1):

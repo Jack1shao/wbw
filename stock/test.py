@@ -12,6 +12,8 @@ kk=gu_save('')
 hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
+code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
+print(code_list)
 #取4个类型的df
 #kk.pl_chunru(['300040'],'D')
 #df=kk.get_k_from_api('002301','D')
