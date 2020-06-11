@@ -94,7 +94,7 @@ class gu_shou(object):
 				df=df[:b]
 		return 'k'+cu
 
-	#底背驰.返回最后一个背驰
+	#顶底背驰.返回最后一个背驰
 	def d_bc(self,df):
 		kk=gu_zb('')
 		cci=kk.cci(df)
@@ -103,16 +103,16 @@ class gu_shou(object):
 		up_li=kk.gjbc(df)
 		ln=len(cci)
 		for i in range(ln-1,-1,-1):
+			##最后一个是底背离
 			if len(dw_li)==0:
 				continue
 			if i == dw_li[-1][2]:#返回背离点
 				return -1,dw_li[-1][0],i
+			#最后一个是顶背离
 			if len(up_li)==0:
 				continue
 			if i == up_li[-1][2]:#返回背离点
 				return 1,up_li[-1][0],i
-		#底顶点
-		#判断背驰
 		return 0,0,0
 
 	def shou_bc(self,code1,ktype1):
@@ -328,6 +328,28 @@ class gu_shou(object):
 		if li_last_s=='s':
 			return 1
 		return 0
+	def shou_bc_last_s2(self,code1):
+		kk=gu_save('')
+		hh=gu_zb('')
+		df=kk.get_k_from_csv(code1,'D')
+		a,b,c=self.d_bc(df)
+		cn1=a>0#最后一个顶背驰
+
+		if cn1 and (c-b) in [8]:
+			return 1
+		return 0
+	def shou_bc9_all(self,list):
+		kk=gu_save('')
+		c_li3=[]
+		code_list=kk.get_from_csv('shou_m.csv').code.values.tolist()
+		for code in code_list:
+			co=(kk.getSixDigitalStockCode(code))
+			f=self.shou_bc_last_s2(co)
+			if f==1:
+				c_li3.append([co,'最后一个是顶背驰9'])
+		df=DataFrame(c_li3,columns=[ 'code', 'name'])
+		df.to_csv('shou_bc9.txt')
+
 
 def main():
 	print('单独执行gu_shou收索，开始')
