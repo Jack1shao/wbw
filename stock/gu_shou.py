@@ -147,7 +147,7 @@ class gu_shou(object):
 	def shou_all_Macd_M_H(self):
 		c_li=[]
 		kk=gu_save('')
-		code_list=kk.get_from_csv('sv_sz.csv').code.values.tolist()
+		code_list=kk.get_from_csv('sv_dmd1.csv').code.values.tolist()
 		for code in code_list:
 			co=(kk.getSixDigitalStockCode(code))
 			print(co)
@@ -192,6 +192,7 @@ class gu_shou(object):
 	#
 	def shou_all_d(self):
 		self.shou_all_Macd_M_H()
+		self.shou_bc9_all([])
 		self.shou_all_cci_d()
 		self.shou_all_dmi_d()
 		return 0

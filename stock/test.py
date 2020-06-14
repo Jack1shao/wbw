@@ -17,7 +17,7 @@ ddd=gu_draw('')
 #code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
 #print(code_list)
 
-rr.shou_bc9_all([])
+rr.shou_all_d()
 #取4个类型的df
 #kk.pl_chunru(['300040'],'D')
 #df=kk.get_k_from_api('002301','D')

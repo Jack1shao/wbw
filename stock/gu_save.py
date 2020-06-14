@@ -139,7 +139,7 @@ class gu_save(object):
 
 		co_li=[]
 		shou_fil=''
-		files1=['sv_sz.csv','shou_m.csv','shou_w.csv']
+		files1=['sv_sz.csv','shou_m.csv','shou_w.csv','sv_dmd1.csv']
 
 		if ktype1=='m':
 			shou_fil=files1[0]
@@ -149,7 +149,7 @@ class gu_save(object):
 		if ktype1=='D':
 			shou_fil=files1[2]
 	
-		shou_fil=files1[0]	
+		shou_fil=files1[3]	
 		code_li=self.get_from_csv( shou_fil).code.values.tolist()
 		
 		for code in code_li:
