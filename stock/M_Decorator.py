@@ -8,28 +8,34 @@ from abc import ABCMeta, abstractmethod
 class Person():
     def __init__(self, name):
         self.name = name
-
+        print("1、"+name)
     def decorator(self, component):
         self.component = component
+        print("55555")
 
     def show(self):
         print ('%s开始穿衣' % self.name)
+
         self.component.show()
+
 
 
 class Finery():
     def __init__(self):
         self.component = None
+        print("2、")
 
     def decorator(self, component):
         self.component = component
+        print("44444")
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def show(self):
         if self.component:
-            self.component.show()
+             self.component.show()
+            
 
 
 class TShirt(Finery):
@@ -62,9 +68,13 @@ if __name__ == '__main__':
     trouser = Trouser()
     shoe = Shoe()
     tie = Tie()
+    print("333-3")
 
     trouser.decorator(tshirt)
     shoe.decorator(trouser)
     tie.decorator(shoe)
     person.decorator(tie)
+    #person.decorator(tshirt)
     person.show()
+
+   # print(person.name)
