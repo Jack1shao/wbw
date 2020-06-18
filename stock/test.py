@@ -1,23 +1,37 @@
 import tushare as ts
 import datetime
-#from getstockClass import getstock
+
 from sqlalchemy import create_engine
 import math
 from gu_zb import gu_zb
 from gu_save import gu_save
 from gu_draw import gu_draw
 from gu_shou import gu_shou
+from stockmd import stock
+from stockmd import m_kl
+from stockmd import w_kl
+from stockmd import D_kl
+from stockmd import Hf_kl
 #df=ts.get_k_data('603336',ktype='m')
 kk=gu_save('')
 hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
+s=stock('002498')
+m=m_kl()
+w=w_kl()
+d=D_kl()
+hf=Hf_kl()
+s.decorator(d)
+s.getk()
+print(s.getname())
+print(s.cci())
 #kk.pl_chunru(['600359'],'D')
 #print(rr.shou_bc_last_s2('600359'))
 #code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
 #print(code_list)
 
-rr.shou_all_d()
+#rr.shou_all_d()
 #取4个类型的df
 #kk.pl_chunru(['300040'],'D')
 #df=kk.get_k_from_api('002301','D')

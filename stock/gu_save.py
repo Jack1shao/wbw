@@ -18,7 +18,7 @@ class gu_save(object):
 		return csv_path
 	#股票基础数据1
 	def get_base_from_api(self):
-		df = ts.get_stock_basics()
+		
 		list1=[]
 		df = ts.get_stock_basics()
 		max_timeToMarket=20200101
@@ -29,8 +29,6 @@ class gu_save(object):
 
 		#删除未上市的公司记录
 		df2=df.drop(list1,axis=0)
-
-		#df2.to_sql('stockbasic',engine,if_exists='append') 
 		return df2
 	#股票基础数据2
 	def get_base_from_db(self):
