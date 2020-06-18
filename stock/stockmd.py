@@ -65,57 +65,29 @@ class stock(object):
 		super(stock, self).__init__()
 		#参数为股票代码
 		self.arg = arg
-		#补全股票代码
-		s_n=''
-		ss=str(arg)[-6:]
-		for i in range(len(ss), 6):
-			s_n+='0'
-
-		self.code=s_n+ss
+		self.name=''
+		self.code=''
+		self.totals=''
 		#k线数据
 		self.df=None
-
-		
+	
 	#修饰器函数
 	def decorator(self,component):
 		self.component=component
-		#股票代码不起
-	def getSixDigitalStockCode(self,code):
-		strZero = ''
-		for i in range(len(str(code)), 6):
-			strZero += '0'
-		return strZero + str(code)
+
 	#获取股票代码
 	def getcode(self):
 		return self.code
-	#基础数据
-	def _get_base(self):
-		files1='d:/stock_csv/{}.csv'.format('basc')
-		if os.path.exists(files1):
-			with open(files1,'r',encoding='utf-8') as csv_file:
-				df = read_csv(csv_file,index_col=0)#指定0列为index列
-		return df
+
 	#获取股票名称
 	def getname(self):
-		df=self._get_base()
-		for co,row in df.iterrows():
-			#要补全6位？？？
-			cod=self.getSixDigitalStockCode(co)
-			if str(cod)==self.code:
-				return row[0]
-		print('未找到股票名字')	
-		return ''
+		return self.name
 		
 
 	#市值，根据日线
 	def get_sz(self):
-		code1=self.code
-		
-		high=self.df[-1:].high.values.tolist()
-		#print(high)
-		df2=self._get_base()
-		totals=df2.loc[int(code1)].totals
-		sz=totals*high[0]
+		jiage=self.df[-1:].close.values.tolist()
+		sz=self.totals*jiage[0]
 		#print(float('%.2f' % sz),'亿')#小数位数
 		return float('%.2f' % sz)
 
@@ -123,6 +95,7 @@ class stock(object):
 		print('来自{}类--获取股票k线'.format(self.__class__.__name__))
 		self.df=self.component.getk(self.code)
 		return self.df
+
 
 	def macd(self):
 		df=self.df
@@ -171,6 +144,7 @@ class Finery():
 	def getk(self,code1):
 		if self.component:
 			self.component.getk(self)
+
 #月@
 class m_kl(Finery):
 	def getk(self,code1):
@@ -206,8 +180,6 @@ class Hf_kl(Finery):
 
 
 
-
-
 		
 #命令
 class commandclass(object):
@@ -232,13 +204,15 @@ class celvclass(object):
 
 if __name__ == '__main__':
 	s=stock('2498')
+	basc=basc()
 	m=m_kl()
 	w=w_kl()
 	d=D_kl()
 	hf=Hf_kl()
-
-	s.decorator(d)
+	s.decorator(basc)
+	#s.decorator(d)
 
 	s.getk()
-	#print(s.df)
+	s.getbasc()
+	print(s.df_basc)
 	#print(s.getname())
