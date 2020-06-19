@@ -13,8 +13,11 @@ Stock=namedtuple('Stock','code name hangye totals')
 
 #获取数据的接口类
 class jiekou:
-	def getbasc(self):
-		return self.get_base_from_api()
+	def getbasc(self,code1):
+		df= self.get_base_from_api()
+		df=df[df.index==code1]
+		return df
+
 	def getkl(self,code,ktype1):
 		return self.get_k_from_csv(code,ktype1)
 		
@@ -156,7 +159,7 @@ class Finery():
 class m_kl(Finery):
 	def getk(self,code1):
 		Finery.getk(self,code1)
-		print('m_kl12'+code1)
+		print('月线+'+code1)
 		g=jiekou()
 		df=g.getkl(code1,'m')
 		return df
@@ -186,6 +189,29 @@ class Hf_kl(Finery):
 
 
 
+class order:
+
+	def __init__(self,stockzb,promotion=None):
+		self.stockzb=stockzb
+		self.promotion=promotion
+	def test(self):
+		pass
+	def due(self):
+		l=0
+		if self.promotion is None:
+			l=0
+		else:
+			l=self.promotion(self)
+		return l
+	def __repr__(self):
+		print(self.due())
+		return ''
+
+def cciorder(order):
+	print('cciorder--0000001')
+	return order.stockzb.cci()
+
+				
 
 		
 #命令
@@ -200,7 +226,7 @@ class commandclass(object):
 class celvclass(object):
 	"""docstring for celvclass"""
 	def __init__(self, arg):
-		super(celvclass, self).__init__()
+		
 		self.arg = arg
 	
 	def bc9():
@@ -209,10 +235,27 @@ class celvclass(object):
 	def rs100():
 		pass
 
+#根据代码获取单个基础信息
+def getstockbasics(code1):
+	jk=jiekou()
+	df=jk.getbasc(code1)[-1:]
+	if df.empty:
+		return None 
+	s_code=df.index.values[-1]
+	s_name=df.name.values[-1]
+	s_totals=df.totals.values[-1]
+	s_hy=df.industry.values[-1]
+	s=Stock(code=s_code,name=s_name,hangye=s_hy,totals=s_totals)
+	return s
+
+
+
+	
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
-
-	s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
+	s=(getstockbasics('002498'))
+	print (s)
+	#s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
 	#获取k线记基础指标
 
 	szb=stockzb(s)
@@ -224,8 +267,8 @@ if __name__ == '__main__':
 	szb.decorator(m)
 
 	szb.getk()
-	print(szb.df)
-
+	#print(szb.cci())
+	(order(szb,cciorder))
 	#应用策略
 
 
