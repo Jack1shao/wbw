@@ -7,9 +7,18 @@ from pandas.core.frame import DataFrame
 import talib
 import tushare as ts
 import datetime
+from collections import namedtuple
+
+Stock=namedtuple('Stock','code name hangye totals')
 
 #获取数据的接口类
 class jiekou:
+	def getbasc(self):
+		return self.get_base_from_api()
+	def getkl(self,code,ktype1):
+		return self.get_k_from_csv(code,ktype1)
+		
+		
 	def get_csvmc(self,code):
 		csv_path='d:/stock_csv/{}.csv'.format(code)
 		return csv_path
@@ -58,16 +67,14 @@ class jiekou:
 		df2=df.drop(list1,axis=0)
 		return df2
 
+		
 #股---实体类
-class stock(object):
+class stockzb(object):
 	"""docstring for stockclass"""
-	def __init__(self, arg):
-		super(stock, self).__init__()
+	def __init__(self, stock):
+		super(stockzb, self).__init__()
 		#参数为股票代码
-		self.arg = arg
-		self.name=''
-		self.code=''
-		self.totals=''
+		self.stock = stock
 		#k线数据
 		self.df=None
 	
@@ -77,11 +84,11 @@ class stock(object):
 
 	#获取股票代码
 	def getcode(self):
-		return self.code
+		return self.stock.code
 
 	#获取股票名称
 	def getname(self):
-		return self.name
+		return self.stock.name
 		
 
 	#市值，根据日线
@@ -93,7 +100,7 @@ class stock(object):
 
 	def getk(self):
 		print('来自{}类--获取股票k线'.format(self.__class__.__name__))
-		self.df=self.component.getk(self.code)
+		self.df=self.component.getk(self.stock.code)
 		return self.df
 
 
@@ -151,7 +158,7 @@ class m_kl(Finery):
 		Finery.getk(self,code1)
 		print('m_kl12'+code1)
 		g=jiekou()
-		df=g.get_k_from_csv(code1,'m')
+		df=g.getkl(code1,'m')
 		return df
 #周@
 class w_kl(Finery):
@@ -203,16 +210,18 @@ class celvclass(object):
 		pass
 
 if __name__ == '__main__':
-	s=stock('2498')
-	basc=basc()
+	s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
+	szb=stockzb(s)
+	
 	m=m_kl()
 	w=w_kl()
 	d=D_kl()
 	hf=Hf_kl()
-	s.decorator(basc)
-	#s.decorator(d)
 
-	s.getk()
-	s.getbasc()
-	print(s.df_basc)
+	szb.decorator(m)
+
+	szb.getk()
+	print(szb.df)
+
+
 	#print(s.getname())

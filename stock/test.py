@@ -7,7 +7,7 @@ from gu_zb import gu_zb
 from gu_save import gu_save
 from gu_draw import gu_draw
 from gu_shou import gu_shou
-from stockmd import stock
+from stockmd import stockzb
 from stockmd import m_kl
 from stockmd import w_kl
 from stockmd import D_kl
@@ -17,16 +17,10 @@ kk=gu_save('')
 hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
-s=stock('002498')
-m=m_kl()
-w=w_kl()
-d=D_kl()
-hf=Hf_kl()
-s.decorator(d)
-s.getk()
-print(s.getname())
-print(s.cci())
-#kk.pl_chunru(['600359'],'D')
+
+ktype=['30','D','w','m']
+for x in ktype:
+	kk.pl_chunru(['600359','600609','002498','600598'],x)
 #print(rr.shou_bc_last_s2('600359'))
 #code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
 #print(code_list)

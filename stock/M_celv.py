@@ -1,7 +1,9 @@
 from collections import namedtuple
  
 Customer = namedtuple('Customer', 'name fidelity')
- 
+Stock=namedtuple('Stock','code name')
+
+
  
 class LineItem:
     def __init__(self, product, quantity, price):
