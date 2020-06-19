@@ -210,9 +210,12 @@ class celvclass(object):
 		pass
 
 if __name__ == '__main__':
+	#输入股票代码获取该代码的基础信息
+
 	s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
+	#获取k线记基础指标
+
 	szb=stockzb(s)
-	
 	m=m_kl()
 	w=w_kl()
 	d=D_kl()
@@ -222,6 +225,8 @@ if __name__ == '__main__':
 
 	szb.getk()
 	print(szb.df)
+
+	#应用策略
 
 
 	#print(s.getname())
