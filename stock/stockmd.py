@@ -8,6 +8,8 @@ import talib
 import tushare as ts
 import datetime
 from collections import namedtuple
+from cciorder import cciorder
+from cciorder import macdorder
 
 Stock=namedtuple('Stock','code name hangye totals')
 
@@ -188,54 +190,56 @@ class Hf_kl(Finery):
 		return df
 
 
+#cciorder 为cci策略
+#macd 为macd策略
+#策略1----背驰 8
+class ccibc8(cciorder):
+	#策略1----背驰 8
+	def dueorder(self):
+		a,b,c=self.bc()
+		cn1=a>0#最后一个顶背驰
 
-class order:
+		if cn1 and (c-b) in [7]:
+			return 1
+		return 0
+#策略2----背驰 9
+class ccibc9(cciorder):
+	#策略2----背驰 9
+	def dueorder(self):
+		a,b,c=self.bc()
+		cn1=a>0#最后一个顶背驰
 
-	def __init__(self,stockzb,promotion=None):
-		self.stockzb=stockzb
-		self.promotion=promotion
-	def test(self):
-		pass
-	def due(self):
-		l=0
-		if self.promotion is None:
-			l=0
-		else:
-			l=self.promotion(self)
-		return l
-	def __repr__(self):
-		print(self.due())
-		return ''
+		if cn1 and (c-b) in [8]:
+			return 1
+		return 0
+#策略3----macd红柱
+class macdyxhz(macdorder):
+	#策略3----macd红柱
+	def dueorder(self):
+		macd=self.macd3()
+		if macd>0:
+			return 1
+		return 0
+#策略4----dmi横盘或高于80
 
-def cciorder(order):
-	print('cciorder--0000001')
-	return order.stockzb.cci()
+#策略5----30日红盘占比
+#策略6----量能放大
+#策略7----9日涨幅幅榜
 
-				
+#管理策略的类
+class Context:
+	#管理策略的类
+	def __init__(self,csuper):
+		self.csuper = csuper
+	def GetResult(self):
+		return self.csuper.dueorder()
 
 		
-#命令
-class commandclass(object):
-	"""docstring for commandclass"""
-	def __init__(self, arg):
-		super(commandclass, self).__init__()
-		self.arg = arg
+
 		
 
-#策略
-class celvclass(object):
-	"""docstring for celvclass"""
-	def __init__(self, arg):
-		
-		self.arg = arg
-	
-	def bc9():
-		pass
 
-	def rs100():
-		pass
-
-#根据代码获取单个基础信息
+#函数--根据代码获取单个基础信息
 def getstockbasics(code1):
 	jk=jiekou()
 	df=jk.getbasc(code1)[-1:]
@@ -246,14 +250,14 @@ def getstockbasics(code1):
 	s_totals=df.totals.values[-1]
 	s_hy=df.industry.values[-1]
 	s=Stock(code=s_code,name=s_name,hangye=s_hy,totals=s_totals)
-	return s
+	return s   #返回一个Stock 
 
 
 
 	
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
-	s=(getstockbasics('002498'))
+	s=(getstockbasics('600609'))
 	print (s)
 	#s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
 	#获取k线记基础指标
@@ -264,12 +268,17 @@ if __name__ == '__main__':
 	d=D_kl()
 	hf=Hf_kl()
 
-	szb.decorator(m)
+	szb.decorator(m)#月线修饰
+	szb.getk()#获取月线
 
-	szb.getk()
-	#print(szb.cci())
-	(order(szb,cciorder))
+	#print(szb.df)
+
+	#ccio=cciorder(szb)
+	#print(ccio.bc9())
+	#print(order(szb,cciorder))
 	#应用策略
+	cl1=Context(macdyxhz(szb))
+	print(cl1.GetResult())
 
 
 	#print(s.getname())

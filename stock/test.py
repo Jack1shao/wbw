@@ -18,9 +18,9 @@ hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 
-ktype=['30','D','w','m']
-for x in ktype:
-	kk.pl_chunru(['600359','600609','002498','600598'],x)
+#ktype=['30','D','w','m']
+#for x in ktype:
+	#kk.pl_chunru(['600359','600609','002498','600598'],x)
 #print(rr.shou_bc_last_s2('600359'))
 #code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
 #print(code_list)
@@ -39,6 +39,19 @@ for x in ktype:
 #print(df.loc[619].date)
 #print(df.loc[631].date)
 #kk.sz_50_2000()
+class Animals:
+	def __init__(self, name):
+		self.name = name
+	def walk(self):
+		print('我会走')
 
+class Dog(Animals):
+	#Dog类派生出bite功能
+	#派生：狗有咬人的技能
+	def bite(self):
+		print('我会咬人'+self.name)
 
+d=Dog('my+')
+d.bite()
+d.walk()
 
