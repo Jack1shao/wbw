@@ -145,6 +145,7 @@ class gu_draw(object):
 		ax[2].plot(PLUS_DI,'y')
 		ax[2].plot(MINUS_DI,'b')
 		ax[2].plot(ADXR,'g')
+		ax[2].axhline(y=80, color='b', linestyle=':')
 		ax[2].axhline(y=50, color='b', linestyle=':')
 		ax[2].axhline(y=20, color='b', linestyle=':')
 		#取顶点
@@ -253,8 +254,8 @@ def main():
 	print('this message is from main function')
 	g=gu_draw('')
 	i=0
-	ktype=['30','D','w','m']
-	#ktype=['D','w']
+	#ktype=['30','D','w','m']
+	ktype=['D','30']
 	while i<10:
 		i+=1
 		print('请输入股票代码：           --退出<99>')

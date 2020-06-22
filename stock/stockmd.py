@@ -10,6 +10,8 @@ import datetime
 from collections import namedtuple
 from cciorder import cciorder
 from cciorder import macdorder
+from cciorder import dmiorder
+from operClass import csv_op
 
 Stock=namedtuple('Stock','code name hangye totals')
 
@@ -19,6 +21,27 @@ class jiekou:
 		df= self.get_base_from_api()
 		df=df[df.index==code1]
 		return df
+
+	def getallstock(self,code1list):
+
+		csv_path='d:/stock_csv/{}.csv'.format('basc')
+		if 'all' in code1list:print('获取所有Stock')
+		jk=csv_op()
+		df=jk.get_from_csv(csv_path)
+		st_list=[]
+		co_list=df.index.values.tolist()
+
+		for co in co_list:
+			s_code=getSixDigitalStockCode(co)
+		
+			if s_code not in code1list and 'all' not in code1list:
+				continue
+			s_name=df[df.index==co].name.values[-1]
+			s_totals=df[df.index==co].totals.values[-1]
+			s_hy=df[df.index==co].industry.values[-1]
+			s=Stock(code=s_code,name=s_name,hangye=s_hy,totals=s_totals)
+			st_list.append(s)
+		return st_list
 
 	def getkl(self,code,ktype1):
 		return self.get_k_from_csv(code,ktype1)
@@ -71,7 +94,14 @@ class jiekou:
 		#删除未上市的公司记录
 		df2=df.drop(list1,axis=0)
 		return df2
-
+	#基础数据2
+	def get_base_from_db(self):
+		basc='basc'
+		files1=self.get_csvmc(basc)
+		if os.path.exists(files1):
+			with open(files1,'r',encoding='utf-8') as csv_file:
+				df = read_csv(csv_file,index_col=0)#指定0列为index列
+		return df
 		
 #股---实体类
 class stockzb(object):
@@ -119,7 +149,7 @@ class stockzb(object):
 		up,mid,lo=talib.BBANDS(df.close,timeperiod=20,nbdevup=2,nbdevdn=2,matype=0)
 		return up,mid,lo
 	#指标dmi
-	def dmi(self,df):
+	def dmi(self):
 		df=self.df
 		MINUS_DI=talib.MINUS_DI(df.high,df.low,df.close,timeperiod=14)
 		PLUS_DI = talib.PLUS_DI(df.high,df.low,df.close, timeperiod=14)
@@ -194,7 +224,7 @@ class Hf_kl(Finery):
 #macd 为macd策略
 #策略1----背驰 8
 class ccibc8(cciorder):
-	#策略1----背驰 8
+	'''策略1----背驰 8'''
 	def dueorder(self):
 		a,b,c=self.bc()
 		cn1=a>0#最后一个顶背驰
@@ -204,7 +234,7 @@ class ccibc8(cciorder):
 		return 0
 #策略2----背驰 9
 class ccibc9(cciorder):
-	#策略2----背驰 9
+	'''策略2----背驰 9'''
 	def dueorder(self):
 		a,b,c=self.bc()
 		cn1=a>0#最后一个顶背驰
@@ -214,36 +244,54 @@ class ccibc9(cciorder):
 		return 0
 #策略3----macd红柱
 class macdyxhz(macdorder):
-	#策略3----macd红柱
+	'''策略3----macd红柱'''
 	def dueorder(self):
 		macd=self.macd3()
 		if macd>0:
 			return 1
 		return 0
 #策略4----dmi横盘或高于80
-
+class dmi50(dmiorder):
+	'''策略4----高于50(向上趋势中)'''
+	def dueorder(self):
+		PDI,MDI,ADX,ADXR=self.dmi3()
+		
+		a2dx=ADX[-2:]
+		#条件
+		n1=MDI[-1]<20
+		n2=a2dx[0]<a2dx[1]
+		n3=a2dx[1]>50
+		n4=PDI[-1]>21
+		if n1 and n4 and n2 and n3:
+			return 1
+		return 0
 #策略5----30日红盘占比
 #策略6----量能放大
 #策略7----9日涨幅幅榜
 
 #管理策略的类
 class Context:
-	#管理策略的类
+	'''管理策略的类'''
 	def __init__(self,csuper):
 		self.csuper = csuper
 	def GetResult(self):
 		return self.csuper.dueorder()
 
-		
-
-		
-
-
+#股票代码不起
+def getSixDigitalStockCode(code):
+		strZero = ''
+		for i in range(len(str(code)), 6):
+			strZero += '0'
+		return strZero + str(code)
 #函数--根据代码获取单个基础信息
 def getstockbasics(code1):
+	
+	'''函数--根据代码获取单个基础信息'''
+
 	jk=jiekou()
 	df=jk.getbasc(code1)[-1:]
 	if df.empty:
+		print('没有该代码{}的信息'.format(code1))
 		return None 
 	s_code=df.index.values[-1]
 	s_name=df.name.values[-1]
@@ -252,33 +300,73 @@ def getstockbasics(code1):
 	s=Stock(code=s_code,name=s_name,hangye=s_hy,totals=s_totals)
 	return s   #返回一个Stock 
 
-
-
-	
-if __name__ == '__main__':
-	#输入股票代码获取该代码的基础信息
-	s=(getstockbasics('600609'))
-	print (s)
-	#s=Stock(code='002498',name='hanl',hangye='xd',totals='2000')
+#函数--根据代码获取单个策略
+def getorderresult(s):
+	'''函数--根据代码获取单个策略'''
+	#s=getstockbasics(code1)
+	print (getstockbasics.__doc__,s)
+	code1=s.code
 	#获取k线记基础指标
-
 	szb=stockzb(s)
-	m=m_kl()
-	w=w_kl()
-	d=D_kl()
-	hf=Hf_kl()
+	m=m_kl()#月线修饰
+	w=w_kl()#周线修饰
+	d=D_kl()#日线修饰
+	hf=Hf_kl()#30线修饰
 
-	szb.decorator(m)#月线修饰
-	szb.getk()#获取月线
 
 	#print(szb.df)
 
-	#ccio=cciorder(szb)
-	#print(ccio.bc9())
-	#print(order(szb,cciorder))
 	#应用策略
-	cl1=Context(macdyxhz(szb))
-	print(cl1.GetResult())
+	#1--日线策略
+	szb.decorator(d)#日线修饰
+	szb.getk()#获取k线
+	strategy = {}
+	strategy[1] = Context(ccibc8(szb))
+	strategy[2] = Context(ccibc9(szb))
+	strategy[3] = Context(dmi50(szb))
+	code_order=[]
+
+	for i in range(1,len(strategy)+1):
+		x=strategy[i].GetResult()
+		y=strategy[i].csuper.__doc__
+		d=y if x else '00'
+		if x:code_order.append([code1,x,d])
 
 
-	#print(s.getname())
+	#2--月线策略
+	
+	szb.decorator(m)#月线修饰
+	szb.getk()#获取月线
+	
+	strategy = {}
+	strategy[1] = Context(macdyxhz(szb))
+
+	for i in range(1,len(strategy)+1):
+		x=strategy[i].GetResult()
+		y=strategy[i].csuper.__doc__
+		d=y if x else '00'
+		if x:code_order.append([code1,x,d])
+	#print(szb.df.head())
+	return code_order
+
+#函数--获取代码策略
+def get_all_orderresult():
+	'''函数--获取代码策略'''
+	tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
+	jk=jiekou()
+	st_list=jk.getallstock(tt)#获取符合的代码Stock，，tt=['all']
+	#容错
+	if len(st_list)==0:
+		print('没有符合的代码')
+		return 0
+	order_js_list=[]
+	for s in st_list:
+		jg_li=getorderresult(s)#获取策略结果
+		order_js_list.extend(jg_li)#集合所有结果
+	print(order_js_list)
+
+if __name__ == '__main__':
+	#输入股票代码获取该代码的基础信息
+	#l=getorderresult('000931')
+	#print(l)
+	get_all_orderresult()

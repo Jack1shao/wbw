@@ -18,9 +18,12 @@ hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 
-#ktype=['30','D','w','m']
-#for x in ktype:
-	#kk.pl_chunru(['600359','600609','002498','600598'],x)
+ktype=['30','D','w','m']
+tt=['600359','600609','002498',
+		'002238','300415','000987',
+		'600598','000931']#tt=['all']
+for x in ktype:
+	kk.pl_chunru(tt,x)
 #print(rr.shou_bc_last_s2('600359'))
 #code_list=kk.get_from_csv('shou_d1.txt').code.values.tolist()
 #print(code_list)

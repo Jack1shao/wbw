@@ -10,7 +10,14 @@ class macdorder:
 		return macd[-1]
 
 		
+class dmiorder:
+	def __init__(self,stockzb):
+		self.stockzb=stockzb
 
+	def dmi3(self):
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		return PDI,MDI,ADX,ADXR
+		
 class cciorder:
 	def __init__(self,stockzb):
 
