@@ -224,7 +224,7 @@ class Hf_kl(Finery):
 #macd 为macd策略
 #策略1----背驰 8
 class ccibc8(cciorder):
-	'''策略1----背驰 8'''
+	'''策略1----背驰8 bc8'''
 	def dueorder(self):
 		a,b,c=self.bc()
 		cn1=a>0#最后一个顶背驰
@@ -234,7 +234,7 @@ class ccibc8(cciorder):
 		return 0
 #策略2----背驰 9
 class ccibc9(cciorder):
-	'''策略2----背驰 9'''
+	'''策略2----背驰9 bc9'''
 	def dueorder(self):
 		a,b,c=self.bc()
 		cn1=a>0#最后一个顶背驰
@@ -244,7 +244,7 @@ class ccibc9(cciorder):
 		return 0
 #策略3----macd红柱
 class macdyxhz(macdorder):
-	'''策略3----macd红柱'''
+	'''策略3----macd红柱 yhz'''
 	def dueorder(self):
 		macd=self.macd3()
 		if macd>0:
@@ -252,7 +252,7 @@ class macdyxhz(macdorder):
 		return 0
 #策略4----dmi横盘或高于80
 class dmi50(dmiorder):
-	'''策略4----高于50(向上趋势中)'''
+	'''策略4----高于50(向上趋势中) d50'''
 	def dueorder(self):
 		PDI,MDI,ADX,ADXR=self.dmi3()
 		
@@ -277,7 +277,7 @@ class Context:
 	def GetResult(self):
 		return self.csuper.dueorder()
 
-#股票代码不起
+#股票代码补齐
 def getSixDigitalStockCode(code):
 		strZero = ''
 		for i in range(len(str(code)), 6):
@@ -329,8 +329,8 @@ def getorderresult(s):
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
 		y=strategy[i].csuper.__doc__
-		d=y if x else '00'
-		if x:code_order.append([code1,x,d])
+		str_d=y if x else '00'
+		if x:code_order.append([code1,s.name,x,str_d])
 
 
 	#2--月线策略
@@ -344,29 +344,64 @@ def getorderresult(s):
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
 		y=strategy[i].csuper.__doc__
-		d=y if x else '00'
-		if x:code_order.append([code1,x,d])
+		str_d=y if x else '00'
+		if x:code_order.append([code1,s.name,x,str_d])
 	#print(szb.df.head())
 	return code_order
 
-#函数--获取代码策略
+#函数--获取给点集合代码所有策略
 def get_all_orderresult():
-	'''函数--获取代码策略'''
-	tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
+	'''函数--获取给点集合代码所有策略'''
+	order_js_list=[]
+	tt=[]
 	jk=jiekou()
+	
+
+	#大名单列表存入tt
+	op=csv_op()
+	dmd_li1=op.get_txt('sv_dmd1.csv').code.values.tolist()
+	for code in dmd_li1:
+		co=getSixDigitalStockCode(code)
+		tt.append(co)
+
+	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
 	st_list=jk.getallstock(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
 		print('没有符合的代码')
 		return 0
-	order_js_list=[]
+	
+	
+	#获取所有策略结果
 	for s in st_list:
 		jg_li=getorderresult(s)#获取策略结果
 		order_js_list.extend(jg_li)#集合所有结果
-	print(order_js_list)
+
+	#结果集存入order.csv
+	df=DataFrame(order_js_list,columns=[ 'code', 'name','cl','clname'])
+	df.to_csv('order.csv')
+	
+	return 0
+#函数 ---分离策略结果集
+def fl_ordercsv():
+	'''函数 ---分离策略结果集'''
+	op=csv_op()
+	cl_df=op.get_txt('order.csv')
+	#策略名去重
+	clname_li11=cl_df.clname.values.tolist()
+	clname_li=(list(set(clname_li11)))
+	
+	for na in clname_li:
+		files1='{}.txt'.format(na[-3:])
+		df=cl_df[cl_df.clname==na]
+		df.to_csv(files1)
+
+	return 0
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
-	#print(l)
-	get_all_orderresult()
+	print(get_all_orderresult.__doc__)
+	#get_all_orderresult()
+	print(fl_ordercsv.__doc__)
+	#fl_ordercsv()
