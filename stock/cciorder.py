@@ -1,3 +1,33 @@
+class bollorder:
+	def __init__(self,stockzb):
+		self.stockzb=stockzb
+	def boll3(self):
+		'''函数--所有股价在中轨之上，有连续3天以上下跌'''
+		ii=6
+		df=self.stockzb.df
+		close_li=df.close.values.tolist()[-ii:]
+		open_li=df.open.values.tolist()[-ii:]
+		up,mid,lo=self.stockzb.boll()
+
+		mid_li=mid.tolist()[-ii:]
+		#在中轨之上
+		c=-1
+		c_day=0
+		for i in range(0,ii):
+			if close_li[i]<mid_li[i]:
+				return 0
+			if close_li[i]>open_li[i]:
+				c=-1
+				c_day=0
+
+			if close_li[i]<open_li[i] :
+				c_day+=1
+				c=1
+			if c_day>3:
+				return c_day
+			#print(close_li[i],open_li[i],mid_li[i],c,c_day)
+		return  0
+
 class macdorder:
 	"""docstring for macdorder"""
 	def __init__(self,stockzb):

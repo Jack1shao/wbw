@@ -11,22 +11,20 @@ from collections import namedtuple
 from cciorder import cciorder
 from cciorder import macdorder
 from cciorder import dmiorder
-from operClass import csv_op
+from cciorder import bollorder
+from operClass import file_op
 
 Stock=namedtuple('Stock','code name hangye totals')
 
 #获取数据的接口类
 class jiekou:
-	def getbasc(self,code1):
-		df= self.get_base_from_api()
-		df=df[df.index==code1]
-		return df
 
-	def getallstock(self,code1list):
-
+	#获取基础信息
+	def getbasc(self,code1list):
+		'''函数--获取基础信息，根据列表['000001','all']'''
 		csv_path='d:/stock_csv/{}.csv'.format('basc')
 		if 'all' in code1list:print('获取所有Stock')
-		jk=csv_op()
+		jk=file_op()
 		df=jk.get_from_csv(csv_path)
 		st_list=[]
 		co_list=df.index.values.tolist()
@@ -41,9 +39,11 @@ class jiekou:
 			s_hy=df[df.index==co].industry.values[-1]
 			s=Stock(code=s_code,name=s_name,hangye=s_hy,totals=s_totals)
 			st_list.append(s)
+		#返回Stock list
 		return st_list
 
 	def getkl(self,code,ktype1):
+		'''函数--获取k线'''
 		return self.get_k_from_csv(code,ktype1)
 		
 		
@@ -265,6 +265,16 @@ class dmi50(dmiorder):
 		if n1 and n4 and n2 and n3:
 			return 1
 		return 0
+#策略5----中轨之上连跌3日以上
+class boll3(bollorder):
+	'''策略5----中轨之上连跌3日以上 bo3'''
+	def dueorder(self):
+		i=self.boll3()
+		#print('boll3',i)
+		if i>3:
+			return 1
+		return 0
+		
 #策略5----30日红盘占比
 #策略6----量能放大
 #策略7----9日涨幅幅榜
@@ -324,6 +334,7 @@ def getorderresult(s):
 	strategy[1] = Context(ccibc8(szb))
 	strategy[2] = Context(ccibc9(szb))
 	strategy[3] = Context(dmi50(szb))
+	strategy[3] = Context(boll3(szb))
 	code_order=[]
 
 	for i in range(1,len(strategy)+1):
@@ -358,14 +369,15 @@ def get_all_orderresult():
 	
 
 	#大名单列表存入tt
-	op=csv_op()
+	op=file_op()
 	dmd_li1=op.get_txt('sv_dmd1.csv').code.values.tolist()
 	for code in dmd_li1:
 		co=getSixDigitalStockCode(code)
 		tt.append(co)
 
-	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	st_list=jk.getallstock(tt)#获取符合的代码Stock，，tt=['all']
+	tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
+	tt=['002465']
+	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
 		print('没有符合的代码')
@@ -385,7 +397,7 @@ def get_all_orderresult():
 #函数 ---分离策略结果集
 def fl_ordercsv():
 	'''函数 ---分离策略结果集'''
-	op=csv_op()
+	op=file_op()
 	cl_df=op.get_txt('order.csv')
 	#策略名去重
 	clname_li11=cl_df.clname.values.tolist()
@@ -402,6 +414,6 @@ if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
 	print(get_all_orderresult.__doc__)
-	#get_all_orderresult()
+	get_all_orderresult()
 	print(fl_ordercsv.__doc__)
 	#fl_ordercsv()

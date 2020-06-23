@@ -4,15 +4,15 @@ from collections import namedtuple
 from pandas.core.frame import DataFrame
 import csv
 Stock=namedtuple('Stock','xh code name cl clname')
-class csv_op:
-	#'''通用'''
+class file_op:
+	#'''--file_op类--通用--读取文件'''
 	def get_from_csv(self,files1):
 	
 		if os.path.exists(files1):
 			with open(files1,'r',encoding='utf-8') as csv_file:
 				df = read_csv(csv_file,index_col=0)#指定0列为index列
 		return df
-
+	#读取文本文件to Df
 	def get_txt(self,files1):
 		st_li=[]
 		if os.path.exists(files1):
@@ -34,5 +34,8 @@ class csv_op:
 		df=DataFrame(st_li,columns=columns)
 
 		return df
+
+	def get_excle(self,files1):
+		return 0
 
 
