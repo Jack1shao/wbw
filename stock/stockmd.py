@@ -375,8 +375,8 @@ def get_all_orderresult():
 		co=getSixDigitalStockCode(code)
 		tt.append(co)
 
-	tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	tt=['002465']
+	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
+	#tt=['002465']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
@@ -416,4 +416,4 @@ if __name__ == '__main__':
 	print(get_all_orderresult.__doc__)
 	get_all_orderresult()
 	print(fl_ordercsv.__doc__)
-	#fl_ordercsv()
+	fl_ordercsv()
