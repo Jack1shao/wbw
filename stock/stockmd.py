@@ -376,7 +376,7 @@ def get_all_orderresult():
 		tt.append(co)
 
 	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	#tt=['002465']
+	tt=['000725']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
