@@ -8,10 +8,10 @@ import talib
 import tushare as ts
 import datetime
 from collections import namedtuple
-from cciorder import cciorder
-from cciorder import macdorder
-from cciorder import dmiorder
-from cciorder import bollorder
+from celvjihe import cciorder
+from celvjihe import macdorder
+from celvjihe import dmiorder
+from celvjihe import bollorder
 from operClass import file_op
 
 Stock=namedtuple('Stock','code name hangye totals')
