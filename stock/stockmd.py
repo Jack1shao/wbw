@@ -275,7 +275,17 @@ class boll3(bollorder):
 			return 1
 		return 0
 		
-#策略5----30日红盘占比
+#策略6----30日红盘占比
+class ccibc6(cciorder):
+	'''策略6----背驰6 bc6'''
+	def dueorder(self):
+		a,b,c=self.bc()
+		cn1=a>0#最后一个顶背驰
+
+		if cn1 and (c-b) in [6]:
+			return 1
+		return 0
+
 #策略6----量能放大
 #策略7----9日涨幅幅榜
 
@@ -334,7 +344,8 @@ def getorderresult(s):
 	strategy[1] = Context(ccibc8(szb))
 	strategy[2] = Context(ccibc9(szb))
 	strategy[3] = Context(dmi50(szb))
-	strategy[3] = Context(boll3(szb))
+	strategy[4] = Context(boll3(szb))
+	strategy[5] = Context(ccibc6(szb))
 	code_order=[]
 
 	for i in range(1,len(strategy)+1):
@@ -376,7 +387,7 @@ def get_all_orderresult():
 		tt.append(co)
 
 	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	tt=['000725']
+	#tt=['000725']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
@@ -390,8 +401,15 @@ def get_all_orderresult():
 		order_js_list.extend(jg_li)#集合所有结果
 
 	#结果集存入order.csv
+	#加入时间节点
+	gxrq = datetime.datetime.now().strftime('%Y%m%d')
+	gxsj = datetime.datetime.now().strftime('%H%M')
+	gx=gxrq+gxsj
+	
+	
 	df=DataFrame(order_js_list,columns=[ 'code', 'name','cl','clname'])
-	df.to_csv('order.csv')
+	df['gxsj']=str(gx)
+	df.to_csv('order.csv')#为增加方式
 	
 	return 0
 #函数 ---分离策略结果集
