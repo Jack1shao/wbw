@@ -117,4 +117,4 @@ def bakanddraw(code,typ,start,end,path):
 	plt.show()
 	return 1
 
-bakanddraw('002498','30',357,468,'')
+bakanddraw('002498','30',0,0,'')

@@ -29,15 +29,16 @@ for x in ktype:
 
 #2占位符的作用
 str1='kk ll mm oo pp'
-*a,b,c=str1.split()
+~,b,c=str1.split()
 *d,l=os.path.split('/houm/offic/kk/ll.csv')
 print(a,b,c,d,l)
-
-
+df=ts.get_hist_data('002498',start='2017-01-01', end='2020-07-18',ktype='30')
+print(len(df))
+print(df.head())
 
 #ddd.draw_cci3('300316','D')
 #print(df.loc[619].date)
-#print(df.loc[631].date)
+print(df[-1:])
 #kk.sz_50_2000()
 
 
