@@ -144,16 +144,23 @@ class cciorder:
 				min1=min(lo_list)
 				
 				kj=(max1-min1)/min1#振幅
-				cci_blok.append([start,end,bz0,bz0,len(cciqrfj),float('%.2f'%kj)])
+				cci_blok.append([start,end,bz0,len(cciqrfj),float('%.2f'%kj)])
 				cciqrfj=[]
 
 			bz0=bz1
 			#块[630, 639, 1, 1, 10, 0.23]]
 		return cci_blok
 
-	#区块形态
-	
-	#冲顶的形态(小丁与大定)
+	#区块头形态
+	def cci_gd(self,start,end):
+		'''区块中的高点'''
+		gd_li=[]#[xh,cci,gj_high]
+
+
+		return 0
+
+
+	#区块尾形态-冲顶的形态(小丁与大定)
 	def chongding(self):
 		#顶点是否涨停，与高点的距离，分小丁与大定。
 

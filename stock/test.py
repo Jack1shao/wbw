@@ -23,11 +23,6 @@ ddd=gu_draw('')
 jk=jiekou()
 
 
-
-ll=[10.01,11.01,11.02,10,13.01,20,12.01]
-print(max(ll))
-
-
 '''#1、临时存入数据
 ktype=['30','D','w','m']
 tt=['600359','600609','002498',
@@ -41,8 +36,6 @@ str1='kk ll mm oo pp'
 *a,b,c=str1.split()
 *d,l=os.path.split('/houm/offic/kk/ll.csv')
 print(a,b,c,d,l)
-
-
 #print(df.loc[619].date)
 
 
