@@ -1,5 +1,6 @@
 #stockmd.py
 #基础
+import numpy as np
 import os
 from pandas import read_csv
 from abc import ABCMeta, abstractmethod
@@ -98,12 +99,13 @@ class cciorder:
 		cci1=self.cci
 		high1=self.df.high.values.tolist()
 		low=self.df.low.values.tolist()
+		vol=self.df.volume.values.tolist()
 		#两个状态值，当两个状态值不一致时，说明状态发生变化。
 		bz0=0
 		bz1=0
 		cciqrfj=[]
 		total=len(cci1)
-		js_up=1
+		dd=self.cci_dd(cci1)
 
 		for i in range(0, total):
 
@@ -112,50 +114,69 @@ class cciorder:
 
 			if cci1[i]<-100:
 				bz1=-1
-
-			if len(cciqrfj)>0 and bz1!=bz0 :
+			#核对格式为[582, 607, 1, 26, 0.78], [608, 632, -1, 25, 0.22], [633, 639, 1, 7, 0.23]]
+			
+			if  bz1!=bz0 or i==total-1 :
+				if i==total-1:cciqrfj.append(i)#最后一条记录
 
 				start=cciqrfj[0]
 				end=cciqrfj[-1]
-				#开始取该段的最高价和最低价
-				hi_list=[]
-				lo_list=[]
+
+				#开始取该段的最高价和最低价,日平均交易量
+				hi_list=[]#最高价
+				lo_list=[]#最低价
+				vol_li=[]#交易量
+				dd_li=[]#顶点
+				for x in range(start,end+1):
+					if dd[x]=='up' and cci1[x]>=95:
+						dd_li.append(x)		
+
 				for x in range(start,end+1):
 					hi_list.append(high1[x])
 					lo_list.append(low[x])
+					vol_li.append(vol[x])
+
+				#该段最高，最低	
 				max1=max(hi_list)
 				min1=min(lo_list)
 				kj=(max1-min1)/min1#振幅
-				cci_blok.append([start,end,bz0,len(cciqrfj),float('%.2f'%kj)])
+				#日平均交易量
+				jyl_day=np.mean(vol_li)/10000
+				#顶点个数
+				ddgs=len(dd_li)
+				#加入数组
+				cci_blok.append([start,end,bz0,len(cciqrfj),float('%.2f'%kj),float('%.1f'%jyl_day),ddgs,dd_li])
+				#清空cciqrfj
 				cciqrfj=[]
-
+		
 			cciqrfj.append(i)
-
-			if i==total-1:
-				start=cciqrfj[0]
-				end=cciqrfj[-1]
-				#开始取该段的最高价和最低价
-				hi_list=[]
-				lo_list=[]
-				for x in range(start,end+1):
-					hi_list.append(high1[x])
-					lo_list.append(low[x])
-				max1=max(hi_list)
-				min1=min(lo_list)
-				
-				kj=(max1-min1)/min1#振幅
-				cci_blok.append([start,end,bz0,len(cciqrfj),float('%.2f'%kj)])
-				cciqrfj=[]
-
 			bz0=bz1
-			#块[630, 639, 1, 1, 10, 0.23]]
+			#块[633, 639, 1, 7, 0.23, 0]
 		return cci_blok
 
 	#区块头形态
 	def cci_gd(self,start,end):
 		'''区块中的高点'''
 		gd_li=[]#[xh,cci,gj_high]
+		bz0=0
+		bz1=0
+		cciqk=[]
+		for i in range(start,end+1):
+			if cci1[i]>100:
+				bz1=1
+			if cci1[i]<=100:
+				bz1=-1
+			if bz1!=bz0 or i==end:
+				st1=cciqk[0]
+				en1=cciqk[-1]
+				#顶点个数
+				#顶点位置
+				#块的宽度
+				#
+				cciqk=[]
 
+			cciqk.append(i)
+			bz0=bz1
 
 		return 0
 
@@ -661,7 +682,7 @@ def getSixDigitalStockCode(code):
 			strZero += '0'
 		return strZero + str(code)
 
-#函数--根据代码获取单个策略
+#测试函数--根据代码获取单个策略
 def test101(code1):
 	jk=jiekou()
 	s=jk.getbasc(code1)[-1]
@@ -686,7 +707,7 @@ def test101(code1):
 	print(szb.df.loc[list_bloc[-1][1]].date)
 
 	return 0
-
+#函数--根据代码获取单个策略
 def getorderresult(s):
 	'''函数--根据代码获取单个策略'''
 	#s=getstockbasics(code1)
@@ -698,9 +719,6 @@ def getorderresult(s):
 	w=w_kl()#周线修饰
 	d=D_kl()#日线修饰
 	hf=Hf_kl()#30线修饰
-
-
-	#print(szb.df)
 
 	#应用策略
 	#1--日线策略
@@ -734,7 +752,7 @@ def getorderresult(s):
 		y=strategy[i].csuper.__doc__
 		str_d=y if x else '00'
 		if x:code_order.append([code1,s.name,x,str_d])
-	#print(szb.df.head())
+	
 	return code_order
 
 #函数--获取给点集合代码所有策略
@@ -801,5 +819,5 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('002498')
+	test101('600359')
 	
