@@ -448,6 +448,8 @@ class cl_1_rsmd(cciorder):
 		#最后一个区域快
 		block_last=list_block[-1]
 		print(block_last)
+		if block_last[2]:
+			return 0
 		return 1
 
 #策略2
@@ -512,7 +514,7 @@ def getSixDigitalStockCode(code):
 def test102(code1):
 	jk=jiekou()
 	s=jk.getbasc(code1)[-1]
-	print (test101.__doc__,s)
+	#print (test101.__doc__,s)
 	res=getorderresult(s)
 	print(res)
 	return 0
@@ -570,6 +572,7 @@ def getorderresult(s):
 	strategy[2] = Context(dmi50(szb))
 	strategy[3] = Context(boll3(szb))
 	strategy[4] = Context(cl_1_rsmd(szb))
+	#strategy.append(Context(cl_1_rsmd(szb)))
 
 	code_order=[]
 
