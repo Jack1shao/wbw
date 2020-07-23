@@ -75,23 +75,7 @@ class cciorder:
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
-	#强弱分界点
-	def cci_ana_qrfj(self,cci1):
-		bz1=0
-		cciqrfj=[]
-		total=len(cci1)
-		js_up=1
 
-		for i in range(0, total):
-			if cci1[i]>100:
-				bz1=1
-			if cci1[i]<-100:
-				bz1=-1
-			if bz1>0:
-				cciqrfj.append(js_up)
-			else:
-				cciqrfj.append(-100)
-		return cciqrfj
 	#强弱区域块
 	def cci_qr_blok(self):
 		'''cciorder类--强弱区域块'''
@@ -181,14 +165,49 @@ class cciorder:
 		return 0
 
 
-	#区块尾形态-冲顶的形态(小丁与大定)
-	def chongding(self):
+	#顶点间存在冲顶的形态(小丁与大定)
+	def ddzj_chongding(self,dd1,dd2):
+		'''顶点间存在冲顶的形态'''
 		#顶点是否涨停，与高点的距离，分小丁与大定。
+		#dd1，dd2为顶点间
+		cci1=self.cci
+		high1=self.df.high.values.tolist()
+		c_li=[]
+		h_li=[]
+		iii=0#计数器,做为冲顶指数，数字越大，将调整越长。
+		bz_c=cci1[dd1]
+		bz_hi=high1[dd1]
+		for i in range(dd1+1,dd2+1):
+			if cci1[i]<bz_c and high1[i]>bz_hi:
+				iii+=1
+				bz_c=cci1[i]
+				bz_hi=high1[i]
+			else:
+				break
+		return iii#计数器,做为冲顶指数，数字越大，将调整越长。
 
-		return 0
+	#顶点间存在背驰
+	def ddzj_beichi(self,dd1,dd2):
+		''''顶点间存在背驰'''
+		cci1=self.cci
+		high1=self.df.high.values.tolist()
 
-	#
-
+		iii=0#计数器,做为冲顶指数，数字越大，将调整越长。
+		dd1_c=cci1[dd1]
+		dd1_hi=high1[dd1]
+		dd2_c=cci1[dd2]
+		dd2_hi=high1[dd2]
+		#高点之间幅度
+		fd=(dd2_hi-dd1_hi)/dd1_hi*100
+		#背驰的条件
+		cn1=dd1_c>dd2_c
+		cn2=dd1_hi<dd2_hi
+		if cn1 and cn2:
+			return 1,dd2-dd1+1,'{}%'.format('%.2f'%fd)
+			#返回1,dd2-dd1+1,'{}%'.format('%.2f'%fd)
+		#返回[是否背驰，顶点间距离，高点间幅度]
+		return 0,dd2-dd1+1,'{}%'.format('%.2f'%fd)#返回[是否背驰，顶点间距离，高点间幅度]
+	
 	#cci折角、所有的顶点
 	def cci_dd(self,ccilist):
 		cci=ccilist
@@ -209,189 +228,9 @@ class cciorder:
 				dd_li.append('lx')
 		dd_li.append('lx')#最后一个cci线为连续
 		return dd_li
-	#cci折角3、去除无用顶点
-	def cci_ana_dd(self,ccilist):
-		dd_li=self.cci_dd(ccilist)
-		#判断相邻连续折角,根据缠论
-		up_li=[]
-		dw_li=[]
-		lxzj_li=[]
-		lxzj_li.append(0)
-		cci=ccilist
-		total=len(cci)
-		for i in range(1,total):
-			if dd_li[i]=='lx':lxzj_li.append(0)
-			elif dd_li[i]!='lx':
-				kk=lxzj_li[i-1]+1
-				lxzj_li.append(kk)
 
-		#去掉没用的折角
-		in_li=[]
-		zz_li=[]
-		for i in range(total-1,-1,-1):
-			
-			if lxzj_li[i]==0:continue
-			if i in in_li:continue
 
-			#单独的折角
-			if lxzj_li[i]==1 :
-				zz_li.append(i)
 
-			#连续折角
-			if lxzj_li[i]>1 :
-				h=lxzj_li[i]
-				for p in range(0,h):
-					in_li.append(i-p)
-				if h==2 or h==4:continue
-				
-				if h==3:
-					#3个角取值
-					if dd_li[i]=='up':
-						if cci[i]>=cci[i-2]:
-						 	zz_li.append(i)
-						else:
-							zz_li.append(i-2)
-					
-					if dd_li[i]=='dw':
-						if cci[i]<=cci[i-2]:
-						 	zz_li.append(i)
-						else:
-							zz_li.append(i-2)
-
-				if h>3 and h%2==1:
-					#或取最大最小值
-					if dd_li[i]=='up':zz_li.append(i)
-					if dd_li[i]=='dw':zz_li.append(i)
-
-				if h>3 and h%2==0:
-					if dd_li[i]=='up':
-						zz_li.append(i)
-						zz_li.append(i-h-1)
-					if dd_li[i]=='dw':
-						zz_li.append(i)
-						zz_li.append(i-h-1)
-		for i in zz_li:
-			if dd_li[i]=='up':
-				up_li.append(i)
-			if dd_li[i]=='dw':
-				dw_li.append(i)
-		#print(dw_li,up_li)
-		in_li.clear()
-		lxzj_li.clear()
-		dd_li.clear()
-
-		return up_li,dw_li
-
-			#cci折角、所有的顶点
-
-	#选择底折点
-	def sel_dd_dw(self,cci):
-		total=len(cci)
-		cciqr=self.cci_ana_qrfj(cci)
-		up_li,dw_li=self.cci_ana_dd(cci)
-		
-		bz=0
-		dw_li2=[]
-		for i in range(0,total):
-			#强势下不画线
-			if cciqr[i]>0:
-				bz=0
-				continue
-			#是折点的
-			if i not in dw_li:continue
-			#bz为堆栈，选择两个顶点
-			#其中一个顶点在100和-100之外
-			#压栈
-			if  bz==0:bz=i
-			if  cci[i]<=cci[bz]:
-				bz=i
-			elif  cci[i]>cci[bz]:
-					dw_li2.append([bz,cci[bz],i,cci[i]])
-					bz=0
-		up_li.clear()
-		dw_li.clear()
-		return dw_li2
-	#选择顶折点
-	def sel_dd_up(self,cci):
-		total=len(cci)
-		cciqr=self.cci_ana_qrfj(cci)
-
-		up_li,dw_li=self.cci_ana_dd(cci)
-		#print(up_li)
-		up_li2=[]
-		bz=0
-		for i in range(0,total):
-			#弱势下不画线
-			if cciqr[i]<0:
-				bz=0
-				#print(i)
-				continue
-			#是顶点的
-			if i not in up_li:continue
-			#bz为堆栈，选择两个顶点
-			#压栈
-			if  bz==0:bz=i
-			if  cci[i]>=cci[bz]:
-				bz=i
-			elif  cci[i]<cci[bz]:
-						up_li2.append([bz,cci[bz],i,cci[i]])
-						bz=0
-		return up_li2
-	#股价底背离
-
-	#股价底背离
-	def gj_di_bl(self,df):
-		cci=self.cci
-		dw_li2=self.sel_dd_dw(cci)
-		#print(dw_li2)
-		low_li=df.low.values.tolist()
-		dw_li=[]
-		for u in dw_li2:
-			if low_li[u[0]]>=low_li[u[2]]:
-				#print(u)
-				dw_li.append(u)
-		return dw_li
-
-	#cci 股价顶背驰
-	def gj_din_bc(self,df):
-		cci=self.cci
-		up_li2=self.sel_dd_up(cci)
-		#print('Lp1',up_li2)
-		high_li=df.high.values.tolist()
-		up_li=[]
-		for u in up_li2:
-			if high_li[u[0]]<=high_li[u[2]]:
-				#print(u)
-				up_li.append(u)
-		return up_li
-	#底背驰优化
-	def bc(self):
-
-		cci=self.cci
-		df=self.df
-		cciqr=self.cci_ana_qrfj(cci)
-		dw_li=self.gj_di_bl(df)
-		up_li=self.gj_din_bc(df)
-		ln=len(cci)
-		for i in range(ln-1,-1,-1):
-			##最后一个是底背离
-			if len(dw_li)==0:
-				continue
-			if i == dw_li[-1][2]:#返回背离点
-				return -1,dw_li[-1][0],i
-			#最后一个是顶背离
-			if len(up_li)==0:
-				continue
-			if i == up_li[-1][2]:#返回背离点
-				return 1,up_li[-1][0],i
-		return 0,0,0
-	def bc9(self):
-		a,b,c=self.bc()
-		cn1=a>0#最后一个顶背驰
-
-		if cn1 and (c-b) in [8]:
-			return 1
-		return 0
 
 
 #获取数据的接口类
@@ -600,25 +439,21 @@ class Hf_kl(Finery):
 
 #cciorder 为cci策略
 #macd 为macd策略
-#策略1----背驰 8
-class ccibc8(cciorder):
-	'''策略1----背驰8 bc8'''
+#策略1
+class cl_1_rsmd(cciorder):
+	'''策略1-处于弱势区域 rsq'''
 	def dueorder(self):
-		a,b,c=self.bc()
-		cn1=a>0#最后一个顶背驰
+		#总的区域快
+		list_block=self.cci_qr_blok()
+		#最后一个区域快
+		block_last=list_block[-1]
+		print(block_last)
+		return 1
 
-		if cn1 and (c-b) in [7]:
-			return 1
-		return 0
-#策略2----背驰 9
+#策略2
 class ccibc9(cciorder):
 	'''策略2----背驰9 bc9'''
 	def dueorder(self):
-		a,b,c=self.bc()
-		cn1=a>0#最后一个顶背驰
-
-		if cn1 and (c-b) in [8]:
-			return 1
 		return 0
 #策略3----macd红柱
 class macdyxhz(macdorder):
@@ -654,15 +489,6 @@ class boll3(bollorder):
 		return 0
 		
 #策略6----30日红盘占比
-class ccibc6(cciorder):
-	'''策略6----背驰6 bc6'''
-	def dueorder(self):
-		a,b,c=self.bc()
-		cn1=a>0#最后一个顶背驰
-
-		if cn1 and (c-b) in [6]:
-			return 1
-		return 0
 
 #策略6----量能放大
 #策略7----9日涨幅幅榜
@@ -683,6 +509,13 @@ def getSixDigitalStockCode(code):
 		return strZero + str(code)
 
 #测试函数--根据代码获取单个策略
+def test102(code1):
+	jk=jiekou()
+	s=jk.getbasc(code1)[-1]
+	print (test101.__doc__,s)
+	res=getorderresult(s)
+	print(res)
+	return 0
 def test101(code1):
 	jk=jiekou()
 	s=jk.getbasc(code1)[-1]
@@ -705,7 +538,15 @@ def test101(code1):
 	print(list_bloc)
 	print(szb.df.loc[list_bloc[-1][0]].date)
 	print(szb.df.loc[list_bloc[-1][1]].date)
-
+	qk_li=list_bloc[-1]
+	dd_li=qk_li[-1]
+	print(qk_li,dd_li)
+	start=dd_li[-2]
+	end=dd_li[-1]
+	print(start,end)
+	iii=co.ddzj_chongding(start,end)
+	print(iii)
+	print(co.ddzj_beichi(start,end))
 	return 0
 #函数--根据代码获取单个策略
 def getorderresult(s):
@@ -725,11 +566,11 @@ def getorderresult(s):
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
 	strategy = {}
-	strategy[1] = Context(ccibc8(szb))
-	strategy[2] = Context(ccibc9(szb))
-	strategy[3] = Context(dmi50(szb))
-	strategy[4] = Context(boll3(szb))
-	strategy[5] = Context(ccibc6(szb))
+	strategy[1] = Context(ccibc9(szb))
+	strategy[2] = Context(dmi50(szb))
+	strategy[3] = Context(boll3(szb))
+	strategy[4] = Context(cl_1_rsmd(szb))
+
 	code_order=[]
 
 	for i in range(1,len(strategy)+1):
@@ -819,5 +660,5 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('600359')
+	test102('000987')
 	
