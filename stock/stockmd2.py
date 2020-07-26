@@ -441,16 +441,28 @@ class Hf_kl(Finery):
 #macd 为macd策略
 #策略1
 class cl_1_rsmd(cciorder):
-	'''策略1-处于弱势区域 rsq'''
+	'''策略1-处于弱势区域 rs'''
 	def dueorder(self):
 		#总的区域快
 		list_block=self.cci_qr_blok()
 		#最后一个区域快
+		#print(list_block)
 		block_last=list_block[-1]
-		print(block_last)
-		if block_last[2]:
-			return 0
-		return 1
+		#print(block_last)
+		#处在弱势区域
+		if block_last[2]<1:
+			#print('rs')
+			return 1
+
+		#处在强势区域，第一个顶点cci<150 顶点个数小于3个
+
+		if block_last[6] and block_last[6]<=3:
+			dd_li=block_last[7]
+			dd1=dd_li[0]
+			if self.cci[dd1]<150:
+				return 2
+
+		return 0
 
 #策略2
 class ccibc9(cciorder):
@@ -538,9 +550,9 @@ def test101(code1):
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
 	print(list_bloc)
-	print(szb.df.loc[list_bloc[-1][0]].date)
-	print(szb.df.loc[list_bloc[-1][1]].date)
-	qk_li=list_bloc[-1]
+	print(szb.df.loc[list_bloc[-2][0]].date)
+	print(szb.df.loc[list_bloc[-2][1]].date)
+	'''	qk_li=list_bloc[-1]
 	dd_li=qk_li[-1]
 	print(qk_li,dd_li)
 	start=dd_li[-2]
@@ -548,7 +560,7 @@ def test101(code1):
 	print(start,end)
 	iii=co.ddzj_chongding(start,end)
 	print(iii)
-	print(co.ddzj_beichi(start,end))
+	print(co.ddzj_beichi(start,end))'''
 	return 0
 #函数--根据代码获取单个策略
 def getorderresult(s):
@@ -568,10 +580,10 @@ def getorderresult(s):
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
 	strategy = {}
-	strategy[1] = Context(ccibc9(szb))
+	#strategy[1] = Context(ccibc9(szb))
 	strategy[2] = Context(dmi50(szb))
 	strategy[3] = Context(boll3(szb))
-	strategy[4] = Context(cl_1_rsmd(szb))
+	strategy[1] = Context(cl_1_rsmd(szb))
 	#strategy.append(Context(cl_1_rsmd(szb)))
 
 	code_order=[]
@@ -579,10 +591,12 @@ def getorderresult(s):
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
 		y=strategy[i].csuper.__doc__
-		str_d=y if x else '00'
-		if x:code_order.append([code1,s.name,x,str_d])
+		#str_d=y if x else '00'
+		#print(y+str(x))
+		#code_order.append([code1,s.name,x,y+str(x)])
+		if x:code_order.append([code1,s.name,x,y+str(x)])
 
-
+	return code_order
 	#2--月线策略
 	
 	szb.decorator(m)#月线修饰
@@ -595,8 +609,8 @@ def getorderresult(s):
 		x=strategy[i].GetResult()
 		y=strategy[i].csuper.__doc__
 		str_d=y if x else '00'
-		if x:code_order.append([code1,s.name,x,str_d])
-	
+		#if x:code_order.append([code1,s.name,x,str_d])
+		code_order.append([code1,s.name,x,str_d])
 	return code_order
 
 #函数--获取给点集合代码所有策略
@@ -615,7 +629,7 @@ def get_all_orderresult():
 		tt.append(co)
 
 	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	#tt=['000725']
+	#tt=['600371']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
@@ -659,9 +673,9 @@ def fl_ordercsv():
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
-	#print(get_all_orderresult.__doc__)
-	#get_all_orderresult()
-	#print(fl_ordercsv.__doc__)
-	#fl_ordercsv()
-	test102('000987')
+	print(get_all_orderresult.__doc__)
+	get_all_orderresult()
+	print(fl_ordercsv.__doc__)
+	fl_ordercsv()
+	#test101('600371')
 	
