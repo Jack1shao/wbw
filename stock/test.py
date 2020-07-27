@@ -29,8 +29,9 @@ tt=['600359','600609','002498',
 		'002238','300415','000987',
 		'600598','000931','002465']#tt=['all']
 for x in ktype:
-	kk.pl_chunru(tt,x)
 
+	#kk.pl_chunru(tt,x)
+	pass
 #2占位符的作用
 str1='kk ll mm oo pp'
 *a,b,c=str1.split()
@@ -38,5 +39,9 @@ str1='kk ll mm oo pp'
 print(a,b,c,d,l)
 #print(df.loc[619].date)
 
+i=3
+b=5
 
-
+y=b-2 if b-2>=0 else 0
+for x in range(b-1,y-1,-1):
+	print(x)

@@ -10,8 +10,10 @@ import tushare as ts
 import datetime
 from collections import namedtuple
 from operClass import file_op
-
+#
 Stock=namedtuple('Stock','code name hangye totals')
+#策略结果
+Cljg=namedtuple('Cljg','code name cl jg qz files')
 
 #策略类
 class bollorder:
@@ -69,7 +71,12 @@ class cciorder:
 
 		self.df=stockzb.df
 		self.cci=stockzb.cci()
-
+		self.code =stockzb.stock.code
+		self.name =stockzb.stock.name
+	def getname(self):
+		return self.name
+	def getcode(self):
+		return self.code
 	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
@@ -450,9 +457,11 @@ class cl_1_rsmd(cciorder):
 		block_last=list_block[-1]
 		#print(block_last)
 		#处在弱势区域
+		#Cljg=namedtuple('Cljg','code name cl jg qz files')
+
 		if block_last[2]<1:
 			#print('rs')
-			return 1
+			return 1,''
 
 		#处在强势区域，第一个顶点cci<150 顶点个数小于3个
 
@@ -460,15 +469,36 @@ class cl_1_rsmd(cciorder):
 			dd_li=block_last[7]
 			dd1=dd_li[0]
 			if self.cci[dd1]<150:
-				return 2
+				return 2,''
 
-		return 0
+		return 0,''
 
 #策略2
-class ccibc9(cciorder):
-	'''策略2----背驰9 bc9'''
+class cl_2_cci_cd(cciorder):
+	'''策略2 本块中有冲顶 cd'''
 	def dueorder(self):
-		return 0
+		#总的区域快
+		list_block=self.cci_qr_blok()
+		#最后一个区域快
+		block_last=list_block[-1]
+
+		if block_last[2]<1:return 0,''
+		#本块最后一条k线
+		lastk_xh=block_last[1]
+		#本块的顶点列表
+		dd_li=block_last[7]
+		l=len(dd_li)#顶点个数
+		b=l-2 if l-2>0 else 0#取最后两顶点，判断是否冲顶
+		iii=0#冲顶指数
+		for i in range(l-1,b-1,-1):
+			dd1=dd_li[i]
+			dd2=lastk_xh
+			iii+=self.ddzj_chongding(dd1,dd2)
+
+		'''策略2 本块中有冲顶 cd'''
+		cl,jg,files=self.__doc__.split()
+		qz=iii
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files)
 #策略3----macd红柱
 class macdyxhz(macdorder):
 	'''策略3----macd红柱 yhz'''
@@ -529,6 +559,8 @@ def test102(code1):
 	#print (test101.__doc__,s)
 	res=getorderresult(s)
 	print(res)
+	s1=Stock(code='002498',name='',hangye='',totals='')
+	print(s1)
 	return 0
 def test101(code1):
 	jk=jiekou()
@@ -581,9 +613,10 @@ def getorderresult(s):
 	szb.getk()#获取k线
 	strategy = {}
 	#strategy[1] = Context(ccibc9(szb))
-	strategy[2] = Context(dmi50(szb))
-	strategy[3] = Context(boll3(szb))
-	strategy[1] = Context(cl_1_rsmd(szb))
+	#strategy[2] = Context(dmi50(szb))
+	#strategy[3] = Context(boll3(szb))
+	#strategy[2] = Context(cl_1_rsmd(szb))
+	strategy[1] = Context(cl_2_cci_cd(szb))
 	#strategy.append(Context(cl_1_rsmd(szb)))
 
 	code_order=[]
@@ -593,8 +626,10 @@ def getorderresult(s):
 		y=strategy[i].csuper.__doc__
 		#str_d=y if x else '00'
 		#print(y+str(x))
+		#print(a[0])
 		#code_order.append([code1,s.name,x,y+str(x)])
-		if x:code_order.append([code1,s.name,x,y+str(x)])
+		#if x:code_order.append([code1,s.name,x,y+str(x)+a[0]])
+		if x.qz>0:code_order.append(x)
 
 	return code_order
 	#2--月线策略
@@ -673,9 +708,9 @@ def fl_ordercsv():
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
-	print(get_all_orderresult.__doc__)
-	get_all_orderresult()
-	print(fl_ordercsv.__doc__)
-	fl_ordercsv()
-	#test101('600371')
+	#print(get_all_orderresult.__doc__)
+	#get_all_orderresult()
+	#print(fl_ordercsv.__doc__)
+	#fl_ordercsv()
+	test102('600609')
 	
