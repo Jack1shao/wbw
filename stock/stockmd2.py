@@ -19,32 +19,21 @@ Cljg=namedtuple('Cljg','code name cl jg qz files')
 class bollorder:
 	def __init__(self,stockzb):
 		self.stockzb=stockzb
-	def boll3(self):
-		'''函数--所有股价在中轨之上，有连续3天以上下跌'''
-		ii=6
+	def boll3(self,start,end):
+		'''函数--所有股价在中轨之上'''
+		
 		df=self.stockzb.df
-		close_li=df.close.values.tolist()[-ii:]
-		open_li=df.open.values.tolist()[-ii:]
+		close_li=df.close.values.tolist()
 		up,mid,lo=self.stockzb.boll()
 
-		mid_li=mid.tolist()[-ii:]
+		mid_li=mid.tolist()
 		#在中轨之上
-		c=-1
-		c_day=0
-		for i in range(0,ii):
+		
+		for i in range(start,end+1):
+			#跌破中轨
 			if close_li[i]<mid_li[i]:
 				return 0
-			if close_li[i]>open_li[i]:
-				c=-1
-				c_day=0
-
-			if close_li[i]<open_li[i] :
-				c_day+=1
-				c=1
-			if c_day>3:
-				return c_day
-			#print(close_li[i],open_li[i],mid_li[i],c,c_day)
-		return  0
+		return  1
 
 class macdorder:
 	"""docstring for macdorder"""
@@ -71,6 +60,7 @@ class cciorder:
 
 		self.df=stockzb.df
 		self.cci=stockzb.cci()
+		self.stockzb=stockzb
 		self.code =stockzb.stock.code
 		self.name =stockzb.stock.name
 	def getname(self):
@@ -238,7 +228,29 @@ class cciorder:
 		dd_li.append('lx')#最后一个cci线为连续
 		return dd_li
 
+	def cci_j4(self,dd,end):
+	
+		'''函数--所有股价在中轨之上'''
+		cci1=self.cci
+		#if cci[dd]<150:return 0
+		
+		df=self.df
+		close_li=df.close.values.tolist()
+		up,mid,lo=self.stockzb.boll()
 
+		mid_li=mid.tolist()
+		#在中轨之上
+		bz_cci=cci1[dd]
+		dd2=dd+3
+		if dd+3>end:dd2=end
+		for i in range(dd,dd2):
+			#跌破中轨
+			if cci1[i]>bz_cci:return 0
+			if close_li[i]<mid_li[i]:
+				return 0
+			bz_cci=cci1[i]
+
+		return  1
 
 
 
@@ -479,12 +491,14 @@ class cl_1_rsmd(cciorder):
 class cl_2_cci_cd(cciorder):
 	'''策略2 本块中有冲顶 cd'''
 	def dueorder(self):
+		cl,jg,files=self.__doc__.split()
 		#总的区域快
 		list_block=self.cci_qr_blok()
 		#最后一个区域快
 		block_last=list_block[-1]
 
-		if block_last[2]<1:return 0,''
+		if block_last[2]<1:
+			return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=0,files=files)
 		#本块最后一条k线
 		lastk_xh=block_last[1]
 		#本块的顶点列表
@@ -501,6 +515,39 @@ class cl_2_cci_cd(cciorder):
 		cl,jg,files=self.__doc__.split()
 		qz=iii
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files)
+#策略3
+class cl_3_b3_j4(cciorder):
+	'''策略3 主升浪一型 zs '''
+	def dueorder(self):
+		cl,jg,files=self.__doc__.split()
+
+		#总的区域快
+		list_block=self.cci_qr_blok()
+		#最后一个区域快
+		block_last=list_block[-1]
+
+		if block_last[2]<1:
+
+			return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=0,files=files)
+		#本块最后一条k线
+		lastk_xh=block_last[1]
+		end=lastk_xh
+		#本块的顶点列表
+		dd_li=block_last[7]
+		l=len(dd_li)#顶点个数
+		b=l-2 if l-2>0 else 0#取最后两顶点，判断是否冲顶
+		iii=0#冲顶指数
+		for i in range(l-1,b-1,-1):
+			dd1=dd_li[i]
+			
+			iii+=self.cci_j4(dd1,end)
+
+		
+		qz=iii
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files)
+		
+		
+
 #策略3----macd红柱
 class macdyxhz(macdorder):
 	'''策略3----macd红柱 yhz'''
@@ -612,9 +659,10 @@ def getorderresult(s):
 	strategy = {}
 	
 	#strategy[2] = Context(dmi50(szb))
-	#strategy[3] = Context(boll3(szb))
+	
 	#strategy[2] = Context(cl_1_rsmd(szb))
 	strategy[1] = Context(cl_2_cci_cd(szb))
+	strategy[2] = Context(cl_3_b3_j4(szb))
 	#strategy.append(Context(cl_1_rsmd(szb)))
 
 	code_order=[]
@@ -622,12 +670,8 @@ def getorderresult(s):
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
 		y=strategy[i].csuper.__doc__
-		#str_d=y if x else '00'
-		#print(y+str(x))
-		#print(a[0])
-		#code_order.append([code1,s.name,x,y+str(x)])
-		#if x:code_order.append([code1,s.name,x,y+str(x)+a[0]])
-		if x.qz>0:code_order.append(x)
+
+		if x.qz>0:code_order.append([x.code,x.name,x.qz,x.cl+x.jg])
 
 	return code_order
 	#2--月线策略
@@ -662,7 +706,7 @@ def get_all_orderresult():
 		tt.append(co)
 
 	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	#tt=['600371']
+	tt=['300216','002238','300415','000987',	'600598','000931']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
@@ -706,9 +750,9 @@ def fl_ordercsv():
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
-	#print(get_all_orderresult.__doc__)
-	#get_all_orderresult()
+	print(get_all_orderresult.__doc__)
+	get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('002371')
+	#test101('002371')
 	
