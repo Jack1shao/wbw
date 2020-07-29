@@ -179,12 +179,14 @@ class cciorder:
 		#dd1，dd2为顶点间
 		cci1=self.cci
 		high1=self.df.high.values.tolist()
+		low1=self.df.low.values.tolist()
 		c_li=[]
 		h_li=[]
 		iii=0#计数器,做为冲顶指数，数字越大，将调整越长。
 		bz_c=cci1[dd1]
 		bz_hi=high1[dd1]
 		for i in range(dd1+1,dd2+1):
+			if low1[i]>low1[i-1] and high1[i]<high1[i-1]:continue
 			if cci1[i]<bz_c and high1[i]>bz_hi:
 				iii+=1
 				bz_c=cci1[i]
@@ -577,22 +579,18 @@ def test101(code1):
 	#1--日线策略
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
-	print(szb.df.columns)
-
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
 	print(list_bloc)
 	print(szb.df.loc[list_bloc[-2][0]].date)
 	print(szb.df.loc[list_bloc[-2][1]].date)
-	'''	qk_li=list_bloc[-1]
+	qk_li=list_bloc[-1]
 	dd_li=qk_li[-1]
-	print(qk_li,dd_li)
 	start=dd_li[-2]
 	end=dd_li[-1]
-	print(start,end)
 	iii=co.ddzj_chongding(start,end)
 	print(iii)
-	print(co.ddzj_beichi(start,end))'''
+	#print(co.ddzj_beichi(start,end))
 	return 0
 #函数--根据代码获取单个策略
 def getorderresult(s):
@@ -612,7 +610,7 @@ def getorderresult(s):
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
 	strategy = {}
-	#strategy[1] = Context(ccibc9(szb))
+	
 	#strategy[2] = Context(dmi50(szb))
 	#strategy[3] = Context(boll3(szb))
 	#strategy[2] = Context(cl_1_rsmd(szb))
@@ -712,5 +710,5 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test102('600609')
+	test101('002371')
 	
