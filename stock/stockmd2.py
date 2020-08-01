@@ -10,6 +10,7 @@ import tushare as ts
 import datetime
 from collections import namedtuple
 from operClass import file_op
+from Tooth_sjjg import queue
 #
 Stock=namedtuple('Stock','code name hangye totals')
 #策略结果
@@ -132,7 +133,7 @@ class cciorder:
 		
 			cciqrfj.append(i)
 			bz0=bz1
-			#块[633, 639, 1, 7, 0.23, 0]
+			#块[625, 639, 1, 15, 0.23, 140.6, 2, [627, 631]]
 		return cci_blok
 
 	#区块头形态
@@ -252,8 +253,78 @@ class cciorder:
 
 		return  1
 
+	##cci dmi 同步折点
+	def cci_dmi(self):
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		#adx顶点
+		dd_li=self.cci_dd(ADX)
+		#cci顶点
+		dd2_li=self.cci_dd(self.cci)
+		#
+		l=len(ADX)
+		#队列，用于判断同时这点
+		q=queue(maxsize=2)
+		s_li=[]
 
+		for i in range(0,l):
+			ss=[]
+			#adx是折点，入队
+			if dd_li[i]!='lx':
+				#print('dmi',i,ADX[i],dd_li[i],self.df.loc[i].date)
+				q.put([dd_li[i],i,self.df.loc[i].date,'dmi',ADX[i]])
+				ss=q.get()
+				if len(ss)==2:
+					if ss[0][0]==ss[1][0]:#收集趋同折点
+						ls=[]
+						for s in ss:
+							for ssss in s:
+								ls.append(ssss)
+						s_li.append(ls)
 
+			#cci是折点，入队
+			if dd2_li[i]!='lx':
+				#print('cci',i,self.cci[i],dd2_li[i],self.df.loc[i].date)
+				q.put([dd2_li[i],i,self.df.loc[i].date,'cci',self.cci[i]])
+				ss=q.get()
+				if len(ss)==2:
+					if ss[0][0]==ss[1][0]:#收集趋同折点
+						ls=[]
+						for s in ss:
+							for ssss in s:
+								ls.append(ssss)
+						s_li.append(ls)
+
+		#for x in s_li:
+			#if x[0]=='dw':print(x)
+		return s_li
+	#cci dmi 同步折点之前
+	def cci_dmi_q(self):
+		'''cci dmi 同步折点之前'''
+		#有三种情况，1、同降，2、cci上折，dmi降，3，cci 降，dmi上折
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		cci =self.cci
+		#条件
+		#1、cci降
+		cn1=cci[-1]<cci[-2]
+		#2、cci上折
+		cn2=cci[-1]>cci[-2] and cci[-3]>cci[-2]
+		cn3=cci[-1]>cci[-2] and cci[-3]<cci[-2] and cci[-3]<cci[-4]#2天前
+
+		#3、dmi降
+		cn4=ADX[-1]<ADX[-2]
+		#4、cci上折
+		cn5=ADX[-1]>ADX[-2] and ADX[-3]>ADX[-2]
+		cn6=ADX[-1]>ADX[-2] and ADX[-3]<ADX[-2] and ADX[-3]<ADX[-4]#2天前
+
+		#5、adx 小于20
+		cn7=ADX[-1]<20
+		qz=0
+		if cn1 and cn4:qz=1
+		if (cn2 or cn3) and cn4 :qz=2
+		if (cn5 or cn6)	and cn1 :qz=2
+		if cn7 and qz>0:qz=5
+		return qz
+ 
 #获取数据的接口类
 class jiekou:
 
@@ -461,10 +532,12 @@ class Hf_kl(Finery):
 #cciorder 为cci策略
 #macd 为macd策略
 #策略1
-class cl_1_rsmd(cciorder):
-	'''策略1-处于弱势区域 rs'''
+class cl1_rsmd(cciorder):
+	'''策略1 处于弱势区域 rs'''
 	def dueorder(self):
 		#总的区域快
+		cl,jg,files=self.__doc__.split()
+		qz=0
 		list_block=self.cci_qr_blok()
 		#最后一个区域快
 		#print(list_block)
@@ -472,23 +545,22 @@ class cl_1_rsmd(cciorder):
 		#print(block_last)
 		#处在弱势区域
 		#Cljg=namedtuple('Cljg','code name cl jg qz files')
-
 		if block_last[2]<1:
-			#print('rs')
-			return 1,''
+			qz=1
+		else:
+			qz=0
 
 		#处在强势区域，第一个顶点cci<150 顶点个数小于3个
+		'''if block_last[6] and block_last[6]<=3:
+									dd_li=block_last[7]
+									dd1=dd_li[0]
+									if self.cci[dd1]<150:
+										return 2,'''''
 
-		if block_last[6] and block_last[6]<=3:
-			dd_li=block_last[7]
-			dd1=dd_li[0]
-			if self.cci[dd1]<150:
-				return 2,''
-
-		return 0,''
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files)
 
 #策略2
-class cl_2_cci_cd(cciorder):
+class cl2_cci_cd(cciorder):
 	'''策略2 本块中有冲顶 cd'''
 	def dueorder(self):
 		cl,jg,files=self.__doc__.split()
@@ -557,20 +629,40 @@ class macdyxhz(macdorder):
 			return 1
 		return 0
 #策略4----dmi横盘或高于80
-class dmi50(dmiorder):
-	'''策略4----高于50(向上趋势中) d50'''
+class cl4_ccianddmi(cciorder):
+	'''策略4 cci&dmi趋同折点为买卖点 bs'''
 	def dueorder(self):
-		PDI,MDI,ADX,ADXR=self.dmi3()
-		
-		a2dx=ADX[-2:]
-		#条件
-		n1=MDI[-1]<20
-		n2=a2dx[0]<a2dx[1]
-		n3=a2dx[1]>50
-		n4=PDI[-1]>21
-		if n1 and n4 and n2 and n3:
-			return 1
-		return 0
+		cl,jg,files=self.__doc__.split()
+
+		qt_li=self.cci_dmi()
+		last=qt_li[-1]
+
+		#趋同点的日期
+		mmd_days1=datetime.datetime.strptime(last[7], '%Y-%m-%d')
+		#k线最后一天的日期
+		lastkdays=datetime.datetime.strptime(self.df.date.values[-1], '%Y-%m-%d')
+		#print(mmd_days1,lastkdays)
+		#日期差
+		pp=lastkdays-mmd_days1
+		#print(pp.days)
+
+
+		if last[0]=='dw' and pp.days<4:
+			qz=pp.days
+			jg1='{0} 买点在 {1} {2} 天前'.format(jg,last[7],pp.days)
+		else:
+			qz=0
+			jg1='{0} 卖点在 {1} {2} 天前'.format(jg,last[7],pp.days)
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg1,qz=qz,files=files+str(qz))
+
+class cl5_maidianqian(cciorder):
+	'''策略5 趋同折点买前 bsq'''
+	def dueorder(self):
+		cl,jg,files=self.__doc__.split()
+
+		qz=self.cci_dmi_q()
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
+
 #策略5----中轨之上连跌3日以上
 class boll3(bollorder):
 	'''策略5----中轨之上连跌3日以上 bo3'''
@@ -605,11 +697,9 @@ def getSixDigitalStockCode(code):
 def test102(code1):
 	jk=jiekou()
 	s=jk.getbasc(code1)[-1]
-	#print (test101.__doc__,s)
+
 	res=getorderresult(s)
 	print(res)
-	s1=Stock(code='002498',name='',hangye='',totals='')
-	print(s1)
 	return 0
 def test101(code1):
 	jk=jiekou()
@@ -628,15 +718,18 @@ def test101(code1):
 	szb.getk()#获取k线
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
-	print(list_bloc)
-	print(szb.df.loc[list_bloc[-2][0]].date)
-	print(szb.df.loc[list_bloc[-2][1]].date)
-	qk_li=list_bloc[-1]
-	dd_li=qk_li[-1]
-	start=dd_li[-2]
-	end=dd_li[-1]
-	iii=co.ddzj_chongding(start,end)
-	print(iii)
+	print(list_bloc[-3:])
+	print(list_bloc[-1][0],szb.df.loc[list_bloc[-1][0]].date)
+	print(list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
+
+	b=co.cci_dmi_q()
+	print(b)
+	#qk_li=list_bloc[-1]
+	#dd_li=qk_li[-1]
+	#start=dd_li[-2]
+	#end=dd_li[-1]
+	#iii=co.ddzj_chongding(start,end)
+	#print(iii)
 	#print(co.ddzj_beichi(start,end))
 	return 0
 #函数--根据代码获取单个策略
@@ -658,20 +751,20 @@ def getorderresult(s):
 	szb.getk()#获取k线
 	strategy = {}
 	
-	#strategy[2] = Context(dmi50(szb))
-	
-	#strategy[2] = Context(cl_1_rsmd(szb))
-	strategy[1] = Context(cl_2_cci_cd(szb))
-	strategy[2] = Context(cl_3_b3_j4(szb))
-	#strategy.append(Context(cl_1_rsmd(szb)))
+	#注入策略
+	strategy[1] = Context(cl1_rsmd(szb))
+	strategy[2] = Context(cl2_cci_cd(szb))
+	strategy[3] = Context(cl_3_b3_j4(szb))
+	strategy[4] = Context(cl4_ccianddmi(szb))
+	strategy[5] = Context(cl5_maidianqian(szb))
 
 	code_order=[]
 
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
-		y=strategy[i].csuper.__doc__
-
-		if x.qz>0:code_order.append([x.code,x.name,x.qz,x.cl+x.jg])
+		#策略结果说明 去除不符合的结果， qz=0
+		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
+	#临时屏蔽月线月线策略
 
 	return code_order
 	#2--月线策略
@@ -684,10 +777,8 @@ def getorderresult(s):
 
 	for i in range(1,len(strategy)+1):
 		x=strategy[i].GetResult()
-		y=strategy[i].csuper.__doc__
-		str_d=y if x else '00'
-		#if x:code_order.append([code1,s.name,x,str_d])
-		code_order.append([code1,s.name,x,str_d])
+		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
+	
 	return code_order
 
 #函数--获取给点集合代码所有策略
@@ -706,7 +797,7 @@ def get_all_orderresult():
 		tt.append(co)
 
 	#tt=['600359','600609','002498',	'002238','300415','000987',	'600598','000931']#tt=['all']
-	tt=['300216','002238','300415','000987',	'600598','000931']
+	#tt=['300216','002238','300415','000987',	'600598','000931']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	#容错
 	if len(st_list)==0:
@@ -726,7 +817,7 @@ def get_all_orderresult():
 	gx=gxrq+gxsj
 	
 	
-	df=DataFrame(order_js_list,columns=[ 'code', 'name','cl','clname'])
+	df=DataFrame(order_js_list,columns=[ 'code', 'name','cl','cljg','qz','files'])
 	df['gxsj']=str(gx)
 	df.to_csv('order.csv')#为增加方式
 	
@@ -736,23 +827,54 @@ def fl_ordercsv():
 	'''函数 ---分离策略结果集'''
 	op=file_op()
 	cl_df=op.get_txt('order.csv')
-	#策略名去重
-	clname_li11=cl_df.clname.values.tolist()
-	clname_li=(list(set(clname_li11)))
-	
-	for na in clname_li:
-		files1='{}.txt'.format(na[-3:])
-		df=cl_df[cl_df.clname==na]
+	#分类文件名去重
+	fil=list(set(cl_df.files.values.tolist()))
+	print(fil)
+
+	for na in fil:
+		files1=na+'.txt'
+		df=cl_df[cl_df.files==na]
+		#print(na,files1)
+		#print(df.head())
 		df.to_csv(files1)
+	return 0
+
+def main():
+	print('---策略主程序---')
+
+	i=0
+	while i<10:
+		i+=1
+		print('执行策略分析---1')
+		print('分离结果集---2')
+		print('99--退出<99>')
+	
+		cc=input()
+		if cc=='99':
+			print('	退出<99>')
+			break
+		ccc=int(str(cc))
+		if ccc<=0 and ccc>=10:
+			print('代码错误')
+			continue
+		if ccc==1:
+			print(get_all_orderresult.__doc__)
+			get_all_orderresult()
+		if ccc==2:
+			#分离结果集
+			print(fl_ordercsv.__doc__)
+			fl_ordercsv()
+
 
 	return 0
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#l=getorderresult('000931')
-	print(get_all_orderresult.__doc__)
-	get_all_orderresult()
+	#print(get_all_orderresult.__doc__)
+	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('002371')
+	main()
+	#test101('000333')
 	
