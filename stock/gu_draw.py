@@ -205,7 +205,7 @@ class gu_draw(object):
 		ax[1].axhline(y=-100, color='b', linestyle=':')
 		#文字
 		##gd_li=self.gdjl(df)
-		#jddd_li=self.jddd(df)
+		jddd_li=self.jddd(df)
 		#for x in gd_li:
 			#plt.text(x[0],0,x[1],size = 10)
 		for x in jddd_li:

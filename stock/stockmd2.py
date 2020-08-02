@@ -68,12 +68,33 @@ class cciorder:
 		return self.name
 	def getcode(self):
 		return self.code
+	def getdmi(self):
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		return ADX
 	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
 		if c2<c1 and c2<c3:return -1
 		return 0
 
+	#强弱分界点
+	def cci_ana_qrfj(self):
+		bz1=0
+		cciqrfj=[]
+		cci1=self.cci
+		total=len(cci1)
+		js_up=1
+
+		for i in range(0, total):
+			if cci1[i]>100:
+				bz1=1
+			if cci1[i]<-100:
+				bz1=-1
+			if bz1>0:
+				cciqrfj.append(js_up)
+			else:
+				cciqrfj.append(-100)
+		return cciqrfj
 	#强弱区域块
 	def cci_qr_blok(self):
 		'''cciorder类--强弱区域块'''
@@ -303,6 +324,7 @@ class cciorder:
 		#有三种情况，1、同降，2、cci上折，dmi降，3，cci 降，dmi上折
 		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
 		cci =self.cci
+		cciqrfj=self.cci_ana_qrfj()
 		#条件
 		#1、cci降
 		cn1=cci[-1]<cci[-2]
@@ -323,7 +345,11 @@ class cciorder:
 		if (cn2 or cn3) and cn4 :qz=2
 		if (cn5 or cn6)	and cn1 :qz=2
 		if cn7 and qz>0:qz=5
-		return qz
+		if qz>0 and cciqrfj[-1]>0:
+			qz=5+qz
+			return qz
+		else:
+			return 0
  
 #获取数据的接口类
 class jiekou:
@@ -518,6 +544,13 @@ class D_kl(Finery):
 		g=jiekou()
 		df=g.get_k_from_csv(code1,'D')
 		return df
+#日@2
+class D_kl2(Finery):
+	def getk(self,code1):
+		Finery.getk(self,code1)
+		g=jiekou()
+		df=g.get_k_from_api(code1,'D')#实时数据
+		return df		
 #hf@
 class Hf_kl(Finery):
 	def getk(self,code1):
@@ -645,10 +678,15 @@ class cl4_ccianddmi(cciorder):
 		#日期差
 		pp=lastkdays-mmd_days1
 		#print(pp.days)
-
+		ppday=pp.days
+		cciqrfj=self.cci_ana_qrfj()
 
 		if last[0]=='dw' and pp.days<4:
-			qz=pp.days
+			if cciqrfj[-ppday]>0:
+				qz=1
+			else:
+				qz=2
+			
 			jg1='{0} 买点在 {1} {2} 天前'.format(jg,last[7],pp.days)
 		else:
 			qz=0
@@ -685,7 +723,24 @@ class Context:
 		self.csuper = csuper
 	def GetResult(self):
 		return self.csuper.dueorder()
+#注入策略,返回结果
+def yycl(szb):
+	'''注入策略'''
+	strategy={}
+	#注入策略
+	strategy[1] = Context(cl1_rsmd(szb))
+	strategy[2] = Context(cl2_cci_cd(szb))
+	strategy[3] = Context(cl_3_b3_j4(szb))
+	strategy[4] = Context(cl4_ccianddmi(szb))
+	strategy[5] = Context(cl5_maidianqian(szb))
 
+	code_order=[]
+
+	for i in range(1,len(strategy)+1):
+		x=strategy[i].GetResult()
+		#策略结果说明 去除不符合的结果， qz=0
+		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
+	return code_order
 #股票代码补齐
 def getSixDigitalStockCode(code):
 		strZero = ''
@@ -694,43 +749,56 @@ def getSixDigitalStockCode(code):
 		return strZero + str(code)
 
 #测试函数--根据代码获取单个策略
-def test102(code1):
-	jk=jiekou()
-	s=jk.getbasc(code1)[-1]
-
-	res=getorderresult(s)
-	print(res)
-	return 0
 def test101(code1):
+
 	jk=jiekou()
 	s=jk.getbasc(code1)[-1]
-	print (test101.__doc__,s)
-	code1=s.code
 	#获取k线记基础指标
 	szb=stockzb(s)
-	m=m_kl()#月线修饰
-	w=w_kl()#周线修饰
-	d=D_kl()#日线修饰
+	d=D_kl2()#日线修饰,实时数据
 	hf=Hf_kl()#30线修饰
 	#应用策略
 	#1--日线策略
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
+
+	#注入策略
+	res=yycl(szb)
+
+	[print(re) for re in res]
+
+	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
-	print(list_bloc[-3:])
-	print(list_bloc[-1][0],szb.df.loc[list_bloc[-1][0]].date)
-	print(list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
+	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
 
-	b=co.cci_dmi_q()
-	print(b)
+	b=co.cci_dmi()
+	l=len(b)
+	dmi=co.getdmi()
+	iii=0
+	for bloc in list_bloc[-5:]:
+		iii+=1
+		print('  \n******** 第{}区域块 *******'.format(iii),bloc)
+
+		start=bloc[0]
+		end=bloc[1]
+		for x in b:
+			print(x) if x[6]>=start and x[6]<=end and x[0]=='dw' else 0
+				
+		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
+		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
+
+
+	#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' ]
+
+	#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%co.getdmi()[b[x][6]],b[x]) for x in range(len(b)-30,len(b)) if b[x][0]=='dw']
 	#qk_li=list_bloc[-1]
 	#dd_li=qk_li[-1]
 	#start=dd_li[-2]
 	#end=dd_li[-1]
 	#iii=co.ddzj_chongding(start,end)
 	#print(iii)
-	#print(co.ddzj_beichi(start,end))
+	#print(co.ddzj_beich\i(start,end))
 	return 0
 #函数--根据代码获取单个策略
 def getorderresult(s):
@@ -745,40 +813,19 @@ def getorderresult(s):
 	d=D_kl()#日线修饰
 	hf=Hf_kl()#30线修饰
 
-	#应用策略
+	#---------应用策略--------
 	#1--日线策略
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
-	strategy = {}
+	#执行应用策略
+	code_order=yycl(szb)
 	
-	#注入策略
-	strategy[1] = Context(cl1_rsmd(szb))
-	strategy[2] = Context(cl2_cci_cd(szb))
-	strategy[3] = Context(cl_3_b3_j4(szb))
-	strategy[4] = Context(cl4_ccianddmi(szb))
-	strategy[5] = Context(cl5_maidianqian(szb))
-
-	code_order=[]
-
-	for i in range(1,len(strategy)+1):
-		x=strategy[i].GetResult()
-		#策略结果说明 去除不符合的结果， qz=0
-		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
-	#临时屏蔽月线月线策略
-
-	return code_order
+	#return code_order#临时屏蔽月线月线策略
 	#2--月线策略
-	
-	szb.decorator(m)#月线修饰
-	szb.getk()#获取月线
-	
-	strategy = {}
-	strategy[1] = Context(macdyxhz(szb))
-
-	for i in range(1,len(strategy)+1):
-		x=strategy[i].GetResult()
-		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
-	
+	#szb.decorator(m)#月线修饰
+	#szb.getk()#获取月线
+	#执行应用策略
+	#code_order=yycl(szb)
 	return code_order
 
 #函数--获取给点集合代码所有策略
@@ -787,7 +834,6 @@ def get_all_orderresult():
 	order_js_list=[]
 	tt=[]
 	jk=jiekou()
-	
 
 	#大名单列表存入tt
 	op=file_op()
@@ -803,8 +849,6 @@ def get_all_orderresult():
 	if len(st_list)==0:
 		print('没有符合的代码')
 		return 0
-	
-	
 	#获取所有策略结果
 	for s in st_list:
 		jg_li=getorderresult(s)#获取策略结果
@@ -816,11 +860,14 @@ def get_all_orderresult():
 	gxsj = datetime.datetime.now().strftime('%H%M')
 	gx=gxrq+gxsj
 	
-	
-	df=DataFrame(order_js_list,columns=[ 'code', 'name','cl','cljg','qz','files'])
-	df['gxsj']=str(gx)
-	df.to_csv('order.csv')#为增加方式
-	
+	columns_li=[ 'code', 'name','cl','cljg','qz','files']
+	if len(order_js_list)>0:
+		if len(order_js_list[-1])!=len(columns_li):
+			print("数据列数量不等")
+		df=DataFrame(order_js_list,columns=columns_li)
+		df['gxsj']=str(gx)
+		df.to_csv('order.csv')#为增加方式
+
 	return 0
 #函数 ---分离策略结果集
 def fl_ordercsv():
@@ -840,13 +887,14 @@ def fl_ordercsv():
 	return 0
 
 def main():
-	print('---策略主程序---')
+	print('\n---策略主程序---')
 
 	i=0
 	while i<10:
 		i+=1
 		print('执行策略分析---1')
 		print('分离结果集---2')
+		print('单代码分析---6位代码')
 		print('99--退出<99>')
 	
 		cc=input()
@@ -865,6 +913,9 @@ def main():
 			print(fl_ordercsv.__doc__)
 			fl_ordercsv()
 
+		if len(cc)==6:
+			test101(str(cc))
+
 
 	return 0
 
@@ -875,6 +926,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
+	#test101('300415')
 	main()
 	#test101('000333')
 	
