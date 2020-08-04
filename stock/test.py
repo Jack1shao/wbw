@@ -23,6 +23,12 @@ rr=gu_shou('')
 ddd=gu_draw('')
 jk=jiekou()
 
+pro = ts.pro_api('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
+#pro = ts.pro_api()
+df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
+print(df.columns.values.tolist())
+print(df)
+
 class queue:
 	def __init__(self,maxsize=0):
 		self.maxsize=maxsize

@@ -646,8 +646,7 @@ class cl_3_b3_j4(cciorder):
 			dd1=dd_li[i]
 			
 			iii+=self.cci_j4(dd1,end)
-
-		
+	
 		qz=iii
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files)
 		
@@ -669,28 +668,23 @@ class cl4_ccianddmi(cciorder):
 
 		qt_li=self.cci_dmi()
 		last=qt_li[-1]
-
 		#趋同点的日期
-		mmd_days1=datetime.datetime.strptime(last[7], '%Y-%m-%d')
-		#k线最后一天的日期
-		lastkdays=datetime.datetime.strptime(self.df.date.values[-1], '%Y-%m-%d')
-		#print(mmd_days1,lastkdays)
-		#日期差
-		pp=lastkdays-mmd_days1
-		#print(pp.days)
-		ppday=pp.days
+		l1=len(self.cci)-1
+		l2=last[6]
+		l=l1-l2
+		
 		cciqrfj=self.cci_ana_qrfj()
 
-		if last[0]=='dw' and pp.days<4:
-			if cciqrfj[-ppday]>0:
-				qz=1
+		if last[0]=='dw' and l<4:
+			if cciqrfj[-l]>0:
+				qz=l
 			else:
-				qz=2
+				qz=10
 			
-			jg1='{0} 买点在 {1} {2} 天前'.format(jg,last[7],pp.days)
+			jg1='{0} 买点在 {1} {2} 天前'.format(jg,last[7],l)
 		else:
 			qz=0
-			jg1='{0} 卖点在 {1} {2} 天前'.format(jg,last[7],pp.days)
+			jg1='{0} 卖点在 {1} {2} 天前'.format(jg,last[7],l)
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg1,qz=qz,files=files+str(qz))
 
 class cl5_maidianqian(cciorder):
@@ -701,20 +695,10 @@ class cl5_maidianqian(cciorder):
 		qz=self.cci_dmi_q()
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 
-#策略5----中轨之上连跌3日以上
-class boll3(bollorder):
-	'''策略5----中轨之上连跌3日以上 bo3'''
-	def dueorder(self):
-		i=self.boll3()
-		#print('boll3',i)
-		if i>3:
-			return 1
-		return 0
-		
-#策略6----30日红盘占比
+#策略5----
 
-#策略6----量能放大
-#策略7----9日涨幅幅榜
+#策略6----
+#策略7----
 
 #管理策略的类
 class Context:
@@ -741,6 +725,7 @@ def yycl(szb):
 		#策略结果说明 去除不符合的结果， qz=0
 		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
 	return code_order
+
 #股票代码补齐
 def getSixDigitalStockCode(code):
 		strZero = ''
@@ -788,7 +773,7 @@ def test101(code1):
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
 
-
+	print('\n',s)
 	#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' ]
 
 	#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%co.getdmi()[b[x][6]],b[x]) for x in range(len(b)-30,len(b)) if b[x][0]=='dw']
@@ -869,6 +854,8 @@ def get_all_orderresult():
 		df.to_csv('order.csv')#为增加方式
 
 	return 0
+#函数--获取给点集合代码所有策略
+
 #函数 ---分离策略结果集
 def fl_ordercsv():
 	'''函数 ---分离策略结果集'''
@@ -926,7 +913,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('300415')
+	test101('601216')
 	main()
 	#test101('000333')
 	
