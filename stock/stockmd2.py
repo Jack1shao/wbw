@@ -716,7 +716,7 @@ def yycl(szb):
 	strategy[2] = Context(cl2_cci_cd(szb))
 	strategy[3] = Context(cl_3_b3_j4(szb))
 	strategy[4] = Context(cl4_ccianddmi(szb))
-	strategy[5] = Context(cl5_maidianqian(szb))
+	#strategy[5] = Context(cl5_maidianqian(szb))
 
 	code_order=[]
 
@@ -750,12 +750,12 @@ def test101(code1):
 	#注入策略
 	res=yycl(szb)
 
-	[print(re) for re in res]
+	
 
 	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
-	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
+	
 
 	b=co.cci_dmi()
 	l=len(b)
@@ -777,16 +777,10 @@ def test101(code1):
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
 
 	print('\n',s)
-	#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' ]
+	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
+	[print(re) for re in res]
 
 	#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%co.getdmi()[b[x][6]],b[x]) for x in range(len(b)-30,len(b)) if b[x][0]=='dw']
-	#qk_li=list_bloc[-1]
-	#dd_li=qk_li[-1]
-	#start=dd_li[-2]
-	#end=dd_li[-1]
-	#iii=co.ddzj_chongding(start,end)
-	#print(iii)
-	#print(co.ddzj_beich\i(start,end))
 	return 0
 #函数--根据代码获取单个策略
 def getorderresult(s):
@@ -916,7 +910,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('000519')
+	test101('002444')
 	main()
 	#test101('000333')
 	
