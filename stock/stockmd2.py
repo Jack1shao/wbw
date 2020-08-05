@@ -761,15 +761,18 @@ def test101(code1):
 	l=len(b)
 	dmi=co.getdmi()
 	iii=0
-	for bloc in list_bloc[-5:]:
+	for bloc in list_bloc[-3:]:
 		iii+=1
-		print('  \n******** 第{}区域块 *******'.format(iii),bloc)
-
+		print(' ******** 第{}区域块 *******'.format(iii),bloc)
 		start=bloc[0]
 		end=bloc[1]
+		print('=====up===')
+		for x in b:
+			print(x[7]) if x[6]>=start and x[6]<=end and x[0]=='up' else 0	
+		print('=====dw===')	
 		for x in b:
 			print(x) if x[6]>=start and x[6]<=end and x[0]=='dw' else 0
-				
+			
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
 
@@ -913,7 +916,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('601216')
+	test101('000519')
 	main()
 	#test101('000333')
 	
