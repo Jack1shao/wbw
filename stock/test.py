@@ -18,16 +18,17 @@ import os
 
 #df=ts.get_k_data('603336',ktype='m')
 kk=gu_save('')
+
 hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 jk=jiekou()
 
-pro = ts.pro_api('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
+#pro = ts.pro_api('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #pro = ts.pro_api()
-df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
-print(df.columns.values.tolist())
-print(df)
+#df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
+#print(df.columns.values.tolist())
+#
 
 class queue:
 	def __init__(self,maxsize=0):
@@ -46,6 +47,8 @@ q=queue(maxsize=3)
 
 #1、临时存入数据
 ktype=['30','D','w','m']
+
+print(ktype[3])
 tt=['002371','600609','002498',
 		'002238','300415','000987',
 		'600598','000931','002465']#tt=['all']

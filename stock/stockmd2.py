@@ -71,6 +71,8 @@ class cciorder:
 	def getdmi(self):
 		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
 		return ADX
+	def getcci(self):
+		return self.stockzb.cci()
 	#cci折角1、判断
 	def __cci_ana_updown(self,c1,c2,c3):
 		if c2>c1 and c2>c3:return 1
@@ -350,6 +352,48 @@ class cciorder:
 			return qz
 		else:
 			return 0
+
+	#cci值及状态
+	def p_cci(self,index_1):
+		cci=self.getcci()
+		zh=cci[index_1]
+		qr=self.cci_ana_qrfj()[index_1]
+		qs=1 if cci[index_1]>=cci[index_1-1] else -1#表示上升或下降
+		#所处的块
+		block=self.cci_qr_blok()
+
+		start=0
+		end=0
+		dd2_li=[]
+		for b in block:
+			if index_1>=b[0] and index_1<=b[1]:
+				start=b[0]
+				end=b[1]
+				dd2_li=b[-1]
+				break
+
+		dd_li=self.cci_dd(cci)
+		up_len=0
+		for x in range(index_1,start,-1):
+			if dd_li[x]=='up' and x in dd2_li:
+				up_len=index_1-x
+				break
+		dw_len=0
+		for x in range(index_1-1,start,-1):
+			if dd_li[x]=='dw':
+				dw_len=index_1-x
+				break
+		first_up=0
+		up_count=len(dd2_li)
+		if up_count>0:
+			first_up=index_1-dd2_li[0]
+
+		return [index_1,zh,qr,qs,up_len,dw_len,first_up,up_count]
+
+	#adx
+	def p_adx(self,index_1):
+
+		return 0
  
 #获取数据的接口类
 class jiekou:
@@ -491,11 +535,11 @@ class stockzb(object):
 		ADX = talib.ADX(df.high,df.low,df.close, timeperiod=6)
 		ADXR = talib.ADXR(df.high,df.low,df.close, timeperiod=6)
 		return PLUS_DI.tolist(),MINUS_DI.tolist(),ADX.tolist(),ADXR.tolist()
-	#指标ma
-	def ma(self):
+	#指标ma,tpd=34,5,8,13,21
+	def ma(self,tpd):
 		df=self.df
 		closed=df['close'].values
-		sma=talib.MA(closed,timeperiod=34,matype=0)
+		sma=talib.MA(closed,timeperiod=tpd,matype=0)
 		return sma.tolist()
 	#指标cci
 	def cci(self):
@@ -506,7 +550,12 @@ class stockzb(object):
 		df=self.df
 		cci=talib.CCI(df.high,df.low,df.close, timeperiod=14)
 		return cci.tolist()
-		
+	#交易量指标,tpd=5,10
+	def ma_vol(self,tpd):
+		df=self.df
+		volume=df['volume'].values
+		sma=talib.MA(volume,timeperiod=tpd,matype=0)
+		return sma.tolist()
 #装饰类
 class Finery():
 	def __init__(self):
@@ -753,6 +802,9 @@ def test101(code1):
 	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
+	#-------------------------------
+	pcci=co.p_cci(629)
+	print(pcci)
 
 	b=co.cci_dmi()
 	l=len(b)
@@ -765,7 +817,12 @@ def test101(code1):
 		end=bloc[1]
 		print('  up:')
 		for x in b:
-			print(x[7]) if x[6]>=start and x[6]<=end and x[0]=='up' else 0	
+			cn0= x[0]=='up'
+			cn1= (x[3]=='dmi' and x[4]>50 )
+			cn2= (x[8]=='dmi' and x[9]>50 )
+			cn3= (x[6]>=start and x[6]<=end)
+			#cn4= x[6]-x[1]<3
+			print(x[5:]) if cn0 and cn3 and (cn1 or cn2)  else 0	
 		print('  dw:')	
 		for x in b:
 			print(x) if x[6]>=start and x[6]<=end and x[0]=='dw' else 0
@@ -907,7 +964,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('601168')
+	test101('000519')
 	main()
 	#test101('000333')
 	
