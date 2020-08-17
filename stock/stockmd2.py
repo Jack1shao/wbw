@@ -71,6 +71,9 @@ class cciorder:
 	def getdmi(self):
 		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
 		return ADX
+	def getdmi_asxr(self):
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		return ADX
 	def getcci(self):
 		return self.stockzb.cci()
 	#cci折角1、判断
@@ -353,7 +356,41 @@ class cciorder:
 		else:
 			return 0
 
-	#cci值及状态
+	#dmi块
+	def dmi_block(self):
+		PDI,MDI,ADX,ADXR=self.stockzb.dmi()
+		dd=self.cci_dd(adx)
+		ln=len(adx)
+		qrfj=[]
+		dmi_bl=[]
+		bz0=0
+		bz1=0
+		for i in range(0,ln):
+			bz1=100 if PDI[i]>=MDI[i] else -100
+			if  bz1!=bz0 or i==total-1 :
+				if i==total-1:qrfj.append(i)#最后一条记录
+
+				start=qrfj[0]
+				end=qrfj[-1]
+
+				dd_li=[]#顶点
+				for x in range(start,end+1):
+					if dd[x]=='up' and dmi[x]>=50:
+						dd_li.append(x)		
+				#顶点个数
+				ddgs=len(dd_li)
+				#加入数组
+				dmi_bl.append([start,end,bz0,len(qrfj),ddgs,dd_li])
+				#清空cciqrfj
+				qrfj=[]
+
+			qrfj.append(i)
+			bz0=bz1
+
+		#[start,end,qrd,gdgs,[gd1,]]
+		return dmi_bl
+
+	#cci点值及状态
 	def p_cci(self,index_1):
 		cci=self.getcci()
 		zh=cci[index_1]
@@ -387,13 +424,69 @@ class cciorder:
 		up_count=len(dd2_li)
 		if up_count>0:
 			first_up=index_1-dd2_li[0]
-
+		#[序号，值，强弱段，趋势，高点距离，低点距离，第一高点距离，高点数]
 		return [index_1,zh,qr,qs,up_len,dw_len,first_up,up_count]
 
-	#adx
+	#adx点值及状态：[序号，值，趋势，高点距离，低点距离，均值高点距离，均值低点距离]
 	def p_adx(self,index_1):
+		'''[序号，值，趋势，强弱段段状态（上涨，盘整，下跌）高点距离，高点值，低点距离，低点值，均值高点距离，均值低点距离]'''
+		adx=self.getdmi()
+		zh=adx[index_1]
+		qs=1 if adx[index_1]>=adx[index_1-1] else 0
+		#qs
+		bl=self.dmi_block()
+		start=0
+		end=0
+		qr=0
+		dd2_li=[]
+		#取所在段
+		for b in bl:
+			if  index_1>=b[0] and index_1<=b[1]:
+				start=b[0]
+				end=b[1]
+				dd2_li=b[-1]
 
+				break
+		#
+		up_count=len(dd2_li)
+		up_len=0
+		dw_len=0
+		#有高点，取最后个高点的距离
+		#if up_count>0:
+		for d in dd2_li:
+			if index_1>d:
+				up_len=index_1-d
+	
+		return [index_1,zh,qr,qs,up_len,dw_len,up_count]
+	#boll点值及状态:[序号，中轨趋势，位置（中轨上，中轨下）]
+	def p_boll(self,index_1):
+		#p_b=[]
+		up,mid,lo=self.stockzb.boll()
+		clos=self.df.close.values.tolist()
+		#low=self.df.low.values.tolist()
+		qs=1 if mid[index_1]>=mid[index_1-1] else 0
+		wz=1 if clos[index_1]>=mid[index_1] else -1
+		return [index_1,qs,wz]
+	#MACD点值及状态:[序号，值，趋势，第几根，线的趋势]
+	def p_macd(self,index_1):
+		
 		return 0
+
+	#量点值及状态：[序号，5日均线差%比，10均线差%比]
+	def p_vol(self,index_1):
+		vol_li=self.df.volume.values.tolist()
+		vol_li_ma5=self.stockzb.ma_vol(5)
+		vol_li_ma10=self.stockzb.ma_vol(10)
+		m5=vol_li_ma5[index_1]
+		m10=vol_li_ma10[index_1]
+		vo=vol_li[index_1]
+		return[index_1,(vo-m5)/m5,(vo-m10)/m10]
+	#股价点值及状态：[close涨幅，high与前高比较，low与前底比较]
+
+	#统计：该点后4日和7日的涨幅和振幅
+	def tj(self,index_1):
+		return 0
+
  
 #获取数据的接口类
 class jiekou:

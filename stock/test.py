@@ -13,10 +13,10 @@ from stockmd import w_kl
 from stockmd import D_kl
 from stockmd import Hf_kl
 from stockmd import jiekou
-from stockmd2 import cciorder
+#from stockmd2 import cciorder
 import os
 
-#df=ts.get_k_data('603336',ktype='m')
+
 kk=gu_save('')
 
 hh=gu_zb(0)
@@ -29,7 +29,8 @@ jk=jiekou()
 #df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
 #print(df.columns.values.tolist())
 #
-
+df=ts.get_k_data('603336',ktype='D')
+print(df.columns.values)
 class queue:
 	def __init__(self,maxsize=0):
 		self.maxsize=maxsize
