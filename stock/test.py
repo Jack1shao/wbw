@@ -29,7 +29,7 @@ jk=jiekou()
 #df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
 #print(df.columns.values.tolist())
 #
-df=ts.get_k_data('603336',ktype='D')
+df=jk.get_from_csv('603336',ktype='D')
 print(df.columns.values)
 class queue:
 	def __init__(self,maxsize=0):
