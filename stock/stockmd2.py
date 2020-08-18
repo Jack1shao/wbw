@@ -399,13 +399,12 @@ class cciorder:
 
 	#cci点值及状态
 	def p_cci(self,index_1):
+		'''index_1 zh qr qs up_len dw_len first_up up_count'''
 		cci=self.getcci()
 		zh=cci[index_1]
 
-		#qrfj=self.cci_ana_qrfj()
-		#print(qrfj)
 		qr=self.cci_ana_qrfj()[index_1]
-		qr=100 if qr==1 else qr 
+		qr=100 if qr==1 else qr #用100表示
 		qs=300 if cci[index_1]>=cci[index_1-1] else -300#表示上升或下降
 		#所处的块
 		block=self.cci_qr_blok()
@@ -440,7 +439,8 @@ class cciorder:
 
 	#adx点值及状态：[序号，值，趋势，高点距离，低点距离，均值高点距离，均值低点距离]
 	def p_adx(self,index_1):
-		'''[序号，值，趋势，强弱段段状态（上涨，盘整，下跌）高点距离，高点值，低点距离，低点值，均值高点距离，均值低点距离]'''
+		'''index_1 zh qr qs up_len dw_len_adx zh_adxr qs_adxr dw_len_adxr ddzh_adxr'''
+		#'''[序号，值，趋势，强弱段段状态（上涨，盘整，下跌）高点距离，高点值，低点距离，低点值，均值高点距离，均值低点距离]'''
 		#adx=self.getdmi()
 		PDI,MDI,adx,adxr=self.stockzb.dmi()
 		#dd=self.cci_dd(ADX)
@@ -490,10 +490,12 @@ class cciorder:
 		#adxr:
 		zh_adxr=adxr[index_1]
 		qs_adxr=300 if adxr[index_1]>=adxr[index_1-1] else -300
-
-		return [index_1,zh,qr,qs,up_len,dw_len_adx,iii,zh_adxr,qs_adxr,dw_len_adxr,adxr[index_1-dw_len_adxr]]
+		ddzh_adxr=adxr[index_1-dw_len_adxr]
+		dd_count=iii
+		return [index_1,zh,qr,qs,up_len,dw_len_adx,zh_adxr,qs_adxr,dw_len_adxr,ddzh_adxr]
 	#boll点值及状态:[序号，中轨趋势，位置（中轨上，中轨下）]
 	def p_boll(self,index_1):
+		'''index_1 qs wz'''
 		#p_b=[]
 		up,mid,lo=self.stockzb.boll()
 		clos=self.df.close.values.tolist()
@@ -503,6 +505,7 @@ class cciorder:
 		return [index_1,qs,wz]
 	#MACD点值及状态:[序号，值，趋势，第几根，线的趋势]
 	def p_macd(self,index_1):
+		'''index_1 zh_m qs_m zh_diff qs_diff zh_dea qs_dea'''
 		diff,dea,macd3=self.stockzb.macd()
 		zh_m=macd3[index_1]
 		zh_diff=diff[index_1]
@@ -514,6 +517,7 @@ class cciorder:
 
 	#量点值及状态：[序号，5日均线差%比，10均线差%比]
 	def p_vol(self,index_1):
+		'''index_1 rag_5 qs_m5 rag_10 qs_m10'''
 		vol_li=self.df.volume.values.tolist()
 		vol_li_ma5=self.stockzb.ma_vol(5)
 		vol_li_ma10=self.stockzb.ma_vol(10)
@@ -525,10 +529,14 @@ class cciorder:
 		qs_m10=300 if m10>=vol_li_ma10[index_1-1] else -300
 		#点值与均量的比值
 		vo=vol_li[index_1]
+		#均量的比值
+		rag_5=(vo-m5)/m5*100
+		rag_10=(vo-m10)/m10*100
 
-		return[index_1,(vo-m5)/m5*100,qs_m5,(vo-m10)/m10*100,qs_m10]
+		return [index_1,rag_5,qs_m5,rag_10,qs_m10]
 	#股价点值及状态：[close涨幅，high与前高比较，low与前底比较]
 	def p_gj(self,index_1):
+		'''index_1 zf_clos qgbj qdbj'''
 		clos=self.df.close.values.tolist()
 		low=self.df.low.values.tolist()
 		hig=self.df.high.values.tolist()
@@ -541,7 +549,7 @@ class cciorder:
 		#与前高前低比较
 		qgbj=9 if hig[index_1-1]<=n_hig else -9
 		qdbj=8 if low[index_1-1]<n_low else -8
-
+		columns='index_1 zf_clos qgbj qdbj'
 		return [index_1,zf_clos,qgbj,qdbj]
 
 	#统计：该点后4日和7日的涨幅和振幅
@@ -561,7 +569,7 @@ class cciorder:
 
 		for sd in someday:
 			end=index_1+sd+1 if index_1+1+sd<=total-1 else total-1
-			#print(start,end)
+
 			#以最后天的最高价做为计算点
 			gj_end=hig[end]
 
@@ -951,24 +959,6 @@ def yycl(szb):
 		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
 	return code_order
 
-#注入策略,返回结果
-def yycl2(szb):
-	'''注入策略'''
-	strategy={}
-	#注入策略
-	strategy[1] = Context(cl1_rsmd(szb))
-	strategy[2] = Context(cl2_cci_cd(szb))
-	#strategy[3] = Context(cl_3_b3_j4(szb))
-	strategy[3] = Context(cl4_ccianddmi(szb))
-	#strategy[5] = Context(cl5_maidianqian(szb))
-
-	code_order=[]
-
-	for i in range(1,len(strategy)+1):
-		x=strategy[i].GetResult()
-		#策略结果说明 去除不符合的结果， qz=0
-		if x.qz>0:code_order.append([x.code,x.name,x.cl,x.jg,x.qz,x.files])
-	return code_order
 
 #股票代码补齐
 def getSixDigitalStockCode(code):
@@ -979,22 +969,25 @@ def getSixDigitalStockCode(code):
 
 #构造样本
 def aiyb():
-	list_code=['600359']
+	tt=[]
 	jk=jiekou()
-	
-	for code1 in list_code:
-		s=jk.getbasc(code1)[-1]
+	#大名单列表存入tt
+	op=file_op()
+	dmd_li1=op.get_txt('sv_dmd1.csv').code.values.tolist()
+	for code in dmd_li1:
+		co=getSixDigitalStockCode(code)
+		tt.append(co)
+	#
+	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
+	iii=0
+	for s in  st_list:
+		iii+=1
 		#获取k线记基础指标
 		szb=stockzb(s)
 		d=D_kl()#日线修饰,实时数据
-		
 		#应用策略
-		#1--日线策略
 		szb.decorator(d)#日线修饰
 		szb.getk()#获取k线
-
-		#注入策略
-		#res=yycl(szb)
 
 		#详细分析
 		co=cciorder(szb)
@@ -1003,8 +996,13 @@ def aiyb():
 		for x in b:
 			if x[0]=='dw':
 				md1.append(x[6])
-		#xh=639
+		code2=co.getcode()
+		name=co.getname()
+
+		yb_li=[]
+		yb_li30=[]
 		for xh in md1:
+			
 			l_cci=co.p_cci(xh)
 			l_adx=co.p_adx(xh)
 			l_vol=co.p_vol(xh)
@@ -1012,8 +1010,19 @@ def aiyb():
 			l_boll=co.p_boll(xh)
 			l_gj=co.p_gj(xh)
 			l_tj=co.tj(xh)
-			print(l_cci+(l_tj))
-		
+			date_xh=co.df.loc[xh].date
+			if l_tj[3]>30:
+				yb_li30.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
+			elif l_tj[1]>5 or l_tj[2]>10:
+				#print(l_tj)
+				yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
+			#print(l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
+		print(iii,len(yb_li),len(yb_li30))
+		df=DataFrame(yb_li)
+		df.to_csv('d:/aiyb10.csv',mode='a',header=False,encoding='utf-8')
+		df2=DataFrame(yb_li30)
+		df2.to_csv('d:/aiyb30.csv',mode='a',header=False,encoding='utf-8')
+
 	return 0
 
 #测试函数--根据代码获取单个策略
@@ -1064,7 +1073,7 @@ def test101(code1):
 			
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
-	xh=606
+	xh=639
 	print('\n',s)
 	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
 	print('cci:',co.p_cci(xh))
@@ -1208,8 +1217,8 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('000987')
-	aiyb()
+	test101('600609')
+	#aiyb()
 	main()
 	#test101('000333')
 	
