@@ -421,19 +421,19 @@ class cciorder:
 
 		dd_li=self.cci_dd(cci)
 		up_len=0
-		for x in range(index_1,start,-1):
-			if dd_li[x]=='up' and x in dd2_li:
+		for x in range(index_1,start-1,-1):
+			if dd_li[x]=='up':
 				up_len=index_1-x
 				break
 		dw_len=0
-		for x in range(index_1-1,start,-1):
+		for x in range(index_1-1,start-1,-1):
 			if dd_li[x]=='dw':
 				dw_len=index_1-x
 				break
 		first_up=0
 		up_count=len(dd2_li)
-		if up_count>0:
-			first_up=index_1-dd2_li[0]
+		first_up=index_1-dd2_li[0] if up_count>0 else 0
+			
 		#[序号，值，强弱段，趋势，高点距离，低点距离，第一高点距离，高点数]
 		return [index_1,zh,qr,qs,up_len,dw_len,first_up,up_count]
 
@@ -547,8 +547,8 @@ class cciorder:
 		#点值涨幅
 		zf_clos=(n_clos-clos[index_1-1]+0.001)/n_clos*100
 		#与前高前低比较
-		qgbj=9 if hig[index_1-1]<=n_hig else -9
-		qdbj=8 if low[index_1-1]<n_low else -8
+		qgbj=9 if hig[index_1-1]<n_hig else -9
+		qdbj=8 if low[index_1-1]<=n_low else -8
 		columns='index_1 zf_clos qgbj qdbj'
 		return [index_1,zf_clos,qgbj,qdbj]
 
@@ -947,15 +947,20 @@ class cl6_aiyb(cciorder):
 		cn1=l_cci[3]<0#cci向下
 		cn2=l_gj[2]<0
 		cn3=l_vol[1]<0#缩量
-		qz=0
-		if cn1 and cn2 and cn3:
-			qz=1 if l_cci[2]>0 else 2
-		
-		if qz>0 and l_adx[-2]==1:
-			qz=10
-		if qz>0 and l_adx[6]>0:
-			qz=11
 
+		qrs=1 if l_cci[2]>0 else 2#1为强势
+		
+		qz0=1 if cn1 and cn3  else 0
+
+		
+		#cci adx 逆向
+		#cci=-300 uplen=3\4   adx=300 dwlen<uplen >3\4 zh<60
+		#cci=-300 uplen=1 dwlen>2   adx=-300 uplen> dwlen>=4
+		cn_nx1=cn1 and l_cci[4] in [3,4]  and l_adx[5]>=2 and l_adx[3]==300 and l_adx[1]<60
+		cn_nx2=cn1 and l_cci[4]==1 and l_adx[3]==-300 and l_adx[5]>=2
+		t=1 if (cn_nx1 or cn_nx2) and qrs and qz0 else 0
+
+		qz=qz0*qrs*t
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 #策略6----
 #策略7----
@@ -1004,7 +1009,7 @@ def aiyb():
 	for code in dmd_li1:
 		co=getSixDigitalStockCode(code)
 		tt.append(co)
-	tt=['002498','600609','600359','600598']
+	#tt=['002495']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	iii=0
 	for s in  st_list:
@@ -1043,15 +1048,16 @@ def aiyb():
 			l_gj=co.p_gj(xh)
 			l_tj=co.tj(xh)
 			date_xh=co.df.loc[xh].date
-			if l_tj[3]>30:
+			if l_tj[2]>20:
 				yb_li30.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
-			elif l_tj[1]>5 or l_tj[2]>10 and l_tj[3]>0:
+
+			#elif l_tj[1]>10 or l_tj[2]>10 and l_tj[3]>0:
 				#print(l_tj)
-				yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
+				#yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
 			#print(l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
-		print(iii,len(yb_li),len(yb_li30))
-		df=DataFrame(yb_li)
-		df.to_csv('d:/aiyb10.csv',mode='a',header=False,encoding='utf-8')
+		#print(iii,len(yb_li),yb_li30)
+		#df=DataFrame(yb_li)
+		#df.to_csv('d:/aiyb10.csv',mode='a',header=False,encoding='utf-8')
 		df2=DataFrame(yb_li30)
 		df2.to_csv('d:/aiyb30.csv',mode='a',header=False,encoding='utf-8')
 
@@ -1086,7 +1092,7 @@ def test101(code1):
 	l=len(b)
 	dmi=co.getdmi()
 	iii=0
-	for bloc in list_bloc[-5:]:
+	for bloc in list_bloc[-8:]:
 		iii+=1
 		print(' ******** 第{}区域块 *******'.format(iii),bloc)
 		start=bloc[0]
@@ -1105,7 +1111,7 @@ def test101(code1):
 			
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
-	xh=620
+	xh=546
 	print('\n',s)
 	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
 	print('cci:',co.p_cci(xh))
@@ -1249,7 +1255,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('000411')
+	#test101('002495')
 	#aiyb()
 	main()
 	#test101('000333')
