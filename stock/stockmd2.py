@@ -439,7 +439,7 @@ class cciorder:
 
 	#adx点值及状态：[序号，值，趋势，高点距离，低点距离，均值高点距离，均值低点距离]
 	def p_adx(self,index_1):
-		'''index_1 zh qr qs up_len dw_len_adx zh_adxr qs_adxr dw_len_adxr ddzh_adxr'''
+		'''index_1 zh qr qs up_len dw_len_adx dd_count zh_adxr qs_adxr dw_len_adxr ddzh_adxr'''
 		#'''[序号，值，趋势，强弱段段状态（上涨，盘整，下跌）高点距离，高点值，低点距离，低点值，均值高点距离，均值低点距离]'''
 		#adx=self.getdmi()
 		PDI,MDI,adx,adxr=self.stockzb.dmi()
@@ -492,7 +492,7 @@ class cciorder:
 		qs_adxr=300 if adxr[index_1]>=adxr[index_1-1] else -300
 		ddzh_adxr=adxr[index_1-dw_len_adxr]
 		dd_count=iii
-		return [index_1,zh,qr,qs,up_len,dw_len_adx,zh_adxr,qs_adxr,dw_len_adxr,ddzh_adxr]
+		return [index_1,zh,qr,qs,up_len,dw_len_adx,dd_count,zh_adxr,qs_adxr,dw_len_adxr,ddzh_adxr]
 	#boll点值及状态:[序号，中轨趋势，位置（中轨上，中轨下）]
 	def p_boll(self,index_1):
 		'''index_1 qs wz'''
@@ -928,8 +928,35 @@ class cl5_maidianqian(cciorder):
 		qz=self.cci_dmi_q()
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 
-#策略5----
-#class cl6_gz
+#策略6----ai样本买点
+class cl6_aiyb(cciorder):
+	'''策略6 ai样本买点 aiyb'''
+	def dueorder(self):
+		cl,jg,files=self.__doc__.split()
+		cci=self.cci
+		total=len(cci)
+		xh=total-1
+		'''index_1 zh qr qs up_len dw_len first_up up_count'''
+		l_cci=self.p_cci(xh)
+		'''index_1 rag_5 qs_m5 rag_10 qs_m10'''
+		l_vol=self.p_vol(xh)
+		'''index_1 zf_clos qgbj qdbj'''
+		l_gj=self.p_gj(xh)
+		'''index_1 zh qr qs up_len dw_len_adx dd_count zh_adxr qs_adxr dw_len_adxr ddzh_adxr'''
+		l_adx=self.p_adx(xh)
+		cn1=l_cci[3]<0#cci向下
+		cn2=l_gj[2]<0
+		cn3=l_vol[1]<0#缩量
+		qz=0
+		if cn1 and cn2 and cn3:
+			qz=1 if l_cci[2]>0 else 2
+		
+		if qz>0 and l_adx[-2]==1:
+			qz=10
+		if qz>0 and l_adx[6]>0:
+			qz=11
+
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 #策略6----
 #策略7----
 
@@ -949,7 +976,7 @@ def yycl(szb):
 	strategy[2] = Context(cl2_cci_cd(szb))
 	#strategy[3] = Context(cl_3_b3_j4(szb))
 	strategy[3] = Context(cl4_ccianddmi(szb))
-	#strategy[5] = Context(cl5_maidianqian(szb))
+	strategy[4] = Context(cl6_aiyb(szb))
 
 	code_order=[]
 
@@ -977,7 +1004,7 @@ def aiyb():
 	for code in dmd_li1:
 		co=getSixDigitalStockCode(code)
 		tt.append(co)
-	#
+	tt=['002498','600609','600359','600598']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	iii=0
 	for s in  st_list:
@@ -994,11 +1021,16 @@ def aiyb():
 		b=co.cci_dmi()
 		md1=[]
 		for x in b:
-			if x[0]=='dw':
+			
+			if x[0]=='dw' and x[3]=='cci':
+				
+				md1.append(x[1])
+			if x[0]=='dw' and x[8]=='cci':
+			
 				md1.append(x[6])
 		code2=co.getcode()
 		name=co.getname()
-
+		#md1=[]
 		yb_li=[]
 		yb_li30=[]
 		for xh in md1:
@@ -1013,7 +1045,7 @@ def aiyb():
 			date_xh=co.df.loc[xh].date
 			if l_tj[3]>30:
 				yb_li30.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
-			elif l_tj[1]>5 or l_tj[2]>10:
+			elif l_tj[1]>5 or l_tj[2]>10 and l_tj[3]>0:
 				#print(l_tj)
 				yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
 			#print(l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
@@ -1073,7 +1105,7 @@ def test101(code1):
 			
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
-	xh=639
+	xh=620
 	print('\n',s)
 	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
 	print('cci:',co.p_cci(xh))
@@ -1217,7 +1249,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('600609')
+	test101('000411')
 	#aiyb()
 	main()
 	#test101('000333')
