@@ -1048,7 +1048,7 @@ def aiyb():
 			l_gj=co.p_gj(xh)
 			l_tj=co.tj(xh)
 			date_xh=co.df.loc[xh].date
-			if l_tj[2]>20:
+			if l_tj[2]>15:
 				yb_li30.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
 
 			#elif l_tj[1]>10 or l_tj[2]>10 and l_tj[3]>0:
