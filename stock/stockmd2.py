@@ -561,7 +561,7 @@ class cciorder:
 		#统计N天内的涨跌幅
 		someday=[2,4,7,12]
 		#以第二天的最低价做为计算点
-		start=index_1+1 if index_1+1<total else total
+		start=index_1+1 if index_1+1<total else total-1
 		gj_start=low[start]
 
 		pr_li=[]
@@ -950,17 +950,16 @@ class cl6_aiyb(cciorder):
 
 		qrs=1 if l_cci[2]>0 else 2#1为强势
 		
-		qz0=1 if cn1 and cn3  else 0
-
-		
+		qz0=1 if cn1 and cn3 and cn2 else 0
+	
 		#cci adx 逆向
 		#cci=-300 uplen=3\4   adx=300 dwlen<uplen >3\4 zh<60
 		#cci=-300 uplen=1 dwlen>2   adx=-300 uplen> dwlen>=4
 		cn_nx1=cn1 and l_cci[4] in [3,4]  and l_adx[5]>=2 and l_adx[3]==300 and l_adx[1]<60
 		cn_nx2=cn1 and l_cci[4]==1 and l_adx[3]==-300 and l_adx[5]>=2
-		t=1 if (cn_nx1 or cn_nx2) and qrs and qz0 else 0
+		t=3 if (cn_nx1 or cn_nx2) and qz0 else qrs
 
-		qz=qz0*qrs*t
+		qz=qz0*t
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 #策略6----
 #策略7----
@@ -1085,8 +1084,8 @@ def test101(code1):
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
 	#-------------------------------
-	pcci=co.p_cci(629)
-	print(pcci)
+	#pcci=co.p_cci(629)
+	#print(pcci)
 
 	b=co.cci_dmi()
 	l=len(b)
@@ -1111,7 +1110,8 @@ def test101(code1):
 			
 		#[print(x,b[x]) for x in range(len(b)-20,len(b)) if b[x][0]=='up' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1]]
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
-	xh=546
+	total=len(co.cci)
+	xh=total-1
 	print('\n',s)
 	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
 	print('cci:',co.p_cci(xh))
@@ -1205,7 +1205,7 @@ def fl_ordercsv():
 	cl_df=op.get_txt('order.csv')
 	#分类文件名去重
 	fil=list(set(cl_df.files.values.tolist()))
-	print(fil)
+	#print(fil)
 
 	for na in fil:
 		files1=na+'.txt'
@@ -1255,7 +1255,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('002495')
+	test101('603709')
 	#aiyb()
 	main()
 	#test101('000333')
