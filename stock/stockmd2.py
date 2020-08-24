@@ -1091,7 +1091,7 @@ def test101(code1):
 	l=len(b)
 	dmi=co.getdmi()
 	iii=0
-	for bloc in list_bloc[-8:]:
+	for bloc in list_bloc[-3:]:
 		iii+=1
 		print(' ******** 第{}区域块 *******'.format(iii),bloc)
 		start=bloc[0]
@@ -1223,6 +1223,7 @@ def main():
 		i+=1
 		print('执行策略分析---1')
 		print('分离结果集---2')
+		print('构造样本---3')
 		print('单代码分析---6位代码')
 		print('99--退出<99>')
 	
@@ -1241,6 +1242,9 @@ def main():
 			#分离结果集
 			print(fl_ordercsv.__doc__)
 			fl_ordercsv()
+		if ccc==3:
+			print(aiyb.__doc__)
+			aiyb()
 
 		if len(cc)==6:
 			test101(str(cc))
@@ -1255,7 +1259,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('603709')
+	#test101('603709')
 	#aiyb()
 	main()
 	#test101('000333')
