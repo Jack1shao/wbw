@@ -22,4 +22,3 @@ iris_dataframe = pd.DataFrame( X_train, columns= iris_dataset.feature_names)
 # 利用 DataFrame 创建 散点图 矩阵， 按 y_train 着色 
 grr = pd.plotting.scatter_matrix( iris_dataframe, c= y_train, figsize=( 15, 15), marker='o', hist_kwds={'bins': 20}, s= 60, alpha=.8, cmap= mglearn.cm3)
 plt.show()
-print('hel')
