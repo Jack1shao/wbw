@@ -1259,7 +1259,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('603709')
+	test101('600831')
 	#aiyb()
 	main()
 	#test101('000333')
