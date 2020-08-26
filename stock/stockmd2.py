@@ -501,8 +501,9 @@ class cciorder:
 		clos=self.df.close.values.tolist()
 		#low=self.df.low.values.tolist()
 		qs=300 if mid[index_1]>=mid[index_1-1] else -300
-		wz=1 if clos[index_1]>=mid[index_1] else -1
-		return [index_1,qs,wz]
+		wzzh=(clos[index_1]-mid[index_1])/mid[index_1]*100
+		#wz=1 if clos[index_1]>=mid[index_1] else -1
+		return [index_1,qs,wzzh]
 	#MACD点值及状态:[序号，值，趋势，第几根，线的趋势]
 	def p_macd(self,index_1):
 		'''index_1 zh_m qs_m zh_diff qs_diff zh_dea qs_dea'''
@@ -1011,6 +1012,9 @@ def aiyb():
 	#tt=['002495']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	iii=0
+	#str_pcci=(co.p_cci).__doc__
+	#print(str_pcci)
+	#return 0
 	for s in  st_list:
 		iii+=1
 		#获取k线记基础指标
@@ -1047,9 +1051,19 @@ def aiyb():
 			l_gj=co.p_gj(xh)
 			l_tj=co.tj(xh)
 			date_xh=co.df.loc[xh].date
-			if l_tj[2]>15:
-				yb_li30.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
-
+			tjlb=0
+			if l_tj[2]<=0:
+				tjlb=-1
+			elif l_tj[2]>0 and l_tj[2]<10:
+				tjlb=1
+			elif l_tj[2]>=10 and l_tj[2]<20:
+				tjlb=2
+			elif l_tj[2]>=20:
+				tjlb=3
+			else:
+				tjlb=0
+	
+			yb_li30.append([code2,date_xh]+l_cci[1:]+l_adx[1:]+l_macd[1:]+l_boll[1:]+l_vol[1:]+l_gj[1:]+[tjlb])
 			#elif l_tj[1]>10 or l_tj[2]>10 and l_tj[3]>0:
 				#print(l_tj)
 				#yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
@@ -1057,8 +1071,10 @@ def aiyb():
 		#print(iii,len(yb_li),yb_li30)
 		#df=DataFrame(yb_li)
 		#df.to_csv('d:/aiyb10.csv',mode='a',header=False,encoding='utf-8')
+		gxrq = datetime.datetime.now().strftime('%Y-%m-%d')
+		files1='d:/aiyb{}.csv'.format(gxrq)
 		df2=DataFrame(yb_li30)
-		df2.to_csv('d:/aiyb30.csv',mode='a',header=False,encoding='utf-8')
+		df2.to_csv(files1,mode='a',header=False,encoding='utf-8')
 
 	return 0
 
@@ -1259,8 +1275,8 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	test101('600831')
-	#aiyb()
+	#test101('600831')
+	aiyb()
 	main()
 	#test101('000333')
 	

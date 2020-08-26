@@ -23,14 +23,17 @@ hh=gu_zb(0)
 rr=gu_shou('')
 ddd=gu_draw('')
 jk=jiekou()
-
+#ts.set_token('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #pro = ts.pro_api('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #pro = ts.pro_api()
+#df = ts.pro_bar(ts_code='000001.SZ', adj='qfq', start_date='20180101', end_date='20181011')
 #df = pro.daily(ts_code='000001', start_date='20150701', end_date='20160718')
-#print(df.columns.values.tolist())
+
+df=ts.get_h_data('002498',start='2019-01-01', end='2020-03-16')
+print(df.columns.values.tolist())
 #
-df=jk.get_from_csv('603336',ktype='D')
-print(df.columns.values)
+#df=jk.get_from_csv('603336',ktype='D')
+#print(df.columns.values)
 class queue:
 	def __init__(self,maxsize=0):
 		self.maxsize=maxsize

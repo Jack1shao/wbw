@@ -158,11 +158,11 @@ class gu_save(object):
 
 	##去除St的股票和上市一年的股票
 	def get_code_list(self):
-		print('--去除St的股票和2019年后上市的股票--')
+		print('--去除St的股票和2020年后上市的股票--')
 		df=self.get_base_from_db()
 		n_li=[]
 		for code,row in df.iterrows():
-			if row[0].find('ST')<0 and row[14]<20190101:
+			if row[0].find('ST')<0 and row[14]<20200101:
 				n_li.append(self.getSixDigitalStockCode(code))
 		return n_li
 	#去除St的股票和上市一年的股票的大名单
