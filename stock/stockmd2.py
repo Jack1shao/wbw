@@ -11,6 +11,8 @@ import datetime
 from collections import namedtuple
 from operClass import file_op
 from Tooth_sjjg import queue
+import matplotlib.pyplot as plt
+import mpl_finance as mpf
 #
 Stock=namedtuple('Stock','code name hangye totals')
 #策略结果
@@ -496,13 +498,13 @@ class cciorder:
 	#boll点值及状态:[序号，中轨趋势，位置（中轨上，中轨下）]
 	def p_boll(self,index_1):
 		'''index_1 qs wz'''
-		#p_b=[]
+	
 		up,mid,lo=self.stockzb.boll()
 		clos=self.df.close.values.tolist()
-		#low=self.df.low.values.tolist()
-		qs=300 if mid[index_1]>=mid[index_1-1] else -300
+		#boll中轨斜率
+		qs=mid[index_1]-mid[index_1-1]
 		wzzh=(clos[index_1]-mid[index_1])/mid[index_1]*100
-		#wz=1 if clos[index_1]>=mid[index_1] else -1
+		#boll中轨斜率
 		return [index_1,qs,wzzh]
 	#MACD点值及状态:[序号，值，趋势，第几根，线的趋势]
 	def p_macd(self,index_1):
@@ -516,12 +518,33 @@ class cciorder:
 		qs_dea=300 if zh_dea>=dea[index_1-1] else -300
 		return [index_1,zh_m,qs_m,zh_diff,qs_diff,zh_dea,qs_dea]
 
-	#量点值及状态：[序号，5日均线差%比，10均线差%比]
-	def p_vol(self,index_1):
-		'''index_1 rag_5 qs_m5 rag_10 qs_m10'''
+	
+	def vol1(self):
 		vol_li=self.df.volume.values.tolist()
 		vol_li_ma5=self.stockzb.ma_vol(5)
-		vol_li_ma10=self.stockzb.ma_vol(10)
+		vol_li_ma10=self.stockzb.ma_vol(13)
+
+		ln=len(vol_li)
+		vol_k=[]
+		for x in range(0,ln):
+			vo=vol_li[x]
+			m5=vol_li_ma5[x]
+			m10=vol_li_ma10[x]
+			#均量的比值
+			rag_5=(vo-m5)/m5*100
+			rag_10=(vo-m10)/m10*100
+			vol_k.append(rag_5)
+
+
+		return vol_k
+
+
+	#量点值及状态：[序号，5日均线差%比，10均线差%比]
+	def p_vol(self,index_1):
+		'''index_1 rag_5 qs_m5 rag_10 qs_m10 volkca volkcaxl'''
+		vol_li=self.df.volume.values.tolist()
+		vol_li_ma5=self.stockzb.ma_vol(5)
+		vol_li_ma10=self.stockzb.ma_vol(13)
 		#5日均量及趋势
 		m5=vol_li_ma5[index_1]
 		qs_m5=300 if m5>=vol_li_ma5[index_1-1] else -300
@@ -533,11 +556,24 @@ class cciorder:
 		#均量的比值
 		rag_5=(vo-m5)/m5*100
 		rag_10=(vo-m10)/m10*100
+		#斜率，顶点距离
+		k5=(vo-m5)/m5*100
+		k10=(vo-m10)/m10*100
 
-		return [index_1,rag_5,qs_m5,rag_10,qs_m10]
+		volkca=k10-k5
+
+		m52=vol_li_ma5[index_1-1]
+		m102=vol_li_ma10[index_1-1]
+		vo2=vol_li[index_1-1]
+		k52=(vo2-m52)/m52*100
+		k102=(vo2-m102)/m102*100
+
+		volkcaxl=volkca-(k102-k52)
+		
+		return [index_1,rag_5,qs_m5,rag_10,qs_m10,volkca,volkcaxl]
 	#股价点值及状态：[close涨幅，high与前高比较，low与前底比较]
 	def p_gj(self,index_1):
-		'''index_1 zf_clos qgbj qdbj'''
+		'''index_1 zf_clos qgbj qdbj baiscz baixl'''
 		clos=self.df.close.values.tolist()
 		low=self.df.low.values.tolist()
 		hig=self.df.high.values.tolist()
@@ -551,7 +587,50 @@ class cciorder:
 		qgbj=9 if hig[index_1-1]<n_hig else -9
 		qdbj=8 if low[index_1-1]<=n_low else -8
 		columns='index_1 zf_clos qgbj qdbj'
-		return [index_1,zf_clos,qgbj,qdbj]
+		#5,13,34日均线斜率，与股价比值
+		ma5_li=self.stockzb.ma(5)
+		ma13_li=self.stockzb.ma(13)
+		ma34_li=self.stockzb.ma(34)
+		inn=index_1
+		k5=(clos[inn]-ma5_li[inn])/ma5_li[inn]*100
+		k34=(clos[inn]-ma34_li[inn])/ma34_li[inn]*100
+		#差
+		baiscz=k34-k5
+		#前一个
+		inn=index_1-1
+		k5a=(clos[inn]-ma5_li[inn])/ma5_li[inn]*100
+		k34a=(clos[inn]-ma34_li[inn])/ma34_li[inn]*100
+		#斜率
+		baixl=baiscz-(k34a-k5a)
+
+		return [index_1,zf_clos,qgbj,qdbj,baiscz,baixl]
+	def bias_1(self):
+		clos=self.df.close.values.tolist()
+		#5,13,34日均线斜率，与股价比值
+		ma5_li=self.stockzb.ma(5)
+		ma13_li=self.stockzb.ma(13)
+		ma34_li=self.stockzb.ma(34)
+		ln1=len(ma34_li)
+		ln2=len(self.cci)
+
+		bixl_li=[]
+		bicz_li=[]
+		for x in range(0,ln1):
+			inn=x
+			k5=(clos[inn]-ma5_li[inn])/ma5_li[inn]*100
+			k34=(clos[inn]-ma34_li[inn])/ma34_li[inn]*100
+			#差
+			baiscz=k34-k5
+			bicz_li.append(baiscz)
+			#前一个
+			inn=x-1
+			k5a=(clos[inn]-ma5_li[inn])/ma5_li[inn]*100
+			k34a=(clos[inn]-ma34_li[inn])/ma34_li[inn]*100
+			#斜率
+			baixl=baiscz-(k34a-k5a)
+			bixl_li.append(baixl)
+
+		return bixl_li,bicz_li
 
 	#统计：该点后4日和7日的涨幅和振幅
 	def tj(self,index_1):
@@ -1009,7 +1088,7 @@ def aiyb():
 	for code in dmd_li1:
 		co=getSixDigitalStockCode(code)
 		tt.append(co)
-	#tt=['002495']
+	tt=['002498','600359','600609']
 	st_list=jk.getbasc(tt)#获取符合的代码Stock，，tt=['all']
 	iii=0
 	#str_pcci=(co.p_cci).__doc__
@@ -1063,7 +1142,7 @@ def aiyb():
 			else:
 				tjlb=0
 	
-			yb_li30.append([code2,date_xh]+l_cci[1:]+l_adx[1:]+l_macd[1:]+l_boll[1:]+l_vol[1:]+l_gj[1:]+[tjlb])
+			yb_li30.append([code2,date_xh]+l_cci[1:]+l_adx[1:]+l_macd[1:]+l_boll[1:]+l_vol+l_gj+[tjlb])
 			#elif l_tj[1]>10 or l_tj[2]>10 and l_tj[3]>0:
 				#print(l_tj)
 				#yb_li.append([code2,date_xh]+l_cci+l_adx+l_macd+l_boll+l_vol+l_gj+l_tj)
@@ -1230,6 +1309,76 @@ def fl_ordercsv():
 		#print(df.head())
 		df.to_csv(files1)
 	return 0
+def dr_cci2(code1):
+	jk=jiekou()
+	s=jk.getbasc(code1)[-1]
+	#获取k线记基础指标
+	szb=stockzb(s)
+	d=D_kl2()#日线修饰,实时数据
+	hf=Hf_kl()#30线修饰
+	#应用策略
+	#1--日线策略
+	szb.decorator(d)#日线修饰
+	szb.getk()#获取k线
+
+	#详细分析
+	co=cciorder(szb)
+	#取4个类型的df
+	df=co.df
+	if df.empty:return 0
+	cci=co.cci
+	ln=len(cci)
+	total=250
+	if ln<total:
+		total=ln
+	PLUS_DI,MINUS_DI,ADX,ADXR=co.stockzb.dmi()
+	bixl_li,bicz_li=co.bias_1()
+	vok=co.vol1()
+	vo=vok[-total:]
+	bixl=bixl_li[-total:]
+	bicz=bicz_li[-total:]
+	df=df[-total:]
+	cci=cci[-total:]
+	MINUS_DI=MINUS_DI[-total:]
+	PLUS_DI=PLUS_DI[-total:]
+	ADX=ADX[-total:]
+	ADXR=ADXR[-total:]
+	#df=df[-self.total:]
+	#4个类型的顶点
+	#画出最后3条线
+	name=co.getname()
+	code=code1
+	fig, ax = plt.subplots(4, 1, figsize=(16,8))
+	ax[0].set_title(name+code+'--',fontproperties = 'SimHei',fontsize = 20)
+	ax[1].plot(cci,'r')
+	ax[2].plot(ADX,'r')
+	ax[2].plot(PLUS_DI,'y')
+	ax[2].plot(MINUS_DI,'b')
+	ax[2].plot(ADXR,'g')
+	ax[2].axhline(y=80, color='b', linestyle=':')
+	ax[2].axhline(y=50, color='b', linestyle=':')
+	ax[2].axhline(y=20, color='b', linestyle=':')
+	ax[3].plot(vo,'r')
+	#ax[3].plot(bicz,'b')
+	ax[3].axhline(y=0, color='b', linestyle=':')
+	#取顶点
+
+	
+	
+	mpf.candlestick2_ochl(ax=ax[0],opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
+	
+	ax[1].axhline(y=100, color='b', linestyle=':')
+	ax[1].axhline(y=-100, color='b', linestyle=':')
+	#文字
+	##gd_li=self.gdjl(df)
+	#jddd_li=self.jddd(df)
+	#for x in gd_li:
+		#plt.text(x[0],0,x[1],size = 10)
+	#for x in jddd_li:
+		#plt.text(x[0],250,x[1],size = 7)
+	plt.style.use('ggplot')
+	plt.show()
+	return 1
 
 def main():
 	print('\n---策略主程序---')
@@ -1276,7 +1425,8 @@ if __name__ == '__main__':
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
 	#test101('600831')
-	aiyb()
+	#aiyb()
+	#dr_cci2('002672')
 	main()
 	#test101('000333')
 	

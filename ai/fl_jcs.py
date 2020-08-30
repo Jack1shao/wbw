@@ -12,7 +12,21 @@ class dataset_gu():
 		#df=''
 		return df
 
+class jlmx():
 
+	def xlmx():
+		'''训练模型'''
+		return
+
+	def savemx():
+		'''保存模型'''
+		return 0
+
+	def getmx():
+		'''调用模型'''
+		return 0
+		
+		
 d=dataset_gu()
 df=d.get_date()
 
