@@ -1,6 +1,7 @@
-#import sys,os
-#sys.path.append(os.path.dirname('d:/py/wbw/stock/stockmd2.py') + os.sep + '../')
-from . import stock 
+import sys,os
+print(sys.path)
+sys.path.append('d:/py/wbw/stock/')
+from  stockmd2 import jiekou
 from sklearn import datasets
 import pandas as pd
 #import mglearn
@@ -11,11 +12,15 @@ class dataset_gu():
 		self.file1='d:/gupiao/aiyb2020.csv'
 
 	def save_date(self):
+		'''用于学习的数据2'''
+		print(self.__doc__)
 		tt=[]
 		jk=jiekou()
 		#大名单列表存入tt
 		op=file_op()
-		dmd_li1=op.get_txt('sv_dmd1.csv').code.values.tolist()
+		dmd_li1=op.get_txt_line('../sv_dmd1.csv')
+		#dmd_li1=op.get_txt_line('sv_dmd1.csv').code.values.tolist()
+		return 0
 		for code in dmd_li1:
 			co=getSixDigitalStockCode(code)
 			tt.append(co)

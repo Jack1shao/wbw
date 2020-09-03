@@ -1361,10 +1361,7 @@ def dr_cci2(code1):
 	ax[3].plot(vo,'r')
 	#ax[3].plot(bicz,'b')
 	ax[3].axhline(y=0, color='b', linestyle=':')
-	#取顶点
-
-	
-	
+		
 	mpf.candlestick2_ochl(ax=ax[0],opens=df["open"].values.tolist(), closes=df["close"].values, highs=df["high"].values, lows=df["low"].values,width=0.7,colorup='r',colordown='g',alpha=0.7)
 	
 	ax[1].axhline(y=100, color='b', linestyle=':')
@@ -1426,7 +1423,7 @@ if __name__ == '__main__':
 	#fl_ordercsv()
 	#test101('600831')
 	#aiyb()
-	#dr_cci2('002672')
+	dr_cci2('002672')
 	main()
 	#test101('000333')
 	
