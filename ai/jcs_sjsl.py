@@ -33,7 +33,8 @@ print(clf.score(train[features],y))
 #print(clf.score(preds,y2))
 
 importances = clf.feature_importances_
-print(importances)
+#print(importances)
+display(importances)
 indices = np.argsort(importances)[::-1]
 for f in range(train[features].shape[1]):
     #print("%2d) %-*s %f" % (f + 1, 30, features[indices[f]], features[indices[f]]))
