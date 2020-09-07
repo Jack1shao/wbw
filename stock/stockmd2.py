@@ -1421,9 +1421,10 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	#test101('600831')
+	code2='002672'
+	test101(code2)
 	#aiyb()
-	dr_cci2('002672')
+	dr_cci2(code2)
 	main()
 	#test101('000333')
 	
