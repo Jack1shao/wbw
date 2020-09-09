@@ -1171,7 +1171,7 @@ def test101(code1):
 	#1--日线策略
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
-
+	
 	#注入策略
 	res=yycl(szb)
 
@@ -1219,7 +1219,7 @@ def test101(code1):
 	print('tj',co.tj(xh))
 
 	[print(re) for re in res]
-
+	dr_cci2(szb)
 	#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%co.getdmi()[b[x][6]],b[x]) for x in range(len(b)-30,len(b)) if b[x][0]=='dw']
 	return 0
 #函数--根据代码获取单个策略
@@ -1309,18 +1309,7 @@ def fl_ordercsv():
 		#print(df.head())
 		df.to_csv(files1)
 	return 0
-def dr_cci2(code1):
-	jk=jiekou()
-	s=jk.getbasc(code1)[-1]
-	#获取k线记基础指标
-	szb=stockzb(s)
-	d=D_kl2()#日线修饰,实时数据
-	hf=Hf_kl()#30线修饰
-	#应用策略
-	#1--日线策略
-	szb.decorator(d)#日线修饰
-	szb.getk()#获取k线
-
+def dr_cci2(szb):
 	#详细分析
 	co=cciorder(szb)
 	#取4个类型的df
@@ -1347,7 +1336,7 @@ def dr_cci2(code1):
 	#4个类型的顶点
 	#画出最后3条线
 	name=co.getname()
-	code=code1
+	code=co.getcode()
 	fig, ax = plt.subplots(4, 1, figsize=(16,8))
 	ax[0].set_title(name+code+'--',fontproperties = 'SimHei',fontsize = 20)
 	ax[1].plot(cci,'r')
@@ -1366,13 +1355,7 @@ def dr_cci2(code1):
 	
 	ax[1].axhline(y=100, color='b', linestyle=':')
 	ax[1].axhline(y=-100, color='b', linestyle=':')
-	#文字
-	##gd_li=self.gdjl(df)
-	#jddd_li=self.jddd(df)
-	#for x in gd_li:
-		#plt.text(x[0],0,x[1],size = 10)
-	#for x in jddd_li:
-		#plt.text(x[0],250,x[1],size = 7)
+
 	plt.style.use('ggplot')
 	plt.show()
 	return 1
@@ -1424,7 +1407,7 @@ if __name__ == '__main__':
 	code2='002672'
 	test101(code2)
 	#aiyb()
-	dr_cci2(code2)
+	#dr_cci2(code2)
 	main()
 	#test101('000333')
 	
