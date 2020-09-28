@@ -167,6 +167,8 @@ class cciorder:
 	#区块头形态
 	def cci_gd(self,start,end):
 		'''区块中的高点'''
+		cci=self.cci
+		
 		gd_li=[]#[xh,cci,gj_high]
 		bz0=0
 		bz1=0
@@ -1042,6 +1044,11 @@ class cl6_aiyb(cciorder):
 		qz=qz0*t
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
 #策略6----
+class cl7_beici(cciorder):
+	def dueorder(self):
+
+
+		return 0
 #策略7----
 
 #管理策略的类
@@ -1404,7 +1411,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	code2='002672'
+	code2='300414'
 	test101(code2)
 	#aiyb()
 	#dr_cci2(code2)
