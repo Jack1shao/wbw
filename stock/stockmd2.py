@@ -164,34 +164,56 @@ class cciorder:
 			#块[625, 639, 1, 15, 0.23, 140.6, 2, [627, 631]]
 		return cci_blok
 
-	#区块头形态
+	#区块头高点形态
 	def cci_gd(self,start,end):
 		'''区块中的高点'''
+
 		cci=self.cci
-		
-		gd_li=[]#[xh,cci,gj_high]
-		bz0=0
-		bz1=0
+		#所有的顶点
+		dd_li=self.cci_dd(cci)#格式为['up','dw','lx']
+
 		cciqk=[]
+		qk_dd_li=[]
 		for i in range(start,end+1):
-			if cci1[i]>100:
-				bz1=1
-			if cci1[i]<=100:
-				bz1=-1
-			if bz1!=bz0 or i==end:
-				st1=cciqk[0]
-				en1=cciqk[-1]
-				#顶点个数
-				#顶点位置
-				#块的宽度
-				#
-				cciqk=[]
+			#获取顶点，当cci下穿100线时，保存【最大顶点，顶点1，顶点2】
+			if dd_li[i]=='up' and cci[i]>100:
+				qk_dd_li.append(i)
+				continue
+			
+			if cci[i]<100 and len(qk_dd_li)>0:
+				#最大值
+				max_i=qk_dd_li[0]
+				for d in qk_dd_li:
+					if max_i==d:
+						continue
+					if cci[d]>=cci[max_i]:
+						max_i=d
+				#构造
+				cciqk.append([max_i]+qk_dd_li)
+				qk_dd_li=[]
 
-			cciqk.append(i)
-			bz0=bz1
+		return cciqk#保存【最大顶点，顶点1，顶点2】[[578, 578], [590, 590], [597, 597, 599], [602, 602]]
+	#单块背驰。
+	def cl7_bc(self):
+		last_block=self.cci_qr_blok()
+		iii=-1
+		if last_block[iii][2]<1:
+			iii-=1
+		start=last_block[iii][0]
+		end=last_block[iii][1]
+		cciqk=self.cci_gd(start,end)
+		#获取最后两个顶点
+		if len(cciqk)<2:return 0#只有一个块
 
+		if len(cciqk[-1])!=2 and len(cciqk[-2])!=2:return 0#只有单顶点，一种情况
+
+		dd_e=cciqk[-1][0]
+		dd_s=cciqk[-2][0]
+		cci1=self.cci
+		high1=self.df.high.values.tolist()
+		if cci1[dd_s]>cci1[dd_e] and high1[dd_s]<high1[dd_e]:
+			return 1
 		return 0
-
 
 	#顶点间存在冲顶的形态(小丁与大定)
 	def ddzj_chongding(self,dd1,dd2):
@@ -1043,13 +1065,17 @@ class cl6_aiyb(cciorder):
 
 		qz=qz0*t
 		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
-#策略6----
-class cl7_beici(cciorder):
-	def dueorder(self):
-
-
-		return 0
 #策略7----
+class cl7_beici(cciorder):
+	'''策略7 背驰 7bc'''
+	def dueorder(self):
+		cl,jg,files=self.__doc__.split()
+		qz=0
+		qz=self.cl7_bc()
+
+
+		return Cljg(code=self.getcode(),name=self.getname(),cl=cl,jg=jg,qz=qz,files=files+str(qz))
+
 
 #管理策略的类
 class Context:
@@ -1063,11 +1089,13 @@ def yycl(szb):
 	'''注入策略'''
 	strategy={}
 	#注入策略
-	strategy[1] = Context(cl1_rsmd(szb))
-	strategy[2] = Context(cl2_cci_cd(szb))
+	#strategy[1] = Context(cl1_rsmd(szb))
+	#strategy[2] = Context(cl2_cci_cd(szb))
 	#strategy[3] = Context(cl_3_b3_j4(szb))
-	strategy[3] = Context(cl4_ccianddmi(szb))
-	strategy[4] = Context(cl6_aiyb(szb))
+	#strategy[3] = Context(cl4_ccianddmi(szb))
+	#strategy[4] = Context(cl6_aiyb(szb))
+
+	strategy[1] = Context(cl7_beici(szb))
 
 	code_order=[]
 
@@ -1185,6 +1213,8 @@ def test101(code1):
 	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
+	print(co.cci_gd(list_bloc[-4][0],list_bloc[-4][1]))
+
 	#-------------------------------
 	#pcci=co.p_cci(629)
 	#print(pcci)
