@@ -201,12 +201,15 @@ class cciorder:
 			iii-=1
 		start=last_block[iii][0]
 		end=last_block[iii][1]
+	
 		cciqk=self.cci_gd(start,end)
+		print(cciqk[-1],cciqk[-2])
 		#获取最后两个顶点
 		if len(cciqk)<2:return 0#只有一个块
 
-		if len(cciqk[-1])!=2 and len(cciqk[-2])!=2:return 0#只有单顶点，一种情况
-
+		if (len(cciqk[-1])!=2 and len(cciqk[-2])!=2): 
+			return 0#只有单顶点，一种情况
+		print(len(cciqk[-1]),len(cciqk[-2]))
 		dd_e=cciqk[-1][0]
 		dd_s=cciqk[-2][0]
 		cci1=self.cci
@@ -1213,7 +1216,8 @@ def test101(code1):
 	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
-	print(co.cci_gd(list_bloc[-4][0],list_bloc[-4][1]))
+	print(co.cl7_bc())
+	#print(co.cci_gd(list_bloc[-4][0],list_bloc[-4][1]))
 
 	#-------------------------------
 	#pcci=co.p_cci(629)
@@ -1223,7 +1227,7 @@ def test101(code1):
 	l=len(b)
 	dmi=co.getdmi()
 	iii=0
-	for bloc in list_bloc[-3:]:
+	for bloc in list_bloc[-1:]:
 		iii+=1
 		print(' ******** 第{}区域块 *******'.format(iii),bloc)
 		start=bloc[0]
@@ -1244,16 +1248,16 @@ def test101(code1):
 		#[print('cci=%.2f'%co.cci[b[x][6]],'dmi=%.2f'%dmi[b[x][6]],b[x]) for x in range(0,len(b)) if (b[x][0]=='dw' and b[x][6]>=bloc[0] and b[x][6]<=bloc[1])]
 	total=len(co.cci)
 	xh=total-1
-	print('\n',s)
-	print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
-	print('cci:',co.p_cci(xh))
-	print('adx:',co.p_adx(xh))
-	print('p_vol:',co.p_vol(xh))
-	#p_boll
-	print('p_macd:',co.p_macd(xh))
-	print('p_boll:',co.p_boll(xh))
-	print('p_gj:',co.p_gj(xh))
-	print('tj',co.tj(xh))
+	'''print('\n',s)
+				print('最后一个k线',list_bloc[-1][1],szb.df.loc[list_bloc[-1][1]].date)
+				print('cci:',co.p_cci(xh))
+				print('adx:',co.p_adx(xh))
+				print('p_vol:',co.p_vol(xh))
+				#p_boll
+				print('p_macd:',co.p_macd(xh))
+				print('p_boll:',co.p_boll(xh))
+				print('p_gj:',co.p_gj(xh))
+				print('tj',co.tj(xh))'''
 
 	[print(re) for re in res]
 	dr_cci2(szb)
@@ -1441,7 +1445,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	code2='300414'
+	code2='600371'
 	test101(code2)
 	#aiyb()
 	#dr_cci2(code2)
