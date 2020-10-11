@@ -203,16 +203,23 @@ class cciorder:
 		end=last_block[iii][1]
 	
 		cciqk=self.cci_gd(start,end)
-		print(cciqk[-1],cciqk[-2])
+		#print(cciqk[-1],cciqk[-2])
 		#获取最后两个顶点
 		if len(cciqk)<2:return 0#只有一个块
 
-		if (len(cciqk[-1])!=2 and len(cciqk[-2])!=2): 
+		if (len(cciqk[-1])!=2 or len(cciqk[-2])!=2): 
 			return 0#只有单顶点，一种情况
-		print(len(cciqk[-1]),len(cciqk[-2]))
+		cci1=self.cci
+		#print(len(cciqk[-1]),len(cciqk[-2]))
 		dd_e=cciqk[-1][0]
 		dd_s=cciqk[-2][0]
-		cci1=self.cci
+		ss=1
+		for dd11 in cciqk:
+			if cci1[dd_s]<cci1[dd11[0]]:
+				ss=0
+		if ss==0:return 0
+
+		
 		high1=self.df.high.values.tolist()
 		if cci1[dd_s]>cci1[dd_e] and high1[dd_s]<high1[dd_e]:
 			return 1
