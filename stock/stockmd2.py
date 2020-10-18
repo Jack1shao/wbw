@@ -154,7 +154,7 @@ class cciorder:
 				jyl_day=np.mean(vol_li)/10000
 				#顶点个数
 				ddgs=len(dd_li)
-				#加入数组
+				#加入数组2
 				cci_blok.append([start,end,bz0,len(cciqrfj),float('%.2f'%kj),float('%.1f'%jyl_day),ddgs,dd_li])
 				#清空cciqrfj
 				cciqrfj=[]
@@ -213,6 +213,9 @@ class cciorder:
 		#print(len(cciqk[-1]),len(cciqk[-2]))
 		dd_e=cciqk[-1][0]
 		dd_s=cciqk[-2][0]
+		jl=dd_e-dd_s
+		#
+		if jl not in [9,10,8]:return 0
 		ss=1
 		for dd11 in cciqk:
 			if cci1[dd_s]<cci1[dd11[0]]:
@@ -692,7 +695,19 @@ class cciorder:
 
 		return pr_li
 
- 
+#辅助功能
+class fuzhu：
+	#
+	def chuquan(self,df):
+		'''除权'''
+		return 0
+	def getSixDigitalStockCode(co):
+		'''补全六位代码'''
+		strZero = ''
+		for i in range(len(str(code)), 6):
+			strZero += '0'
+		return strZero + str(code)
+		
 #获取数据的接口类
 class jiekou:
 
