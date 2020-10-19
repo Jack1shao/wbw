@@ -13,11 +13,14 @@ from operClass import file_op
 from Tooth_sjjg import queue
 import matplotlib.pyplot as plt
 import mpl_finance as mpf
+print('开始。。。。')
 #
 Stock=namedtuple('Stock','code name hangye totals')
 #策略结果
 Cljg=namedtuple('Cljg','code name cl jg qz files')
-
+#数据令牌
+ts.set_token('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
+pro = ts.pro_api()
 #策略类
 class bollorder:
 	def __init__(self,stockzb):
@@ -109,7 +112,16 @@ class cciorder:
 		cci1=self.cci
 		high1=self.df.high.values.tolist()
 		low=self.df.low.values.tolist()
-		vol=self.df.volume.values.tolist()
+
+		#适应新的列名
+		liem=self.df.columns.values.tolist()
+		vvv=['vol','volume']
+		#量能列名
+		jyl='volume'
+		for lm in liem:
+			if lm in vvv:
+				jyl=lm
+		vol=self.df[jyl].values.tolist()
 		#两个状态值，当两个状态值不一致时，说明状态发生变化。
 		bz0=0
 		bz1=0
@@ -696,7 +708,7 @@ class cciorder:
 		return pr_li
 
 #辅助功能
-class fuzhu：
+class fuzhu:
 	#
 	def chuquan(self,df):
 		'''除权'''
@@ -771,6 +783,26 @@ class jiekou:
 		gxsj = datetime.datetime.now().strftime('%H%M')
 		df['gxrq']=gxrq
 		df['gxsj']=gxsj
+		return df
+	#从接口取数,新的接口Pro
+	def get_k_from_api_pro(self,code1,ktype1):
+		'''新的接口Pro'''
+		pro = ts.pro_api()
+		k_li=['D']
+		if ktype1 not in k_li:
+			print("k线类型错误")
+			return 0
+		if code1[0]=='6':
+			code2=code1+'.SH'
+		else:
+			code2=code1+'.SZ'
+		#日期处理
+		rq_now = datetime.datetime.now().strftime('%Y%m%d')
+		rq_kaishi='20150103'
+		#df = pro.daily(ts_code='002498.SZ', start_date='20180701', end_date='20200718')
+		df=pro.daily(ts_code=code2, start_date=rq_kaishi, end_date=rq_now)
+		df.rename(columns={'vol':'volume','trade_date':'date','ts_code':'code'}, inplace=True) 
+		df=df.sort_values(by='date' , ascending=True)
 		return df
 	#基础数据1
 	def get_base_from_api(self):
@@ -911,7 +943,7 @@ class D_kl2(Finery):
 	def getk(self,code1):
 		Finery.getk(self,code1)
 		g=jiekou()
-		df=g.get_k_from_api(code1,'D')#实时数据
+		df=g.get_k_from_api_pro(code1,'D')#实时数据
 		return df		
 #hf@
 class Hf_kl(Finery):
@@ -1243,7 +1275,7 @@ def test101(code1):
 
 	#-------------------------------
 	#pcci=co.p_cci(629)
-	#print(pcci)
+	print(co.df.head())
 
 	b=co.cci_dmi()
 	l=len(b)
@@ -1467,7 +1499,7 @@ if __name__ == '__main__':
 	#get_all_orderresult()
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
-	code2='600371'
+	code2='600598'
 	test101(code2)
 	#aiyb()
 	#dr_cci2(code2)
