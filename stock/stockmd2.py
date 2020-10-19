@@ -841,6 +841,11 @@ class stockzb(object):
 	def decorator(self,component):
 		self.component=component
 
+	def getk(self):
+		print('来自{}类--获取股票k线'.format(self.__class__.__name__))
+		self.df=self.component.getk(self.stock.code)
+		return self.df
+
 	#获取股票代码
 	def getcode(self):
 		return self.stock.code
@@ -856,12 +861,6 @@ class stockzb(object):
 		sz=self.totals*jiage[0]
 		#print(float('%.2f' % sz),'亿')#小数位数
 		return float('%.2f' % sz)
-
-	def getk(self):
-		print('来自{}类--获取股票k线'.format(self.__class__.__name__))
-		self.df=self.component.getk(self.stock.code)
-		return self.df
-
 
 	def macd(self):
 		df=self.df
