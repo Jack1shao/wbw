@@ -10,10 +10,10 @@ from collections import namedtuple
 Stock=namedtuple('Stock','code name hangye totals')
 ts.set_token('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #数据获取接口
-class gu_get_from:
-	'''获取数据'''
+class gu_getfromapi:
+	'''从api获取数据'''
 	#获取api 数据
-	def get_from_api(self,code1,start_d,end_d):
+	def get_D_k(self,code1,start_d):
 		
 		'''新的接口Pro'''
 		pro = ts.pro_api()
@@ -21,22 +21,30 @@ class gu_get_from:
 		rq_now = datetime.datetime.now().strftime('%Y%m%d')
 		rq_kaishi='20140103'
 		start_d=rq_kaishi if start_d=='' else rq_now
-		print(start_d)
-		#df = pro.daily(ts_code='002498.SZ', start_date='20180701', end_date='20200718')
-		df=pro.daily(ts_code=code, start_date=rq_kaishi, end_date=rq_now)
+		#获取数据
+		df=pro.daily(ts_code=code1, start_date=rq_kaishi, end_date=rq_now)
 		df.rename(columns={'vol':'volume','trade_date':'date','ts_code':'code'}, inplace=True) 
 		df=df.sort_values(by='date' , ascending=True)
 		return df
 
+	#全天模式
+	def get_allday_k(self,date):
+		ff
 		return df
 	#获取基础数据api
-	def get_base_from_api(self):
+	def get_base(self):
 		df = ts.get_stock_basics()
+		rq_now = datetime.datetime.now().strftime('%Y%m%d')
+		df['gxrq']=rq_now
+
 		return df
 
+class gu_getfromdb(object):
+	"""获取本地数据"""
+		
 	#获取本地数据
 	#获取基础数据db
-	def get_base_from_csv(self):
+	def get_base(self):
 		basc='basc'
 		files1=self.get_csvmc(basc)
 		if os.path.exists(files1):
@@ -44,18 +52,19 @@ class gu_get_from:
 				df = read_csv(csv_file,index_col=0)#指定0列为index列
 		return df
 
-	def get_from_csv(self,code,type1):
+	def get_D_k(self,code,type1):
 		df=0
-
 		return df 
+
 #数据存储接口
 class gu_save:
 	#存入数据
-	def save_to(self,df,type1):
+	def save_to_db(self,df,type1):
 		return 0
 	#存入csv
-	def save_k_to_csv(self,df,files1,mode):
+	def save_to_csv(self,df,files1,mode):
 		#files1=gu_jiekou_fuzhu().get_csvname(code)
+		if df.empty:return 0
 		if mode=='a' and os.path.exists(files1):
 			df.to_csv(files1,mode='a',header=False)
 			print('- 增量存入csv')
@@ -64,7 +73,7 @@ class gu_save:
 			print('- 覆盖存入csv')
 		return 1
 #辅助功能
-class gu_jiekou_fuzhu:
+class gu_fuzhu:
 
 	#代码补全处理
 	def code_buquan(self,code):
@@ -98,20 +107,30 @@ class gu_jiekou_fuzhu:
 #策略4获取旧api
 #策略5获取本地from db
 #策略6获取本地from csv
-def test1():
-	gs=gu_get_from()
-	df=gs.get_from_api('600609','D')
-	ll=df.values
-	print(len(ll),len(ll[0]))
-	for r in ll:
-		print(r)
+class t(gu_getfromapi,gu_save):
+	
+	def test1(self):
+		code1='600609'
+		files1=gu_fuzhu().get_csvname(code1)
+		mode='a' if os.path.exists(files1) else ''
+		#mode='a'
+		#获取
+		df[df[date].isin()]
+
+		df=self.get_D_k(gu_fuzhu().code_buquan(code1),'')
+
+		print(code1,files1,mode)
+		self.save_to_csv(df,files1,mode)
+		#ll=df.values
+		return 0
+	
 
 
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	test1()
+	t().test1()
 	#df=gs.get_base_from_api()
 	#print(df.head(),len(df))
 	#print(gu_jiekou_fuzhu().get_csvname('002498'))
