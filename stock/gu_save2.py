@@ -28,8 +28,8 @@ class gu_getfromapi:
 		return df
 
 	#全天模式
-	def api_allday_k(self,date):
-		ff
+	def api_allday_k(self,date1):
+		df = pro.daily(trade_date=date1)
 		return df
 	#获取基础数据api
 	def api_base(self):
@@ -160,23 +160,118 @@ class t(gu_getfromapi,gu_save,gu_getfromdb):
 
 	
 #生成复权数据 
-class fq:
+class fq(gu_save,gu_getfromdb):
+	'''生成复权数据'''
+	#复权因子
+	def fqyz(self,code1):
+		'''计算新复权因子'''
+		
+		files1=gu_fuzhu().get_csvname(code1)
+		code_bq=gu_fuzhu().code_buquan(code1)
+		#获取单个票数据
+		df=self.get_fromfiles(files1)
+		#转换为np
+		values_df=df.values
+		#提前复权因子 存入fqyz_li； for语句
+		fqyz_li=[]
+		close_bz=0#标志位
+		for vv in values_df:
+			
+			if close_bz==0:
+				close_bz=vv[5]
+				continue
 
-	def qfq(self):
+			if vv[6]!=close_bz:
+				#print(code_bq,vv[1],vv[5],vv[6],close_bz,close_bz-vv[6])
+				fqyz_li.append([code_bq,vv[1],close_bz-vv[6]])
+			close_bz=vv[5]
+		
+		columns_fqyz=['code','date','fqyz_zh']
+		df=DataFrame(fqyz_li,columns=columns_fqyz)
+	
+		return df
+	def fqyz_add(self,df):
+		files_fqyz='d:/stock_csv/fqyz.csv'
+		mode='a' if os.path.exists(files_fqyz) else ''
+		code1=df.code.values[0]
+		date_li=df.date.values.tolist()
+
+		if mode=='a':
+			df_fqyz=self.get_fromfiles(files_fqyz)
+			df_fqyz=df_fqyz[df_fqyz.code==code1]
+			
+			df_in=df_fqyz[~(df_fqyz.date.isin(date_li))]
+			
+			if df_in.empty:
+				print('复权因子无增加')
+				return 1
+			else:
+				self.save_tofiles_by_df(df_in,files_fqyz,mode)	
+				return 0	
+
+		self.save_tofiles_by_df(df,files_fqyz,mode)	
+
+		return 0
+
+	def get_fqyz(self,code1):
+		'''获取已经计算好的复权因子'''
+		files_fqyz='d:/stock_csv/fqyz.csv'
+		df_fqyz=self.get_fromfiles(files_fqyz)
+		code_st=gu_fuzhu().code_buquan(code1)
+
+		df_fqyz=df_fqyz[df_fqyz.code==code_st]
+		return df_fqyz
+
+	#前复权
+	def qfq(self,code1):
+		'''前复权'''
+		files1=gu_fuzhu().get_csvname(code1)
+		df_fqyz=self.get_fqyz(code1)
+
+		#文件存在，则为增量 修改模式
+		mode='a' if os.path.exists(files1) else ''
+		#mode='a'
+		if mode=='':
+			print('无数据')
+			return -1
+
+		df1=self.get_fromfiles(files1)#获取本地df
+		#按时间排序
+		df=df1.sort_values(by='date' , ascending=True)
+		columns1=df.columns.values.tolist()
+		gu_li=df.values
+		print(gu_li)
+		ln=len(df1)
+		
+		for i in range(ln,0,-1):
+			ii=i-1
+			print(ii,gu_li[ii])
+			##print(i,df['date'])
+		pass
+	#后复权
+	def hfq(self,code1):
+
 		pass
 
-	def hfq(self):
-
-		pass
-
-
+def test():
+	f=fq()
+	code1='300568'
+	#df=f.fqyz(code1)
+	#print(df)
+	#f.fqyz_add(df)
+	f.qfq(code1)
+	#print(f.get_fqyz(gu_fuzhu().code_buquan(code1)))
+	
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	code1='600609'
-	t().savebasc()
-	t().D_k_add(code1)
+	test()
+	code1='300568'
+	#fq().fqyz(code1)
+	#code1='300568'
+	#t().savebasc()
+	#t().D_k_add(code1)
 	#df=gs.api_base_from_api()
 	#print(df.head(),len(df))
 	#print(gu_jiekou_fuzhu().get_csvname('002498'))
