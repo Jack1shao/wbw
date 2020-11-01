@@ -109,7 +109,9 @@ class gu_fuzhu:
 #策略4获取旧api
 #策略5获取本地from db
 #策略6获取本地from csv
-class t(gu_getfromapi,gu_save,gu_getfromdb):
+
+#功能策略
+class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 	#存储基础数据
 	def savebasc(self):
 		'''存储基础数据'''
@@ -124,17 +126,27 @@ class t(gu_getfromapi,gu_save,gu_getfromdb):
 	def D_k_add(self,code1):
 		#code1='600609'
 		files1=gu_fuzhu().get_csvname(code1)
+		jyrl_filse='d:/stock_csv/jyrl.csv'
 		#文件存在，则为增量 修改模式
 		mode='a' if os.path.exists(files1) else ''
+		md='a' if os.path.exists(jyrl_filse) else ''
 		#mode='a'
 		if mode=='a':
 			df1=self.get_fromfiles(files1)#获取本地df
 			date_li=df1.date.values.tolist()#日期列
 			date_max=max(date_li)#最大日期
-			
+			#获取交易日历，如果最大值与日历相等，返回，不取数
+			if md=='a':
+				jyrl_df=self.get_fromfiles(jyrl_filse)
+				jyrl_li=jyrl_df.date.values.tolist()
+				rl_max=max(jyrl_li)
+				print(rl_max,date_max)
+				if date_max==rl_max:
+					print('最新数据')
+					return 2
 			start_d=str(date_max+1)
 		else:
-			start_d='20140101'
+			start_d='20000101'
 		#获取api ‘D’ k线
 		df=self.api_D_k(gu_fuzhu().code_buquan(code1),start_d)
 			#转为字符串
@@ -155,10 +167,55 @@ class t(gu_getfromapi,gu_save,gu_getfromdb):
 	#获取交易日历
 	def jiaoyirili(self):
 	 	'''根据5只代表票获得交易日历'''
-	 	#[]
-	 	pass
+	 	code5_li=['000002','000001','600006','600609','600000']
+	 	files1='d:/stock_csv/jyrl.csv'
+	 	mode='a' if os.path.exists(files1) else ''
+	 	if mode=='a':
+	 		df=self.get_fromfiles(files1)
+	 		rl_li=df.date.values.tolist()
+	 		rl_max=max(rl_li)
+	 	else:
+	 		rl_li=[]
+	 		rl_max='20000101'
+	 	rl_li2=[]
+	 	for co in code5_li:
+	 		co_files=gu_fuzhu().get_csvname(co)
+	 		df=self.api_D_k(gu_fuzhu().code_buquan(co),rl_max)
+	 		date_li=df.date.values.tolist()
+	 		for dd in date_li:
+	 			if dd in rl_li or dd in rl_li2:
+	 				continue
+	 			else:
+	 				rl_li2.append(dd)
+	 	rl_li2.sort()
+	 
+	 	jyrl_li=[]
+	 	for rl in rl_li2:
+	 		jyrl_li.append([rl])
+	 		print(rl)
 
-	
+	 	jyrl_df=DataFrame(jyrl_li,columns=['date'])
+	 	jyrl_df.sort_values(by='date' , ascending=True)
+	 	#print(jyrl_df)
+	 	self.save_tofiles_by_df(jyrl_df,files1,mode)
+	 	return 0
+	#从基础数据中获取code列表，并遍历获取api数据,本功能可以再次继承
+	def qlzj(self):
+		gf=gu_fuzhu()
+		basc_file='d:/stock_csv/basc.csv'
+		df=self.get_fromfiles(basc_file)
+		code_li=df.index.values.tolist()
+		code_li.sort()
+		#需要补全
+		ii=0
+		for co in code_li:
+
+			print(co)
+			self.D_k_add(co)
+			ii+=1
+			if ii>2:
+				break
+		return 0
 #生成复权数据 
 class fq(gu_save,gu_getfromdb):
 	'''生成复权数据'''
@@ -254,20 +311,47 @@ class fq(gu_save,gu_getfromdb):
 		pass
 
 def test():
-	f=fq()
-	code1='300568'
-	#df=f.fqyz(code1)
-	#print(df)
+	g=gongnengchelv()
+
+	code1='600609'
+	#1、增量获取k线
+	#g.D_k_add(code1)
+	#2、获取交易日历
+	#g.jiaoyirili()
+	#3、获取日线
+	#g.qlzj()
+
+	#4、生产复权数据
+
+	#print(code_li)
 	#f.fqyz_add(df)
-	f.qfq(code1)
+	#f.qfq(code1)
 	#print(f.get_fqyz(gu_fuzhu().code_buquan(code1)))
-	
+def main():
+
+	code5_li=['000002','000001','600006','600609','600000']
+	g=gongnengchelv()
+	#1、获取基础数据#getbasc
+	g.savebasc()
+	#2、获取交易日历（ ['000002'，'000001'，'600006'，'600609'，'600000']）
+	for co in code5_li:
+		print(co)
+		g.D_k_add(co)
+	g.jiaoyirili()
+	#3、从allday增加数据
+	#3、从基础数据中获取code列表，并遍历获取api数据
+	g.qlzj()
+
+		#获取复权因子
+		#生产复权k线
+
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	test()
-	code1='300568'
+	#test()
+	main()
+	#code1='300568'
 	#fq().fqyz(code1)
 	#code1='300568'
 	#t().savebasc()
