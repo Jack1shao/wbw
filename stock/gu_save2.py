@@ -7,6 +7,10 @@ from pandas.core.frame import DataFrame
 from collections import namedtuple
 
 #
+path='d:/stock_csv/'
+basc_file=path+'basc.csv'
+fqyz_file=path+'fqyz.csv'
+
 Stock=namedtuple('Stock','code name hangye totals files1')
 ts.set_token('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #数据获取接口
@@ -90,10 +94,10 @@ class gu_fuzhu:
 	#
 	def get_csvname(self,code):
 		if code=='basc':
-			csv_path='d:/stock_csv/{}.csv'.format(code)
+			csv_path=path+'{}.csv'.format(code)
 		else:	
 			co=self.code_buquan(code)
-			csv_path='d:/stock_csv/{}.csv'.format(co)
+			csv_path=path+'{}.csv'.format(co)
 		return csv_path
 
 	#计算复权因子
@@ -209,12 +213,11 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 		#需要补全
 		ii=0
 		for co in code_li:
-
-			print(co)
+			if int(co)<603131:continue
+			print(co,ii)
 			self.D_k_add(co)
 			ii+=1
-			if ii>2:
-				break
+			#if ii>1000:	break
 		return 0
 #生成复权数据 
 class fq(gu_save,gu_getfromdb):
@@ -337,13 +340,14 @@ def main():
 	for co in code5_li:
 		print(co)
 		g.D_k_add(co)
+	
 	g.jiaoyirili()
 	#3、从allday增加数据
 	#3、从基础数据中获取code列表，并遍历获取api数据
 	g.qlzj()
 
-		#获取复权因子
-		#生产复权k线
+	#获取复权因子
+	#生产复权k线
 
 
 if __name__ == '__main__':

@@ -34,8 +34,8 @@ pro = ts.pro_api('4d4e8c66f3fe804a585a345419362a9982790682a79ef65214b5d5e1')
 #df = pro.daily(trade_date='20201022')
 #df = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
 #df = pro.trade_cal(exchange='', start_date='20180101', end_date='20181231')
-df = pro.query('stock_basic', exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
-print(df.columns.values.tolist(),df.head())
+#df = pro.query('stock_basic', exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
+
 #print(df[df.date=='20200527'].values)
 
 #['ts_code', 'trade_date', 'open', 'high', 'low', 'close', 'pre_close', 'change', 'pct_chg', 'volume', 'amount']
@@ -77,6 +77,10 @@ str1='kk ll mm oo pp'
 *d,l=os.path.split('/houm/offic/kk/ll.csv')
 print(a,b,c,d,l)
 #print(df.loc[619].date)
+
+code='600609.SH'
+*a,b=code.split('.')
+print(a,b)
 
 i=3
 b=5
