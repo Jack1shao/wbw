@@ -126,6 +126,13 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 		df=self.api_base()
 		bb=self.save_tofiles_by_df(df,files1,mode)
 		return bb
+	#获取全部代码列表，代码未补全
+	def get_allcode(self):
+
+		df=self.get_fromfiles(basc_file)
+		code_li=df.index.values.tolist()
+		code_li.sort()
+		return code_li
 	#K线增量存储
 	def D_k_add(self,code1):
 		#code1='600609'
@@ -174,6 +181,7 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 	 	code5_li=['000002','000001','600006','600609','600000']
 	 	files1='d:/stock_csv/jyrl.csv'
 	 	mode='a' if os.path.exists(files1) else ''
+	 	print('获得交易日历--开始--')
 	 	if mode=='a':
 	 		df=self.get_fromfiles(files1)
 	 		rl_li=df.date.values.tolist()
@@ -184,7 +192,7 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 	 	rl_li2=[]
 	 	for co in code5_li:
 	 		co_files=gu_fuzhu().get_csvname(co)
-	 		df=self.api_D_k(gu_fuzhu().code_buquan(co),rl_max)
+	 		df=self.api_D_k(gu_fuzhu().code_buquan(co),rl_max+1)
 	 		date_li=df.date.values.tolist()
 	 		for dd in date_li:
 	 			if dd in rl_li or dd in rl_li2:
@@ -202,22 +210,20 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 	 	jyrl_df.sort_values(by='date' , ascending=True)
 	 	#print(jyrl_df)
 	 	self.save_tofiles_by_df(jyrl_df,files1,mode)
+	 	print('获得交易日历--结束--')
 	 	return 0
 	#从基础数据中获取code列表，并遍历获取api数据,本功能可以再次继承
+	#可单独写入策略
 	def qlzj(self):
-		gf=gu_fuzhu()
-		basc_file='d:/stock_csv/basc.csv'
-		df=self.get_fromfiles(basc_file)
-		code_li=df.index.values.tolist()
-		code_li.sort()
-		#需要补全
-		ii=0
+		#获取全部列表
+		code_li=self.get_allcode()
+		ii=0#辅助打印，用于查看进度
 		for co in code_li:
-			if int(co)<603131:continue
+			#if int(co)<603131:continue
 			print(co,ii)
 			self.D_k_add(co)
 			ii+=1
-			#if ii>1000:	break
+
 		return 0
 #生成复权数据 
 class fq(gu_save,gu_getfromdb):
@@ -248,19 +254,21 @@ class fq(gu_save,gu_getfromdb):
 		
 		columns_fqyz=['code','date','fqyz_zh']
 		df=DataFrame(fqyz_li,columns=columns_fqyz)
-	
 		return df
+	#增加复权因子存入文件	
 	def fqyz_add(self,df):
-		files_fqyz='d:/stock_csv/fqyz.csv'
+		files_fqyz=fqyz_file#全局变量复权因子文件
 		mode='a' if os.path.exists(files_fqyz) else ''
 		code1=df.code.values[0]
-		date_li=df.date.values.tolist()
-
+	
 		if mode=='a':
 			df_fqyz=self.get_fromfiles(files_fqyz)
 			df_fqyz=df_fqyz[df_fqyz.code==code1]
 			
-			df_in=df_fqyz[~(df_fqyz.date.isin(date_li))]
+			#已经存在的列表
+			date_li=df_fqyz.date.values.tolist()
+			#不存在的数据
+			df_in=df[~(df.date.isin(date_li))]
 			
 			if df_in.empty:
 				print('复权因子无增加')
@@ -268,14 +276,15 @@ class fq(gu_save,gu_getfromdb):
 			else:
 				self.save_tofiles_by_df(df_in,files_fqyz,mode)	
 				return 0	
-
+		#全量增加
+		print("全量增加复权因子存入文件{}".format)
 		self.save_tofiles_by_df(df,files_fqyz,mode)	
 
 		return 0
-
+	'''获取已经计算好的复权因子'''	
 	def get_fqyz(self,code1):
 		'''获取已经计算好的复权因子'''
-		files_fqyz='d:/stock_csv/fqyz.csv'
+		files_fqyz=fqyz_file
 		df_fqyz=self.get_fromfiles(files_fqyz)
 		code_st=gu_fuzhu().code_buquan(code1)
 
@@ -287,7 +296,7 @@ class fq(gu_save,gu_getfromdb):
 		'''前复权'''
 		files1=gu_fuzhu().get_csvname(code1)
 		df_fqyz=self.get_fqyz(code1)
-
+		print(df_fqyz)
 		#文件存在，则为增量 修改模式
 		mode='a' if os.path.exists(files1) else ''
 		#mode='a'
@@ -298,14 +307,15 @@ class fq(gu_save,gu_getfromdb):
 		df1=self.get_fromfiles(files1)#获取本地df
 		#按时间排序
 		df=df1.sort_values(by='date' , ascending=True)
+		print(df.head())
 		columns1=df.columns.values.tolist()
 		gu_li=df.values
-		print(gu_li)
+		#print(gu_li)
 		ln=len(df1)
 		
 		for i in range(ln,0,-1):
 			ii=i-1
-			print(ii,gu_li[ii])
+			#print(ii,gu_li[ii])
 			##print(i,df['date'])
 		pass
 	#后复权
@@ -316,20 +326,23 @@ class fq(gu_save,gu_getfromdb):
 def test():
 	g=gongnengchelv()
 
-	code1='600609'
+	code1='300568'
 	#1、增量获取k线
 	#g.D_k_add(code1)
+
 	#2、获取交易日历
 	#g.jiaoyirili()
 	#3、获取日线
 	#g.qlzj()
 
 	#4、生产复权数据
-
-	#print(code_li)
+	f=fq()
+	#复权因子增加
+	#df=f.fqyz(code1)
 	#f.fqyz_add(df)
-	#f.qfq(code1)
-	#print(f.get_fqyz(gu_fuzhu().code_buquan(code1)))
+	#计算前复权
+	f.qfq(code1)
+	return 0
 def main():
 
 	code5_li=['000002','000001','600006','600609','600000']
@@ -344,7 +357,7 @@ def main():
 	g.jiaoyirili()
 	#3、从allday增加数据
 	#3、从基础数据中获取code列表，并遍历获取api数据
-	g.qlzj()
+	#g.qlzj()
 
 	#获取复权因子
 	#生产复权k线
@@ -353,8 +366,8 @@ def main():
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	#test()
-	main()
+	test()
+	#main()
 	#code1='300568'
 	#fq().fqyz(code1)
 	#code1='300568'
