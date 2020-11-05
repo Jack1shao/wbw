@@ -3,6 +3,7 @@ import tushare as ts
 import datetime
 import os
 from pandas import read_csv
+import  pandas as pd
 from pandas.core.frame import DataFrame
 from collections import namedtuple
 
@@ -91,7 +92,13 @@ class gu_fuzhu:
 		else:
 			code2=code1+'.SZ'
 		return code2
-	#
+	#'''补全六位代码'''
+	def getSixDigitalStockCode(self,code):
+		'''补全六位代码'''
+		strZero = ''
+		for i in range(len(str(code)), 6):
+			strZero += '0'
+		return strZero + str(code)
 	def get_csvname(self,code):
 		if code=='basc':
 			csv_path=path+'{}.csv'.format(code)
@@ -295,36 +302,71 @@ class fq(gu_save,gu_getfromdb):
 	def qfq(self,code1):
 		'''前复权'''
 		files1=gu_fuzhu().get_csvname(code1)
-		df_fqyz=self.get_fqyz(code1)
-		print(df_fqyz)
-		#文件存在，则为增量 修改模式
+				#文件存在，则为增量 修改模式
 		mode='a' if os.path.exists(files1) else ''
-		#mode='a'
-		if mode=='':
-			print('无数据')
-			return -1
+		if mode=='':print('无数据');	return -1
 
+
+		#获取本地df#按时间正序排列排序
 		df1=self.get_fromfiles(files1)#获取本地df
-		#按时间排序
-		df=df1.sort_values(by='date' , ascending=True)
-		print(df.head())
-		columns1=df.columns.values.tolist()
-		gu_li=df.values
-		#print(gu_li)
-		ln=len(df1)
+		df=df1.sort_values(by='date' , ascending=False)#False倒序 #True 是正序排列
+		d_li=df.values.tolist()
 		
-		for i in range(ln,0,-1):
-			ii=i-1
-			#print(ii,gu_li[ii])
-			##print(i,df['date'])
-		pass
+		clm=df.columns.values#
+
+		close_bz=0#标志位
+		#按交易日历计算复权因子
+		for vv in d_li:
+			
+			if close_bz==0:
+				close_bz=vv[6]
+				continue
+
+			if vv[5]!=close_bz:
+				#print(vv[5],close_bz,vv[5]-close_bz)
+				open1=vv[2]
+				high1=vv[3]
+				low1=vv[4]
+				close1=vv[5]
+				pre_clos=vv[6]
+				#计算 复权 取小数2位
+				vv[5]=close_bz
+				vv[6]=round(vv[5]/(1+vv[8]/100),2)
+				vv[4]=round(close_bz/close1*low1,2)
+				vv[3]=round(close_bz/close1*high1,2)
+				vv[2]=round(close_bz/close1*open1,2)
+				
+			close_bz=vv[6]#标志位复位
+		
+		df_qfq=DataFrame(d_li,columns=clm)
+
+		#print(df_qfq.head())
+		return df_qfq
 	#后复权
 	def hfq(self,code1):
 
 		pass
+'''生产复权k线'''
+def sc_DKlin():
+	g=gongnengchelv()
+	f=fq()
+	fz=gu_fuzhu()
+
+	code_li=g.get_allcode()
+	for co in code_li:
+		co='300568'
+		files1=path+fz.getSixDigitalStockCode(co)+'D.csv'
+		df=f.qfq(co)
+		df2=df.sort_values(by='date' , ascending=True)#False倒序 #True 是正序排列
+
+		f.save_tofiles_by_df(df2,files1,'')
+		break
+	return 0
+
 
 def test():
 	g=gongnengchelv()
+	sc_DKlin()
 
 	code1='300568'
 	#1、增量获取k线
@@ -341,7 +383,10 @@ def test():
 	#df=f.fqyz(code1)
 	#f.fqyz_add(df)
 	#计算前复权
-	f.qfq(code1)
+	#df=f.get_fqyz(code1)
+	#df2=df.sort_values(by='date' , ascending=True)#True 是正序排列
+	#print(df2)
+	#f.qfq(code1)
 	return 0
 def main():
 
