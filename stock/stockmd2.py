@@ -758,14 +758,14 @@ class jiekou:
 	def get_k_from_csv(self,code,ktype1):
 		print('来自{2}类--从本地取-{0}-{1}'.format(code,ktype1,self.__class__.__name__))
 		files1=self.get_csvmc(code+ktype1)
-		print(files1)
+		#print(files1)
 		if os.path.exists(files1):
 			with open(files1,'r',encoding='utf-8') as csv_file:
 				df = read_csv(csv_file,index_col=0)#指定0列为index列
 		else:
 			print('未找到股票数据，请先载入')
 			return DataFrame([])
-		print(df.head())
+		#print(df.head())
 		return df
 	#从接口取数
 	def get_k_from_api(self,code1,ktype1):
@@ -1258,7 +1258,7 @@ def test101(code1):
 	s=jk.getbasc(code1)[-1]
 	#获取k线记基础指标
 	szb=stockzb(s)
-	print(szb)
+	#print(szb)
 	d=D_kl()#日线修饰,实时数据
 	hf=Hf_kl()#30线修饰
 	#应用策略
@@ -1277,7 +1277,7 @@ def test101(code1):
 
 	#-------------------------------
 	#pcci=co.p_cci(629)
-	print(co.df.head())
+	#print(co.df.head())
 
 	b=co.cci_dmi()
 	l=len(b)
@@ -1503,7 +1503,7 @@ if __name__ == '__main__':
 	#print(fl_ordercsv.__doc__)
 	#fl_ordercsv()
 	code2='300568'
-	test101(code2)
+	#test101(code2)
 	#aiyb()
 	#dr_cci2(code2)
 	main()

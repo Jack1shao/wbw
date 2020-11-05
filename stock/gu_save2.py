@@ -137,6 +137,11 @@ class gongnengchelv(gu_getfromapi,gu_save,gu_getfromdb):
 	def get_allcode(self):
 
 		df=self.get_fromfiles(basc_file)
+
+		df=df[df['timeToMarket']>0]
+		#print(df)
+		out_li=['689009']
+
 		code_li=df.index.values.tolist()
 		code_li.sort()
 		return code_li
@@ -304,7 +309,7 @@ class fq(gu_save,gu_getfromdb):
 		files1=gu_fuzhu().get_csvname(code1)
 				#文件存在，则为增量 修改模式
 		mode='a' if os.path.exists(files1) else ''
-		if mode=='':print('无数据');	return -1
+		if mode=='':print('无数据',files1);	return -1
 
 
 		#获取本地df#按时间正序排列排序
@@ -351,24 +356,26 @@ def sc_DKlin():
 	g=gongnengchelv()
 	f=fq()
 	fz=gu_fuzhu()
-
+	out_li=['689009']
 	code_li=g.get_allcode()
 	for co in code_li:
-		co='300568'
+		#co='300568'
+		if co in out_li:continue
 		files1=path+fz.getSixDigitalStockCode(co)+'D.csv'
 		df=f.qfq(co)
 		df2=df.sort_values(by='date' , ascending=True)#False倒序 #True 是正序排列
 
 		f.save_tofiles_by_df(df2,files1,'')
-		break
+		#break
 	return 0
 
 
 def test():
 	g=gongnengchelv()
-	sc_DKlin()
+	#sc_DKlin()
+	#coli=g.get_allcode()
 
-	code1='300568'
+	#code1='003018'
 	#1、增量获取k线
 	#g.D_k_add(code1)
 
@@ -386,7 +393,7 @@ def test():
 	#df=f.get_fqyz(code1)
 	#df2=df.sort_values(by='date' , ascending=True)#True 是正序排列
 	#print(df2)
-	#f.qfq(code1)
+	f.qfq(code1)
 	return 0
 def main():
 
@@ -406,13 +413,14 @@ def main():
 
 	#获取复权因子
 	#生产复权k线
+	sc_DKlin()
 
 
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	test()
-	#main()
+	#test()
+	main()
 	#code1='300568'
 	#fq().fqyz(code1)
 	#code1='300568'
