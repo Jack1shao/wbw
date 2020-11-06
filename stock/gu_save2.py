@@ -356,11 +356,13 @@ def sc_DKlin():
 	g=gongnengchelv()
 	f=fq()
 	fz=gu_fuzhu()
-	out_li=['689009']
+	out_li=[689009]
 	code_li=g.get_allcode()
 	for co in code_li:
 		#co='300568'
-		if co in out_li:continue
+		if co in out_li:
+			continue
+
 		files1=path+fz.getSixDigitalStockCode(co)+'D.csv'
 		df=f.qfq(co)
 		df2=df.sort_values(by='date' , ascending=True)#False倒序 #True 是正序排列
@@ -369,10 +371,10 @@ def sc_DKlin():
 		#break
 	return 0
 
-
+#各种测试
 def test():
 	g=gongnengchelv()
-	#sc_DKlin()
+	sc_DKlin()
 	#coli=g.get_allcode()
 
 	#code1='003018'
@@ -393,7 +395,7 @@ def test():
 	#df=f.get_fqyz(code1)
 	#df2=df.sort_values(by='date' , ascending=True)#True 是正序排列
 	#print(df2)
-	f.qfq(code1)
+	#f.qfq(code1)
 	return 0
 def main():
 
@@ -409,9 +411,7 @@ def main():
 	g.jiaoyirili()
 	#3、从allday增加数据
 	#3、从基础数据中获取code列表，并遍历获取api数据
-	#g.qlzj()
-
-	#获取复权因子
+	g.qlzj()
 	#生产复权k线
 	sc_DKlin()
 
@@ -419,14 +419,8 @@ def main():
 if __name__ == '__main__':
 	#输入股票代码获取该代码的基础信息
 	#print(gu_save.__doc__)
-	#test()
-	main()
-	#code1='300568'
-	#fq().fqyz(code1)
-	#code1='300568'
-	#t().savebasc()
-	#t().D_k_add(code1)
-	#df=gs.api_base_from_api()
-	#print(df.head(),len(df))
-	#print(gu_jiekou_fuzhu().get_csvname('002498'))
+	test()
+	#main()
+	
+
 

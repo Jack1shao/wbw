@@ -1259,25 +1259,18 @@ def test101(code1):
 	#获取k线记基础指标
 	szb=stockzb(s)
 	#print(szb)
-	d=D_kl()#日线修饰,实时数据
+	d=D_kl2()#日线修饰,实时数据
 	hf=Hf_kl()#30线修饰
 	#应用策略
 	#1--日线策略
 	szb.decorator(d)#日线修饰
 	szb.getk()#获取k线
-	
 	#注入策略
 	res=yycl(szb)
-
 	#详细分析
 	co=cciorder(szb)
 	list_bloc=co.cci_qr_blok()
 	print(co.cl7_bc())
-	#print(co.cci_gd(list_bloc[-4][0],list_bloc[-4][1]))
-
-	#-------------------------------
-	#pcci=co.p_cci(629)
-	#print(co.df.head())
 
 	b=co.cci_dmi()
 	l=len(b)
