@@ -7,6 +7,7 @@ from getjsbf import getjsbfClass
 from zqfenxi_gz import zqfenxi_gz
 import pandas as pd
 import os
+import math
 class zqfenxi(object):
 	"""docstring for zqfenxi"""
 	def __init__(self, arg):
@@ -238,11 +239,11 @@ class zqfenxi(object):
 			ccc=df_mx3.columns.values.tolist()
 			vvv=df_mx3.values.tolist()
 			for row in vvv:
-				print(row)
+				print(len(row))
 					
 			files='e:/football/{}1.csv'.format(cp.replace('/','-'))
 			print(files)
-			#df_mx3.to_csv(files,encoding="utf_8_sig")
+			df_mx3.to_csv(files,encoding="utf_8_sig")
 			#end for list_yp
 		return 0
 	#未完场比赛数据获取和建立模型。
@@ -354,8 +355,20 @@ class zqfenxi(object):
 		print(df)
 		return df
 
-
-	
+class gu_getfromdb(object):
+	"""获取本地数据"""
+	#获取本地文件数据
+	def get_fromfiles(self,files1):
+		
+		print('来自{1}类--从本地文件{0}取数--'.format(files1,self.__class__.__name__))
+		
+		if os.path.exists(files1):
+			with open(files1,'r',encoding='utf-8') as csv_file:
+				df = pd.read_csv(csv_file,index_col=0,keep_default_na=False)#指定0列为index列
+		else:
+			print('未找到数据，请先载入')
+			return DataFrame([])
+		return df
 #获取完场数据
 #h=zqfenxi(0).read_mxk()
 #h=zqfenxi(0).fenxi_yysj()
@@ -364,5 +377,46 @@ class zqfenxi(object):
 #h=zqfenxi(0).lsd_liebiao()
 
 #根据模型库，生成单个分析文件
-h=zqfenxi(0).creat_mxk('半球')
+#h=zqfenxi(0).creat_mxk('半球')
+def test():
+	gg=gu_getfromdb()
+	cp='半球'
+	files1='e:/football/{}1.csv'.format(cp)
+	df=gg.get_fromfiles(files1)
+	ccc=df.columns.values.tolist()
+	vvv=df.values.tolist()
+	for row in vvv:
+		for i in range(0,len(row)):
+			if row[i] is '':
+				row[i]=0
+		#print(row)
+	df=DataFrame(vvv,columns=ccc)		
+	print(df.head())
+	print(df.shape())
+	files='e:/football/{}2.csv'.format(cp.replace('/','-'))
+	print(files)
+	df.to_csv(files,encoding="utf_8_sig")
+	return 0
+def main():
+	gg=gu_getfromdb()
+	cp='半球'
+	files1='e:/football/{}1.csv'.format(cp)
+	data=gg.get_fromfiles(files1)
+	print(data.head())
+	print(data.shape)
+	data_train, data_test= train_test_split(data,test_size=0.1, random_state=0)
+	print ("训练集统计描述：\n",data_train.describe().round(2))
+	print ("验证集统计描述：\n",data_test.describe().round(2))
+	print ("训练集信息：\n",data_train.iloc[:,2].value_counts())  
+	print ("验证集信息：\n",data_test.iloc[:,2].value_counts())   
+
+	X_train=data_train.iloc[:,4:10]#  data_train.iloc[:,0:-2]     
+	X_test=data_test.iloc[:,4:10] #data_train.iloc[:,0:-2]
+	feature=data_train.iloc[:,4:10].columns
+	print (feature)
+	return 0
+
+if __name__ == '__main__':
+	#h=zqfenxi(0).creat_mxk('半球')
+	main()
 
