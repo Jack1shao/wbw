@@ -182,9 +182,13 @@ class zqfenxi(object):
 			df=kk.select(path_f+'Bet365.csv')
 			#print(df.columns.values)
 			df=df[df.cp==cp]
-			df_mx3=uu.get_mx(df)
+			df_mx3=uu.get_mx(df)[['idnm','zd','kd','sg','jp','cp','c_klmx','c_zz','c_fh']]
+			print(df_mx3.columns.values)
+			#['idnm' 'zd' 'kd' 'sg' 'jp' 'cp' 'bfgl' 'ykzs' 'bcgs' 'c_klmx' 'c_zz' 'c_fh' 'j_klmx' 'j_zz' 'j_fh']
+			
 			print(df_mx3.head())
 			print(len(df_mx3))
+			#return 0
 			#再次读取模型库
 			iii_lr=0
 
@@ -205,12 +209,15 @@ class zqfenxi(object):
 				df_mxk_lr=df_mxk[(df_mxk.xh13==cp)&(df_mxk.xh14==files)]
 				#增加模型库的信息
 				df_mx2=pd.merge(df_mx21,df_mxk_lr,how='left',left_on='c_klmx',right_on='xh2')	
-				df_mx2=df_mx2[['idnm','bcgs','c_klmx','xh15','c_fh','j_klmx']]
+				#df_mx2=df_mx2[['idnm','bcgs','c_klmx','xh15','c_fh','j_klmx']]
+				df_mx2=df_mx2[['idnm','bcgs','c_klmx','c_fh','c_zz']]
 				bcgsss=df_mx2.iloc[0,1]
-				#print(bcgsss)
-				df_mx2.rename(columns={'xh15':'lenre_{}'.format(bcgsss)},inplace = True)
-				df_mx2.rename(columns={'c_klmx':'c_klmx_{}'.format(bcgsss)},inplace = True)
-				df_mx2.rename(columns={'c_fh':'c_fh_{}'.format(bcgsss)},inplace = True)
+				print(bcgsss)
+				#df_mx2.rename(columns={'xh15':'lenre_{}'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'c_klmx':'{}c_klmx'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'c_fh':'{}c_fh'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'c_zz':'{}c_zz'.format(bcgsss)},inplace = True)
+				df_mx2.rename(columns={'bcgs':'{}bcgs'.format(bcgsss)},inplace = True)
 				#合并模型
 				df_mx3=pd.merge(df_mx3,df_mx2,how='left',on='idnm')	
 			#增加一列冷热情况，个位为冷的数量，百位为热的数量
@@ -227,10 +234,15 @@ class zqfenxi(object):
 			#print(list_lr)
 			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_len','count_re'])
 			#print(df_lr)
-			df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
-			files='e:/football/{}.csv'.format(cp.replace('/','-'))
+			#df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
+			ccc=df_mx3.columns.values.tolist()
+			vvv=df_mx3.values.tolist()
+			for row in vvv:
+				print(row)
+					
+			files='e:/football/{}1.csv'.format(cp.replace('/','-'))
 			print(files)
-			df_mx3.to_csv(files,encoding="utf_8_sig")
+			#df_mx3.to_csv(files,encoding="utf_8_sig")
 			#end for list_yp
 		return 0
 	#未完场比赛数据获取和建立模型。
@@ -352,5 +364,5 @@ class zqfenxi(object):
 #h=zqfenxi(0).lsd_liebiao()
 
 #根据模型库，生成单个分析文件
-#h=zqfenxi(0).creat_mxk('半球')
+h=zqfenxi(0).creat_mxk('半球')
 
