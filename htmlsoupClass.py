@@ -5,6 +5,8 @@ from gethtmlClass import getHtml
 from bs4 import BeautifulSoup
 import re
 import io
+
+##网页解析
 class htmlsoup(object):
 	"""docstring for htmlsoup
 		##网页解析
@@ -311,6 +313,10 @@ class htmlsoup(object):
 			
 		#print(listbifa,1,listsjtd)
 		return listbifa,1,listsjtd
+
+
+
+#
 
 #h=htmlsoup(830867);
 #h.getyapan()

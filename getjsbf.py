@@ -16,7 +16,6 @@ class getjsbfClass(object):
 	def _gethtmlsoup(self,url):
 		#500w北单比方情况
 		#url="https://live.500.com/zqdc.php"
-		
 		#url="https://live.500.com/2h1.php"
 		htmltext=getHtml().getHtml_by_firefox(url)
 		soup=BeautifulSoup(htmltext,'lxml')
@@ -58,7 +57,7 @@ class getjsbfClass(object):
 		return bsxxlist
 
 
-
+	#获取昨日完场比分	
 	def wcbf(self,day):
 		url1="https://live.500.com/wanchang.php"
 		url2='?e={}'.format(day)
@@ -194,7 +193,7 @@ class getjsbfClass(object):
 		for x in listwbw1:
 			print(x)
 		print("\n------------------------------选取结束-------------------------\n")
-
+		return 0
 
 
 
@@ -293,17 +292,18 @@ class getjsbfClass(object):
 	#取网页数据返回Dataframe
 	def get_ouzhi_df(self,idnm):
 		k=htmlsoup(idnm)
-		scblist,z,ouzhilist=k.getscbandouzhi()
+		scblist,z,ouzhilist=k.getscbandouzhi()#赛程表和欧赔
 		columns_list_ouzhi=['idnm', 'xh', 'bcgs', 'cz3', 'cz1', 'cz0', 'jz3', 'jz1', 'jz0', 'cgl3', 'cgl1', 'cgl0', 'jgl3', 'jgl1', 'jgl0', 'chf', 'jhf', 'ck3', 'ck1', 'ck0', 'jk3', 'jk1', 'jk0']
 		df=DataFrame(ouzhilist,columns=columns_list_ouzhi)
 		#df=df[df.bcgs.isin(['Expekt','BINGOAL','Sweden','Oddset','Iceland','Bet365','威廉希尔'])]
+		#临时出入文件再读出
 		df.to_csv('bifa.csv')
-
 		df_ouzhi=zqconfigClass(0).select('bifa.csv')
 
 		columns_list_scb=['idnm','zd','kd','nd','ls','lc','zjq','kjq','bssj']
-		df=DataFrame(scblist,columns=columns_list_scb)
-		df.to_csv('bifa.csv')
+		df2=DataFrame(scblist,columns=columns_list_scb)
+		#临时出入文件再读出
+		df2.to_csv('bifa.csv')
 		df_scb=zqconfigClass(0).select('bifa.csv')
 		#print(df_scb)
 		return df_ouzhi,df_scb

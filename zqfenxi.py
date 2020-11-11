@@ -183,12 +183,17 @@ class zqfenxi(object):
 			df=kk.select(path_f+'Bet365.csv')
 			#print(df.columns.values)
 			df=df[df.cp==cp]
+
+			#bet365的欧洲指数
+			df_ouzhi2=df[['idnm','cz3','cz1','cz0']]
+		
+			
 			df_mx3=uu.get_mx(df)[['idnm','zd','kd','sg','jp','cp','c_klmx','c_zz','c_fh']]
-			print(df_mx3.columns.values)
+			#print(df_mx3.columns.values)
 			#['idnm' 'zd' 'kd' 'sg' 'jp' 'cp' 'bfgl' 'ykzs' 'bcgs' 'c_klmx' 'c_zz' 'c_fh' 'j_klmx' 'j_zz' 'j_fh']
 			
 			print(df_mx3.head())
-			print(len(df_mx3))
+			#print(len(df_mx3))
 			#return 0
 			#再次读取模型库
 			iii_lr=0
@@ -235,11 +240,10 @@ class zqfenxi(object):
 			#print(list_lr)
 			df_lr=pd.DataFrame(list_lr,columns=['idnm','count_len','count_re'])
 			#print(df_lr)
-			#df_mx3=pd.merge(df_mx3,df_lr,how='left',on='idnm')
+			df_mx3=pd.merge(df_mx3,df_ouzhi2,how='left',on='idnm')
 			ccc=df_mx3.columns.values.tolist()
 			vvv=df_mx3.values.tolist()
-			for row in vvv:
-				print(len(row))
+
 					
 			files='e:/football/{}1.csv'.format(cp.replace('/','-'))
 			print(files)
@@ -417,6 +421,6 @@ def main():
 	return 0
 
 if __name__ == '__main__':
-	#h=zqfenxi(0).creat_mxk('半球')
-	main()
+	h=zqfenxi(0).creat_mxk('半球')
+	#main()
 
