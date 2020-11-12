@@ -25,6 +25,9 @@ class zqmain(object):
 
 			li_wbw_wcbf.extend(kk.wcbf(d))
 		if len(li_wbw_wcbf)==0:print('完场数据 have no date');return 0
+
+		print(li_wbw_wcbf)
+		return 0
 		#读取联赛列表 from zqconfig
 		zqdf=zqconfigClass('').cfg_select()
 		li=zqdf.ls.values
@@ -151,7 +154,8 @@ class zqmain(object):
 				break
 
 #获取完场数据
-h=zqmain(0).main()
+h=zqmain(0).zrwc_save()
+#h=zqmain(0).main()
 
 
 

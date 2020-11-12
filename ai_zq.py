@@ -3,12 +3,21 @@ from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 import os
 from pandas.core.frame import DataFrame
-from sklearn.model_selection import GridSearchCV,train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler,StandardScaler,OneHotEncoder
 from sklearn.metrics import mean_squared_error, explained_variance_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.cluster import AgglomerativeClustering,DBSCAN,KMeans
+from sklearn.decomposition import PCA
 from zqfenxi import zqfenxi
+import matplotlib.pyplot as plt
+import mglearn
+
+
+
+from sklearn.externals import joblib
 class gu_getfromdb(object):
 	"""获取本地数据"""
 	#获取本地文件数据
@@ -46,9 +55,8 @@ class zq_sjcl:
 		for row in vvv:
 			if row[3]==2:row[3]=3
 
-			if row[3] in [0,3]:
-				row[3]=1
-			else:row[3]=0
+			row[3]=1 if row[3] in [0,1] else 0
+	
 
 			for i in range(0,len(row)):
 				if row[i] is '':
@@ -72,9 +80,9 @@ class zq_aicl:
 		#files1='e:/football/{}2.csv'.format(cp)
 		gg=gu_getfromdb()
 		data=gg.get_fromfiles(files1)
-		x=data.iloc[:,5:]
+		x=data.iloc[:,6:]
 		y=data.iloc[:,3]
-		feature=data.iloc[:,5:].columns
+		feature=data.iloc[:,6:].columns
 
 		return x,y,feature
 
@@ -84,9 +92,10 @@ class zq_aicl:
 		x_1=pd.get_dummies(x)
 		#x_2=MinMaxScaler().fit_transform(x_1)
 		x_2=StandardScaler().fit_transform(x_1)
+
 		#print(x_2)
 		#拆分训练集
-		X_train,X_test,y_train,y_test= train_test_split(x_2,y,test_size=0.35, random_state=0)	
+		X_train,X_test,y_train,y_test= train_test_split(x_2,y,test_size=0.3, random_state=0)	
 		return 	X_train,X_test,y_train,y_test,feature
 	#梯度提升机参数调优
 	def ai_td_tc(self,x,y,feature):
@@ -98,7 +107,7 @@ class zq_aicl:
 		param_test3 = {'min_samples_split':range(1000,2100,200), 'min_samples_leaf':range(30,71,10)}
 		param_test4 = {'max_features':range(7,20,2)}
 
-		clf=GridSearchCV(estimator=GradientBoostingClassifier(learning_rate=0.07, n_estimators=60,max_depth=5,max_features=11,subsample=0.8, random_state=0),
+		clf=GridSearchCV(estimator=GradientBoostingClassifier(learning_rate=0.01,max_depth=5,max_features=13, n_estimators=20,random_state=0),
 			param_grid = param_test3, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
 		clf.fit(X_train,y_train)
 		#查看性能#grid_scores_
@@ -107,45 +116,122 @@ class zq_aicl:
 	#梯度提升机成模型
 	def ai_td_xl(self,x,y,feature):
 		#导入数据集
+	
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
-		clf2=GradientBoostingClassifier(learning_rate=0.06, n_estimators=60,max_depth=5,max_features=11, subsample=0.8,random_state=0)
-		#clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=20,max_depth=6,max_features=13, subsample=0.8, random_state=0,min_samples_leaf=20,min_samples_split=1000)
+		clf2=GradientBoostingClassifier(learning_rate=0.03, n_estimators=60,max_depth=5,max_features=13, 
+			subsample=0.8,random_state=0,min_samples_leaf=30,min_samples_split=1000)
+		#clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=20,max_depth=6,max_features=13, subsample=0.8, random_state=0,min_samples_leaf=30,min_samples_split=1000)
 
 		clf2.fit(X_train,y_train)
 		print(" Accuracy on training set: {:.3f}". format( clf2.score( X_train, y_train)))
 		print(" Accuracy on test set: {:.3f}". format( clf2.score( X_test, y_test)))
 		#保存模型
+		dirs='e:/football/'
+		fil_mx=dirs+'1_05_mx.pkl'
 
+		joblib.dump(clf2,fil_mx)
 		return 0
 
 	#根据梯度提升机数据预测
 
 	def ai_td_yc(self,list1):
+		dirs='e:/football/'
+		fil_mx=dirs+'1_05_mx.pkl'
 		#提取已训练好的模型
-
+		clk=joblib.load(fil_mx)
+		#print(" Accuracy on training set: {:.3f}". format( clf2.score( X_train, y_train)))
+		#print(" Accuracy on test set: {:.3f}". format( clf2.score( X_test, y_test)))
+		
 		#预测结果
-		pass
+		y=clk.predict(list1)
+		print('预测结果{}'.format(y))
+		return y
+
+	def jl(self,x,y,feature):
+		print(feature)
+		#聚类算法
+		x_1=pd.get_dummies(x)
+		x_2=StandardScaler().fit_transform(x_1)
+	
+		#agg=AgglomerativeClustering(n_clusters=3)
+		#assignment=agg.fit_predict(x_2)
+		#print(assignment)
+		#mglearn.discrete_scatter(x_1[:,0],x_1[:,1],assignment)
+		#algorithms=[KMeans(n_clusters=2),AgglomerativeClustering(n_clusters=10),DBSCAN]
+		
+		#PCA 降为
+		pca=PCA(n_components=2)
+		x_pca=pca.fit_transform(x_2)
+		print('Original shape :{}'.format(str(x_2.shape)))
+		print('Reduced shape :{}'.format(str(x_pca.shape)))
+		
+		#dbscan=algorithms[1]
+		#clusters=dbscan.fit_predict(x_2)
+		#print(len(clusters),len(x_2))
+		#绘制簇
+		#plt.scatter(x_pca[:,0],x_2[:,1],c=clusters)
+		mglearn.discrete_scatter(x_pca[:,0],x_pca[:,1],y)
+		plt.legend(feature,loc='best')
+		plt.gca().set_aspect("equal")
+		#mglearn.plots.plot_agglomerative()
+		plt.xlabel('Feature0')
+		plt.ylabel('Feature1')
+		plt.show()
+
+
+		return 0
 
 
 def main():
 	zz=zq_aicl()
 	zs=zq_sjcl()
 	#zs.jg()
-	#files1=zs.sjcl()
-	#print(files1)
+	#数据处理
+	print('数据处理')
+	files1=zs.sjcl()
+	
 
 	#提取数据
+
 	files1='e:/football/ai2.csv'
+	print('提取数据'+files1)
 	x,y,feature=zz.getfiles(files1)
-	print(len(x),len(y))
+	#print(len(x),len(y))
+	# 聚类
+	#zz.jl(x,y,feature)
 	#特征工程
 	#X_train,X_test,y_train,y_test,feature=zz.ai_tzgc(x,y,feature)
 	#调参
+	print('调参')
 	#zz.ai_td_tc(x,y,feature)
 	#训练
 	zz.ai_td_xl(x,y,feature)
-	pass
+	return 0
+def test2():
+	zz=zq_aicl()
+	
+	files1='e:/football/ai2.csv'
+	x,y,feature=zz.getfiles(files1)
+	X_train,X_test,y_train,y_test,feature=zz.ai_tzgc(x,y,feature)
+
+	ln=len(X_test)
+	#print(X_test)
+
+
+	dirs='e:/football/'
+	fil_mx=dirs+'1_05_mx.pkl'
+	#提取已训练好的模型
+	clk=joblib.load(fil_mx)
+
+	for i in range(0,ln):
+		jg=y_test.values[i]
+		#print(X_test.values.tolist()[i])
+		ycz=clk.predict([X_test[i]])
+		print('结果:{} 预测:{}'.format(jg,ycz))
+		if i>500:break
+	
+	return 0
 
 def test1():
 	gg=gu_getfromdb()
@@ -164,7 +250,7 @@ def test1():
 	x_1=pd.get_dummies(x)
 	x_2=MinMaxScaler().fit_transform(x_1)
 	#print(x_2)
-	X_train,X_test,y_train,y_test= train_test_split(x_2,y,test_size=0.3, random_state=0)
+	X_train,X_test,y_train,y_test= train_test_split(x_2,y,test_size=0.35, random_state=0)
 	#print ("训练集统计描述：\n",data_train.describe().round(2))
 	#print ("验证集统计描述：\n",data_test.describe().round(2))
 	#print ("训练集信息：\n",data_train.iloc[:,2].value_counts())  
@@ -197,7 +283,7 @@ def test1():
 	param_test3 = {'min_samples_split':range(1000,2100,200), 'min_samples_leaf':range(30,71,10)}
 	param_test4 = {'max_features':range(7,20,2)}
 	#print(param_test4+param_test2)
-	clf=GridSearchCV(estimator=GradientBoostingClassifier(learning_rate=0.02, n_estimators=30,max_depth=5,max_features=13, subsample=0.8, random_state=0),
+	clf=GridSearchCV(estimator=GradientBoostingClassifier(learning_rate=0.07, n_estimators=30,max_depth=5,max_features=13, subsample=0.8, random_state=0),
 		param_grid = param_test, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
 	clf.fit(X_train,y_train)
 	print(clf.cv_results_,clf.best_params_,clf.best_score_)
@@ -213,5 +299,6 @@ def test1():
 if __name__ == '__main__':
 	#h=zqfenxi(0).creat_mxk('半球')
 	#ycl=zq_sjcl().sjcl()
-	#test1()
+	#test2()
 	main()
+	#test2()

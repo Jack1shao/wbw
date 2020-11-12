@@ -19,12 +19,12 @@ class htmlsoup(object):
 
 	def _gethtmlsoup(self,url):
 		htmltext=getHtml().getHtml_by_firefox2(url,2)
-		soup=BeautifulSoup(htmltext,'lxml')
+		soup=BeautifulSoup(htmltext,'html5lib')
 		return soup
 	#欧指需加滚动条
 	def _gethtmlsoup_oz(self,url):
 		htmltext=getHtml().getHtml_by_firefox2(url,7)
-		soup=BeautifulSoup(htmltext,'lxml')
+		soup=BeautifulSoup(htmltext,'html5lib')
 		return soup
 
 	def _set_sc_url_soup(self,starts):

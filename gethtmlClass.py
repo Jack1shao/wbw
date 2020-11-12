@@ -130,7 +130,6 @@ class getHtml(object):
 
 #测试类函数
 
-
-#h=getHtml()	
-
-#print(h.getHtml_by_firefox("http://live.win007.com/index2in1.aspx?id=8"))
+if __name__ == '__main__':
+	h=getHtml()	
+	print(h.getHtml_by_firefox("https://live.500.com/wanchang.php?e=2020-11-11"))

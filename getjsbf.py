@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from loggerClass import logger
 import re
 from zqconfigClass import zqconfigClass
-
+from tooth_day import tooth_dayClass
 from pandas.core.frame import DataFrame
 class getjsbfClass(object):
 	"""docstring for getjsbf"""
@@ -18,13 +18,19 @@ class getjsbfClass(object):
 		#url="https://live.500.com/zqdc.php"
 		#url="https://live.500.com/2h1.php"
 		htmltext=getHtml().getHtml_by_firefox(url)
-		soup=BeautifulSoup(htmltext,'lxml')
+		
+		soup=BeautifulSoup(htmltext,'html5lib')
 		return soup
-	#500w北单比方情况
+	#500w北单比方情况和足彩页面解析
 	#用find和get 获取数据
-	def get500wzqdc(self,soup):
-		#
-		print("获取500w比赛单场数据")
+
+	def get500wzqdc(self,url):
+		#获取500w比赛单场数据
+		print("获取500w比赛单场数据"+url)
+		#url="https://live.500.com/zqdc.php"
+		#url2="https://live.500.com/zucai.php"
+
+		soup=self._gethtmlsoup(url)
 		listtable=soup.find_all(id='table_match')
 		list31=listtable[0].find_all('tr')
 		bsxxlist=[]
@@ -53,7 +59,7 @@ class getjsbfClass(object):
 			#
 			#if listbcbf[0]==' ':
 			bsxxlist.append(listgy)
-
+			#['欧洲U21', '格鲁吉亚U21', '斯洛伐克U21', '11-12', '18:00', '794557', '未']
 		return bsxxlist
 
 
@@ -64,28 +70,38 @@ class getjsbfClass(object):
 		url=url1+url2
 		print(url)
 		return self.get500wwcbf(url)
-		
+	#获取昨日完场比分	
+	def get500wwcbf2(self):
+		list_day=tooth_dayClass(1).last_sunday_saturday()
+		li_wbw_wcbf=[]
+		for d in list_day:
+			url1="https://live.500.com/wanchang.php"
+			url=url1+'?e={}'.format(d)
+			
+			li_wbw_wcbf.extend(self.get500wwcbf(url))
+
+		if len(li_wbw_wcbf)==0:
+			print('完场数据 have no date')
+			return []
+
+		return li_wbw_wcbf
 	#获取昨日完场比分
 	def get500wwcbf(self,url):
-		print("获取500w比赛昨日完场比分数据")
-		
-		#url='https://live.500.com/wanchang.php?e=2019-09-01'
-		htmltext=getHtml().geturltext(url)
-		
-		soup=BeautifulSoup(htmltext,'lxml')
+		print("获取500w比赛昨日完场比分数据"+url)
+		htmltext=getHtml().getHtml_by_firefox(url)
+		soup=BeautifulSoup(htmltext,'html5lib')
+	
 		listtable=soup.find_all(id='table_match')
-
 		list31=listtable[0].find_all('tr')
 		bsxxlist=[]
 		zqdf=zqconfigClass('').cfg_select()
 		li=zqdf.ls.values
-		#print(li)
-		#print(list31[0])
+
 		for x in list31:
-			#print(x)
+
 			id12=(x.get('id'))
 			if id12==None: continue
-			#print(id12)
+
 			id1=id12[1:]
 			idlist=[]
 			idlist.append(id1)	
@@ -98,7 +114,7 @@ class getjsbfClass(object):
 			if listgy[0].find('丙')>-1:continue	
 			listgy.extend(idlist)
 			bsxxlist.append(listgy)
-		#print(bsxxlist)	
+
 		return bsxxlist
 	#获取球探当日的比赛信息
 	def getqtzqdc(self):
@@ -173,24 +189,42 @@ class getjsbfClass(object):
 		print("\n1.获取500万数据")
 		url="https://live.500.com/zqdc.php"
 		url2="https://live.500.com/zucai.php"
+		lb_df=zqconfigClass(0).select('zqconfig_bslb.csv')
+		#已完场的数据
+		df=lb_df[lb_df['zt']=='完']
+		lb_li=df.idnm.values.tolist()
 
-		listwbw=self.get500wzqdc(self._gethtmlsoup(url))#足球单场
-		list_zucai=self.get500wzqdc(self._gethtmlsoup(url2))#足彩
-		listwbw.extend(list_zucai)
+		dc_li=self.get500wzqdc(url)#足球单场
+		zc_li=self.get500wzqdc(url2)#足彩
+		ywc_li=self.get500wwcbf2()#完场数据
+
+		wcbs_li=df.values.tolist()
+		#1添加新完场数据
+		
+		for r in ywc_li:
+			if int(r[3]) in lb_li:continue
+			wcbs_li.append([r[3],'完',r[0],r[1],r[2],'00-00','00:00'])
+			
+		dc_li.extend(zc_li)
+	
+		
+		#2整理500万数据,添加未完场数据
+		temp_li=[]
 		list_ls=zqconfigClass(0).select('zqconfig.csv').ls.values.tolist()#选用的大联赛
-		#整理500万数据
-		listwbw1=[]
-		for wbw in listwbw:
-			if wbw[0] in list_ls:
-				#wbw=['德甲', '拜仁慕尼黑', '霍芬海姆', '10-05', '21:30', '824679']
-				listwbw1.append(wbw)
+		for r in dc_li:
+			if r[5] in temp_li:continue#去重
+			if r[0] in list_ls :
+				#r=['欧洲U21', '格鲁吉亚U21', '斯洛伐克U21', '11-12', '18:00', '794557', '未']
+				wcbs_li.append([r[5],r[6],r[0],r[1],r[2],r[3],r[4]])
+				temp_li.append(r[5])#去重
+
 		print("\n-----------------------选取结果：写入config文件---------------\n")	
-		if len(listwbw1)>0:	
-			df1=DataFrame(listwbw1,columns=['ls','zd','kd','bsrq','bssj','idnm','zt'])
-			df1=df1.sort_values(by=['bsrq','ls','bssj'],axis = 0,ascending = True)
+		if len(wcbs_li)>0:	
+			df1=DataFrame(wcbs_li,columns=['idnm','zt','ls','zd','kd','bsrq','bssj'])
+			df1=df1.sort_values(by=['zt','ls','bssj'],axis = 0,ascending = True)
 			files1='zqconfig_bslb.csv'
 			df1.to_csv(files1)#写入文件
-		for x in listwbw1:
+		for x in wcbs_li:
 			print(x)
 		print("\n------------------------------选取结束-------------------------\n")
 		return 0
@@ -361,8 +395,10 @@ class getjsbfClass(object):
 		return df,z
 
 	#返回df
-
-
+if __name__ == '__main__':
+	k=getjsbfClass(0)
+	#k.wcbf2()
+	k.jsbf2()
 #columns_list_scb= ['idnm', 'zd', 'kd', 'nd', 'ls', 'lc', 'zjq', 'kjq', 'bstime']
 #columns_list_bifa=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']
 #columns_list_yapan['idnm', 'xh', 'ypgs', 'jzs', 'jp', 'jks', 'czs', 'cp', 'cks']
