@@ -45,8 +45,10 @@ class buqisj(object):
 	def bqbfmain(self,idstart,idend):
 		jsq=0#计数器
 		#必发不存在的记录
-		sql="SELECT s.idnm from scb s where  s.nd=16 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm) limit 60"
-		idlist=savedateClass().select(sql)
+		
+		sql="SELECT s.idnm from scb s where  s.nd=19 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm and xh=1) "
+		sql2=" AND EXISTS (Select 1 from yapan c where c.idnm=s.idnm and c.cp='半球' and c.ypgs='Bet365') limit 60"
+		idlist=savedateClass().select(sql+sql2)
 		#补齐在列表Idlist 中的比赛必发数据
 		iii=0
 		for idnmrow in idlist:
@@ -58,5 +60,8 @@ class buqisj(object):
 				print(datetime.datetime.now())
 		return 0
 
-#h=buqisj('').bqbfmain(1,2)
+def main():
+	h=buqisj('').bqbfmain(1,2)
 
+if __name__ == '__main__':
+	main()

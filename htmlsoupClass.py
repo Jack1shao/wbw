@@ -247,6 +247,7 @@ class htmlsoup(object):
 		soup,id1=self._set_bifa_soup()
 		ss=soup.find_all('table',attrs={'class':'pub_table pl_table_data bif-yab'})
 		#无必发数据时放回空值
+		#print(ss)
 		wbif=['0','0','0','0','0','0','0','0','0','0','0','0']
 		wbif.insert(0,str(id1))
 		wbf=[]
@@ -254,7 +255,7 @@ class htmlsoup(object):
 		wbf.append(wbif)
 
 
-		if len(ss)<2:logger().error(str(self.idnm)+'必发无数据bifa0001');return wbf,0,[]
+		if len(ss)<1:logger().error(str(self.idnm)+'必发无数据bifa0001');return wbf,0,[]
 		
 		#print(ss[0:8])
 		#打印表格中的每一格

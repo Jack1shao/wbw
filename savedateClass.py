@@ -63,7 +63,7 @@ class savedateClass(object):
 				print("发生异常",e);
 				return 0
 			finally:cur.close();conn.close()#释放数据库资源
-			return dateList	
+			return list(dateList)	
 
 
 

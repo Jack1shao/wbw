@@ -11,7 +11,7 @@ from zqconfigClass import zqconfigClass
 import datetime
 from pandas.core.frame import DataFrame
 import pandas as pd
-
+import os
 class getzqClass(object):
 	"""docstring for getzqClass"""
 	def __init__(self, arg):
@@ -257,27 +257,60 @@ class cl_save(getzqClass):
 		return 0
 
 
-	def from_csv(self,idnm):
-		pass
-	#存入db
-	def to_db(self):
-		df=self.get_id_list()
 
+	#存入db
+	#清理列表
+	def qingli_lb(self):
+		'''清理列表'''
+		df=self.get_id_list()
+		#获取已经完场的场次
 		id_df=df[df['zt']=='完']
 		id_li=id_df.idnm.values.tolist()
 
-		min_id=min(id_li)
-		max_id=max(id_li)
+		#根据已知比赛场次寻找已在数据裤的场次
+		list_idnm=self.getbsid_bylist(id_li)
+		#二维转一维
+		li_id=[]
+		for li in list_idnm:
+			for x in li:
+				li_id.append(x)
+		#2\数据库中没有的比赛id列表===z
+		z=[id1 for id1 in id_li if id1 not in li_id]
+		#
+		df_notin=df[~df.idnm.isin(li_id)]
+		#print(df_notin)
+		files='zqconfig_bslb.csv'
+		df_notin.to_csv(files)
+		return z
 
-		sql="select idnm from scb where idnm between " +str(min_id)+" and " +str(max_id)
-		id_db_li=self._bsid_from_db(min_id,max_id,sql)
-		for iiid in id_li:
-			print(iiid)
-			if iiid in id_db_li:
-				continue
-			#获取数据写入数据库
-			#save_to_db
 
+	def to_db(self):
+		df=self.get_id_list()
+		#获取已经完场的场次
+		id_df=df[df['zt']=='完']
+		id_li=id_df.idnm.values.tolist()
+
+		#1\获取数据库中批量比赛id
+
+		#根据已知比赛场次寻找已在数据裤的场次
+		list_idnm=self.getbsid_bylist(id_li)
+		#二维转一维
+		li_id=[]
+		for li in list_idnm:
+			for x in li:
+				li_id.append(x)
+		#2\数据库中没有的比赛id列表===z
+		z=[id1 for id1 in id_li if id1 not in li_id]
+		#
+		#df_notin=df[~df.idnm.isin(li_id)]
+		#print(df_notin)
+
+		#3\存入数据库
+		z1=z[:10] if len(z)>10 else z
+		print('每次存入{}场比赛数据{}'.format(len(z1),z1))
+		
+		[getzqClass('').getbsid(idnm,idnm) for idnm in z1 if len(z1)>0 ]
+		self.qingli_lb()
 		return 0
 
 	def from_db(self,idnm):
@@ -382,10 +415,10 @@ class zqfromdb:
 			else:
 				li1=df.values.tolist()[0]
 				
-				jhfc=li1[3]-li1[2]
-				ck3c=li1[4]*100-li1[2]
-				ck1c=li1[5]*100-li1[2]
-				ck0c=li1[6]*100-li1[2]
+				jhfc=(li1[3]-li1[2])/li1[2]
+				ck3c=(li1[4]*100-li1[2])/li1[2]
+				ck1c=(li1[5]*100-li1[2])/li1[2]
+				ck0c=(li1[6]*100-li1[2])/li1[2]
 				
 				li2=[li1[2],jhfc,ck3c,ck1c,ck0c]#
 
@@ -442,27 +475,129 @@ class zqfromdb:
 		#print(df.values.tolist())
 		return df
 
-	def from_db_ouzhi(self,idnm):
-		pass
-	def from_db_yapan(self,idnm):
-		pass
-	def from_db_bifa(self,idnm):
-		pass
+	def from_db_scb(self,idnm):
+		'''时程表'''
+		columns=['idnm','zd','kd','nd','ls','lc','zjq','kjq','bssj']
+		sql="select s.* from scb s where s.idnm={}".format(idnm)
+		
+		scb_li=(savedateClass().select(sql))
+		if len(columns)==len(scb_li[0]):
+			scb_df=DataFrame(scb_li,columns=columns)
+		else:
+			scb_df=DataFrame([[]])
 
+		print(scb_df)
+		return scb_df
+		
+	def from_db_ouzhi(self,idnm):
+		'''欧赔'''
+		columns=['idnm','xh','bcgs','cz3','cz1','cz0','jz3','jz1','jz0',
+		'cgl3','cgl1','cgl0','jgl3','jgl1','jgl0','chf','jhf','ck3','ck1','ck0','jk3','jk1','jk0']
+		
+		sql="select s.* from ouzhi s where s.idnm={}".format(idnm)
+		
+		dbsj_li=(savedateClass().select(sql))
+		df=DataFrame(dbsj_li,columns=columns)
+
+
+		#print(df)
+		return df
+		
+	def from_db_yapan(self,idnm):
+		'''亚盘'''
+		columns=['idnm','xh','bcgs','n1','jp','n2','n3','cp','n4']
+		
+		sql="select s.* from yapan s where s.idnm={}".format(idnm)
+		
+		dbsj_li=(savedateClass().select(sql))
+
+		if len(columns)==len(dbsj_li[0]):
+			df=DataFrame(dbsj_li,columns=columns)
+		else:
+			df=DataFrame([[]])
+		df2=(df[df.bcgs=='Bet365'])
+
+		print(df2)
+		return df2
+
+	def from_db_bifa(self,idnm):
+		'''必发'''
+		columns=['idnm','xh','xm','pl','gl','bd','bf','cjj','cjl','zjyk','bfzs','lrzs','ykzs']
+		
+		sql="select s.* from bifa s where s.idnm={}".format(idnm)
+		
+		dbsj_li=(savedateClass().select(sql))
+		df=DataFrame(dbsj_li,columns=columns)
+		ii=[1,2,3]
+		df=df[df.xh.isin(ii)]
+		
+		return df
+
+	def from_db_bifatd(self,idnm):
+		'''必发'''
+		columns=['idnm','ty','gm','fx','bz']
+		
+		sql="select s.* from sjtdbf s where s.idnm={}".format(idnm)
+		
+		dbsj_li=(savedateClass().select(sql))
+		df=DataFrame(dbsj_li,columns=columns)
+		#print(df)
+
+		return df
+def save_tofiles_by_df(df,files1,mode):
+	#files1=gu_jiekou_fuzhu().get_csvname(code)
+	if df.empty:return 0
+	if mode=='a' and os.path.exists(files1):
+		df.to_csv(files1,mode='a',header=False)
+		print('- 增量存入csv')
+	else :
+		df.to_csv(files1)
+		print('- 覆盖存入csv')
+	return 1	
+
+def scaisj():
+	h=zqfromdb()
+	sql="select idnm,cp,jp from yapan where cp='半球' and ypgs='Bet365' "
+	li=(savedateClass().select(sql))
+	df=DataFrame(li,columns=['idnm','cp','jp'])
+	#print(df)
+	id_li=df.idnm.values.tolist()
+	files1='e:/football/ai_zq_sj.csv'
+	mode=''
+	for idnm in id_li:
+		df=h.ai_sj(h.from_db_scb(idnm),h.from_db_ouzhi(idnm),h.from_db_yapan(idnm),h.from_db_bifa(idnm),h.from_db_bifatd(idnm))
+		
+		if mode=='':
+			mode='a' if os.path.exists(files1) else ''
+
+		save_tofiles_by_df(df,files1,mode)
+		
+
+	return 0
 def test():
 	h=zqfromdb()
-	idnm=961683
-
-	h.ai_sj(h.from_csv_scb(idnm),h.from_csv_ouzhi(idnm),h.from_csv_yapan(idnm),h.from_csv_bifa(idnm),h.from_csv_bifatd(idnm))
+	kk=getzqClass(0)
+	idnm=780898
+	#df=h.from_db_bifa(idnm)
 	#print(df)
+	#csv取数
+	#h.ai_sj(h.from_csv_scb(idnm),h.from_csv_ouzhi(idnm),h.from_csv_yapan(idnm),h.from_csv_bifa(idnm),h.from_csv_bifatd(idnm))
+	#数据库取数
+	df=h.ai_sj(h.from_db_scb(idnm),h.from_db_ouzhi(idnm),h.from_db_yapan(idnm),h.from_db_bifa(idnm),h.from_db_bifatd(idnm))
+	print(df)
 
 	return 0
 #主程序入口		
 def main():
 	cl=cl_save(0)
+	scaisj()
 	#保存未完场数据
 	#cl.to_csv()
-	test()
+	#cl.to_db()
+	#cl.from_csv_ouzhi()
+	#df=cl.qingli_lb()
+	#print(len(df))
+	#test()
 	#完场数据写入数据 库
 
 
