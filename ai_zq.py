@@ -54,7 +54,7 @@ class zq_sjcl:
 		#'cz3','cz1','cz0','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365',
 		#'chf_Iceland','jhfc_Iceland','ck3c_Iceland','ck1c_Iceland','ck0c_Iceland','lrzs1','ykzs1','lrzs2','ykzs2','lrzs3','ykzs3','gm','fx']
 		#columns=['idnm','zd','kd','zjq','kjq','sg','cp','cz3','cz1','cz0','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','jhfc_Iceland','ykzs1','ykzs2','ykzs3','fx']
-		columns=['idnm','zd','kd','zjq','kjq','sg','ykzs1','ykzs2','ykzs3','fx','gm','chf_Bet365','jhfc_Bet365']
+		columns=['idnm','zd','kd','zjq','kjq','sg','jp','js1','ls','lc','cp','ykzs1','ykzs2','ykzs3','fx','gm','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','chf_Iceland','jhfc_Iceland']
 
 		df=gg.get_fromfiles(files1)
 		#df=df[df.gm!=0][columns]
@@ -66,8 +66,8 @@ class zq_sjcl:
 		for row in vvv:
 			#if row[3]==2:row[3]=3
 			#row[5]=0 if row[5] in [1,0] else 1#二分类
-			row[10]=row[6]
-			row[9]=row[8]
+			row[6]=row[11]
+			row[7]=row[12]*row[13]
 			for i in range(0,len(row)):
 				if row[i] is '':
 					row[i]=0
@@ -145,8 +145,8 @@ class zq_aicl:
 		param_test3 = {'min_samples_split':range(200,1000,200), 'min_samples_leaf':range(40,61,10)}
 		param_test4 = {'max_features':range(7,10,1)}
 
-		clf=GridSearchCV(estimator=GradientBoostingClassifier(max_features=9,max_depth=7,n_estimators=10,learning_rate=0.01,random_state=0,min_samples_leaf=50,min_samples_split=600),
-			param_grid = param_test4, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
+		clf=GridSearchCV(estimator=GradientBoostingClassifier(max_features=7,max_depth=9,n_estimators=30,learning_rate=0.01,random_state=0,min_samples_leaf=40,min_samples_split=800),
+			param_grid = param_test3, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
 		#{'min_samples_leaf': 30, 'min_samples_split': 1600} 0.5457417355371901
 		#{'n_estimators': 30} 0.5384028925619834
 		#{'max_depth': 5} 0.5340371900826447
@@ -162,7 +162,7 @@ class zq_aicl:
 	
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
-		clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=40,max_depth=7,max_features=9, subsample=0.8, random_state=0,min_samples_leaf=60,min_samples_split=400)
+		clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=30,max_depth=9,max_features=7, subsample=0.8, random_state=0,min_samples_leaf=40,min_samples_split=800)
 		#clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=20,max_depth=6,max_features=13, subsample=0.8, random_state=0,min_samples_leaf=30,min_samples_split=1000)
 
 		clf2.fit(X_train,y_train)
@@ -175,18 +175,13 @@ class zq_aicl:
 		joblib.dump(clf2,fil_mx)
 		return 0
 	#逻辑模型
-	def ai_td_xl2(self,x,y,feature):
+	def LogisticR(self,x,y,feature):
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
 		pipeline = Pipeline([('poly', PolynomialFeatures(degree=2)),
 			('clf', LogisticRegression())])  
 		parameters = {
-		#'vect__max_df': (0.25, 0.5, 0.75),  
-		#'vect__stop_words': ('english', None),  
-		#'vect__max_features': (2500, 5000, 10000, None),  
-		#'vect__ngram_range': ((1, 1), (1, 2)),  
-		#'vect__use_idf': (True, False),  
-		#'vect__norm': ('l1', 'l2'),  
+
 		'clf__penalty': ('l1', 'l2'),  
 		'clf__C': (0.01, 0.1, 1, 10),  
 		}
@@ -208,7 +203,7 @@ class zq_aicl:
 		#for i,predictions in enumerate(predictions[-5:]):  
 			#print ('预测类型：%s. 信息: %s' %(predictions,y_test[i])) 
 		#scores = cross_val_score(classifer,X_train,y_train,cv=5)
-		clf2 = LogisticRegression(penalty='l1',C=1)
+		clf2 = LogisticRegression(penalty='l1',C=0.1)
 		clf2.fit(X_train,y_train) 
 		print(" Accuracy on training set: {:.3f}". format( clf2.score( X_train, y_train)))
 		print(" Accuracy on test set: {:.3f}". format( clf2.score( X_test, y_test)))
@@ -249,7 +244,7 @@ class zq_aicl:
 		print('预测结果{}'.format(y))
 		return y
 
-	def jl(self,x,y,feature):
+	def pca1(self,x,y,feature):
 		#print(feature)
 		#聚类算法
 		x_1=pd.get_dummies(x)
@@ -262,17 +257,19 @@ class zq_aicl:
 		#algorithms=[KMeans(n_clusters=2),AgglomerativeClustering(n_clusters=10),DBSCAN]
 		
 		#PCA 降为
+		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 		pca=PCA(n_components=2)
-		x_pca=pca.fit_transform(x_2)
-		print('Original shape :{}'.format(str(x_2.shape)))
+		x_pca=pca.fit_transform(X_train)
+		print('Original shape :{}'.format(str(X_train.shape)))
 		print('Reduced shape :{}'.format(str(x_pca.shape)))
-		
+		print(pca.components_ )
 		#dbscan=algorithms[1]
 		#clusters=dbscan.fit_predict(x_2)
 		#print(len(clusters),len(x_2))
 		#绘制簇
 		#plt.scatter(x_pca[:,0],x_2[:,1],c=clusters)
-		mglearn.discrete_scatter(x_pca[:,0],x_pca[:,1],y)
+		#print(x_pca[:,0],x_pca[:,1])
+		mglearn.discrete_scatter(x_pca[:,0],x_pca[:,1],y_train)
 		plt.legend(feature,loc='best')
 		plt.gca().set_aspect("equal")
 		#mglearn.plots.plot_agglomerative()
@@ -308,8 +305,9 @@ def main():
 	#训练
 	print('训练')
 	#zz.ai_td_xl(x,y,feature)
-	#zz.ai_td_xl2(x,y,feature)
-	zz.linearsvc(x,y,feature)
+	#zz.LogisticR(x,y,feature)
+	#zz.linearsvc(x,y,feature)
+	zz.pca1(x,y,feature)
 	return 0
 def test2():
 	zz=zq_aicl()
