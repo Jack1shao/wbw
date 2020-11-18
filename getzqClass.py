@@ -306,7 +306,7 @@ class cl_save(getzqClass):
 		#print(df_notin)
 
 		#3\存入数据库
-		z1=z[:10] if len(z)>10 else z
+		z1=z[:20] if len(z)>20 else z
 		print('每次存入{}场比赛数据{}'.format(len(z1),z1))
 		
 		[getzqClass('').getbsid(idnm,idnm) for idnm in z1 if len(z1)>0 ]
@@ -360,7 +360,8 @@ class zqfromdb:
 		#1\ai——scb处理
 		#,idnm,zd,kd,nd,ls,lc,zjq,kjq,bssj
 		if scb.empty:return empty_df
-		li1=scb[['idnm','zd','kd','zjq','kjq']].values.tolist()[0]#第一行
+		columns_scb=['idnm','zd','kd','ls','lc','zjq','kjq'] 
+		li1=scb[columns_scb].values.tolist()[0]#第一行
 		idnm=li1[0]
 		#判断赛果
 		if li1[-2]-li1[-1]>0:
@@ -371,8 +372,8 @@ class zqfromdb:
 			sg=0
 		li1.append(sg)
 
-
-		columns_scb=['idnm','zd','kd','zjq','kjq','sg'] #
+		columns_scb.append('sg')
+		#
 		ai_scb_df=DataFrame([li1],columns=columns_scb)  #
 		
 
@@ -557,7 +558,7 @@ def save_tofiles_by_df(df,files1,mode):
 
 def scaisj():
 	h=zqfromdb()
-	sql="select idnm,cp,jp from yapan where cp='半球' and ypgs='Bet365' "
+	sql="select idnm,cp,jp from yapan where jp='半球' and ypgs='Bet365' "
 	li=(savedateClass().select(sql))
 	df=DataFrame(li,columns=['idnm','cp','jp'])
 	#print(df)
@@ -593,6 +594,7 @@ def main():
 	scaisj()
 	#保存未完场数据
 	#cl.to_csv()
+	#保存完场数据
 	#cl.to_db()
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()

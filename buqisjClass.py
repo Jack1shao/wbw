@@ -46,8 +46,8 @@ class buqisj(object):
 		jsq=0#计数器
 		#必发不存在的记录
 		
-		sql="SELECT s.idnm from scb s where  s.nd=19 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm and xh=1) "
-		sql2=" AND EXISTS (Select 1 from yapan c where c.idnm=s.idnm and c.cp='半球' and c.ypgs='Bet365') limit 60"
+		sql="SELECT s.idnm from scb s where  s.nd=20 and not EXISTS (select 1 from bifa b where b.idnm=s.idnm and xh=1) "
+		sql2=" AND EXISTS (Select 1 from yapan c where c.idnm=s.idnm and c.jp='半球' and c.ypgs='Bet365') limit 60"
 		idlist=savedateClass().select(sql+sql2)
 		#补齐在列表Idlist 中的比赛必发数据
 		iii=0
