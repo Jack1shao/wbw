@@ -294,6 +294,7 @@ class cl_save(getzqClass):
 
 		#根据已知比赛场次寻找已在数据裤的场次
 		list_idnm=self.getbsid_bylist(id_li)
+		if list_idnm==0:return 0
 		#二维转一维
 		li_id=[]
 		for li in list_idnm:
@@ -591,11 +592,11 @@ def test():
 #主程序入口		
 def main():
 	cl=cl_save(0)
-	scaisj()
+	#scaisj()
 	#保存未完场数据
 	#cl.to_csv()
 	#保存完场数据
-	#cl.to_db()
+	cl.to_db()
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()
 	#print(len(df))
