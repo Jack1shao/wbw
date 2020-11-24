@@ -395,7 +395,7 @@ class zqfromdb:
 		if ouzhi.empty:return empty_df
 		columns=ouzhi.columns.values
 		#print(columns)
-		bcgs_li=['Bet365','Expekt','10BET','威廉希尔','Oddset','Iceland','Sweden']
+		bcgs_li=['Bet365','Expekt','威廉希尔','Oddset','Iceland','Sweden']
 		bc1='Bet365'
 		col_365=['idnm','bcgs','cz3','cz1','cz0']  #---
 		df=ouzhi[ouzhi.bcgs==bc1][col_365]
@@ -438,9 +438,9 @@ class zqfromdb:
 		li2.append(idnm)
 		bf_columns.append('idnm')
 		ii=[1,2,3]
-		#bifa=empty_df
+		
 		bifa_df=bifa[bifa.idnm==idnm]
-
+		#必发列项转行项
 		if bifa_df.empty:
 			li3=[0 for i in range(len(columns1)*3)]
 			for i in ii:
@@ -456,7 +456,7 @@ class zqfromdb:
 				li2.extend(bf.values.tolist()[0])
 				bf_columns.extend(col)
 
-		#  idnm    ty            gm                         fx    bz
+		#  idnm ty    gm    fx    bz
 		columns_td=['gm','fx']
 		df=bifatd[bifatd.idnm==idnm][columns_td]
 		if df.empty:
@@ -587,62 +587,26 @@ def test():
 	#数据库取数
 	df=h.ai_sj(h.from_db_scb(idnm),h.from_db_ouzhi(idnm),h.from_db_yapan(idnm),h.from_db_bifa(idnm),h.from_db_bifatd(idnm))
 	print(df)
-
 	return 0
+
 #主程序入口		
 def main():
 	cl=cl_save(0)
-	#scaisj()
-	#保存未完场数据
+	#1保存完场数据 #完场数据写入数据 库
+	#cl.to_db()
+
+	#2保存未完场数据
 	#cl.to_csv()
-	#保存完场数据
-	cl.to_db()
+
+	#3生成ai数据
+	scaisj()
+
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()
-	#print(len(df))
 	#test()
-	#完场数据写入数据 库
-
 
 if __name__ == '__main__':
 	main()
-	'''def getzq_main(self):
-					between_list=[
-							['法甲','19','808039','808071'],
-							['法乙','19','809429','809483'],
-							['英超','19','806501','806519'],
-							['西甲','19','830801','0'],
-							['意甲','19','853822','0'],
-							['德乙','19','825597','825627'],
-							['德甲','19','824571','0'],
-							['芬超','19','795956','0'],
-							['挪超','19','788508','0'],
-							['k1联','19','783817','784125'],
-							['日职','19','779376','779788'], 
-							['美职','19','780198','780808'],
-							['日职乙','19','778452','779044'],
-							['丹超','19','805215','805245'],
-							['巴甲','19','800197','800473'],
-							['丹甲','19','0','0'],
-							['葡超','19','837459','0'],
-							['瑞士超','19','0','0'],
-							['瑞典超','19','789008','789280'],
-							['荷甲','19','0','0']
-						]
-			
-					in_list=['779816','805581','867116','867116']	
-					if len(in_list)!=0:
-						print(in_list)
-						for x in in_list:
-							self.getbsid(int(x),int(x))
-					#补齐比赛数据
-					iii=0
-					for x in between_list:
-						iii+=1
-						
-						#if x[0]!='日职乙':continue
-						self.getbs_othor(x[0],x[1])
-					return 0'''
 
 #h=getzqClass('').idnm_in([])
 

@@ -47,27 +47,27 @@ class zq_sjcl:
 	def sjcl(self):
 		'''数据预处理'''
 		gg=gu_getfromdb()
-		
-		#files1='e:/football/{}1.csv'.format(cp)
 		files1='e:/football/ai_zq_sj.csv'
 		#columns=['idnm','zd','kd','zjq','kjq','sg','jp','js1','cp','cs3','bcgs',
 		#'cz3','cz1','cz0','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365',
 		#'chf_Iceland','jhfc_Iceland','ck3c_Iceland','ck1c_Iceland','ck0c_Iceland','lrzs1','ykzs1','lrzs2','ykzs2','lrzs3','ykzs3','gm','fx']
 		#columns=['idnm','zd','kd','zjq','kjq','sg','cp','cz3','cz1','cz0','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','jhfc_Iceland','ykzs1','ykzs2','ykzs3','fx']
-		columns=['idnm','zd','kd','zjq','kjq','sg','jp','js1','ls','lc','cp','ykzs1','ykzs2','ykzs3','fx','gm','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','chf_Iceland','jhfc_Iceland']
-
+		
+		#选择需要的列
+		columns=['idnm','zd','kd','zjq','kjq','sg','jp','js1','cs3','ls','lc','cp','ykzs1','ykzs2','ykzs3','fx','gm','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','chf_Iceland','jhfc_Iceland']
 		df=gg.get_fromfiles(files1)
-		#df=df[df.gm!=0][columns]
 		df=df[columns]
-		ccc=df.columns.values.tolist()
 
+		ccc=df.columns.values.tolist()
 
 		vvv=df.values.tolist()
 		for row in vvv:
 			#if row[3]==2:row[3]=3
-			#row[5]=0 if row[5] in [1,0] else 1#二分类
-			row[6]=row[11]
-			row[7]=row[12]*row[13]
+			row[5]=0 if row[5] in [1,0] else 1#二分类
+			row[6]=row[12]*row[13]
+			row[7]=row[12]*row[14]
+			row[8]=row[13]*row[14]
+			#文字转换为简单模式
 			for i in range(0,len(row)):
 				if row[i] is '':
 					row[i]=0
@@ -113,15 +113,11 @@ class zq_aicl:
 	#提取数据
 	def getfiles(self,files1):
 
-		#cp='半球'
-		#files1='e:/football/{}2.csv'.format(cp)
 		gg=gu_getfromdb()
 		data=gg.get_fromfiles(files1)
-
 		x=data.iloc[:,6:]
 		y=data.iloc[:,5]
 		feature=data.iloc[:,6:].columns
-
 		return x,y,feature
 
 	#特征工程 数据预处理
@@ -131,9 +127,9 @@ class zq_aicl:
 		#x_2=MinMaxScaler().fit_transform(x_1)
 	
 		x_2=StandardScaler().fit_transform(x_1)
-		
+		x3=PolynomialFeatures(degree=2).fit_transform(x_2)
 		#拆分训练集
-		X_train,X_test,y_train,y_test= train_test_split(x_2,y,test_size=0.35, random_state=0)	
+		X_train,X_test,y_train,y_test= train_test_split(x3,y,test_size=0.3, random_state=0)	
 		return 	X_train,X_test,y_train,y_test,feature
 	#梯度提升机参数调优
 	def ai_td_tc(self,x,y,feature):
@@ -141,16 +137,16 @@ class zq_aicl:
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
 		param_test1 = {'n_estimators':range(10,81,10)}
-		param_test2={'max_depth':range(5,15,2)}
+		param_test2={'max_depth':range(5,15,1)}
 		param_test3 = {'min_samples_split':range(200,1000,200), 'min_samples_leaf':range(40,61,10)}
 		param_test4 = {'max_features':range(7,10,1)}
 
-		clf=GridSearchCV(estimator=GradientBoostingClassifier(max_features=7,max_depth=9,n_estimators=30,learning_rate=0.01,random_state=0,min_samples_leaf=40,min_samples_split=800),
+		clf=GridSearchCV(estimator=GradientBoostingClassifier(learning_rate=0.01,random_state=0),
 			param_grid = param_test3, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
-		#{'min_samples_leaf': 30, 'min_samples_split': 1600} 0.5457417355371901
-		#{'n_estimators': 30} 0.5384028925619834
-		#{'max_depth': 5} 0.5340371900826447
-		#{'max_features': 17} 0.5527954545454545
+		#{'min_samples_leaf': 60, 'min_samples_split': 800} 0.5273927540611697
+		#{'n_estimators': 50} 0.5292384500931061
+		#{'max_depth': 14} 0.5292384500931061
+		#{'max_features': 7} 0.5292384500931061
 		clf.fit(X_train,y_train)
 		#查看性能#grid_scores_
 		#print(clf.cv_results_,clf.best_params_,clf.best_score_)
@@ -162,7 +158,7 @@ class zq_aicl:
 	
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
-		clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=30,max_depth=9,max_features=7, subsample=0.8, random_state=0,min_samples_leaf=40,min_samples_split=800)
+		clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=60,max_depth=14,max_features=7, subsample=0.8, random_state=0,min_samples_leaf=40,min_samples_split=600)
 		#clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=20,max_depth=6,max_features=13, subsample=0.8, random_state=0,min_samples_leaf=30,min_samples_split=1000)
 
 		clf2.fit(X_train,y_train)
@@ -301,13 +297,13 @@ def main():
 
 	#调参
 	print('调参')
-	#zz.ai_td_tc(x,y,feature)
+	zz.ai_td_tc(x,y,feature)
 	#训练
 	print('训练')
-	#zz.ai_td_xl(x,y,feature)
+	zz.ai_td_xl(x,y,feature)
 	#zz.LogisticR(x,y,feature)
 	#zz.linearsvc(x,y,feature)
-	zz.pca1(x,y,feature)
+	#zz.pca1(x,y,feature)
 	return 0
 def test2():
 	zz=zq_aicl()
@@ -402,12 +398,6 @@ def test1():
 	return 0
 
 
-def test3():
-	files1='e:/football/ai_zq_sj.csv'
-	gg=gu_getfromdb()
-	data=gg.get_fromfiles(files1)
-	df=data[data.sg==1][['idnm','zd','kd','sg','cp','jp']]
-	print(len(df))
 
 
 
