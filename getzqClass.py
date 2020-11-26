@@ -593,13 +593,13 @@ def test():
 def main():
 	cl=cl_save(0)
 	#1保存完场数据 #完场数据写入数据 库
-	#cl.to_db()
+	cl.to_db()
 
 	#2保存未完场数据
 	#cl.to_csv()
 
 	#3生成ai数据
-	scaisj()
+	#scaisj()
 
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()

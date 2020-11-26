@@ -158,7 +158,7 @@ class zq_aicl:
 	
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
-		clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=60,max_depth=14,max_features=7, subsample=0.8, random_state=0,min_samples_leaf=40,min_samples_split=600)
+		clf2=GradientBoostingClassifier(learning_rate=0.02, n_estimators=60,max_depth=14,max_features=7, subsample=0.8, random_state=0,min_samples_leaf=40,min_samples_split=500)
 		#clf2=GradientBoostingClassifier(learning_rate=0.01, n_estimators=20,max_depth=6,max_features=13, subsample=0.8, random_state=0,min_samples_leaf=30,min_samples_split=1000)
 
 		clf2.fit(X_train,y_train)
@@ -297,7 +297,7 @@ def main():
 
 	#调参
 	print('调参')
-	zz.ai_td_tc(x,y,feature)
+	#zz.ai_td_tc(x,y,feature)
 	#训练
 	print('训练')
 	zz.ai_td_xl(x,y,feature)
