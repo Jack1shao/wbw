@@ -56,17 +56,17 @@ class zq_sjcl:
 		#选择需要的列
 		columns=['idnm','zd','kd','zjq','kjq','sg','jp','js1','cs3','ls','lc','cp','ykzs1','ykzs2','ykzs3','fx','gm','chf_Bet365','jhfc_Bet365','ck3c_Bet365','ck1c_Bet365','ck0c_Bet365','chf_Iceland','jhfc_Iceland']
 		df=gg.get_fromfiles(files1)
-		df=df[columns]
+		#df=df[columns]
 
 		ccc=df.columns.values.tolist()
 
 		vvv=df.values.tolist()
 		for row in vvv:
 			#if row[3]==2:row[3]=3
-			row[5]=0 if row[5] in [1,0] else 1#二分类
-			row[6]=row[12]*row[13]
-			row[7]=row[12]*row[14]
-			row[8]=row[13]*row[14]
+			#row[5]=0 if row[5] in [1,0] else 1#二分类
+			#row[6]=row[12]*row[13]
+			#row[7]=row[12]*row[14]
+			#row[8]=row[13]*row[14]
 			#文字转换为简单模式
 			for i in range(0,len(row)):
 				if row[i] is '':
@@ -174,7 +174,7 @@ class zq_aicl:
 	def LogisticR(self,x,y,feature):
 		X_train,X_test,y_train,y_test,feature=self.ai_tzgc(x,y,feature)
 
-		pipeline = Pipeline([('poly', PolynomialFeatures(degree=2)),
+		pipeline = Pipeline([
 			('clf', LogisticRegression())])  
 		parameters = {
 
@@ -300,9 +300,9 @@ def main():
 	#zz.ai_td_tc(x,y,feature)
 	#训练
 	print('训练')
-	zz.ai_td_xl(x,y,feature)
+	#zz.ai_td_xl(x,y,feature)
 	#zz.LogisticR(x,y,feature)
-	#zz.linearsvc(x,y,feature)
+	zz.linearsvc(x,y,feature)
 	#zz.pca1(x,y,feature)
 	return 0
 def test2():

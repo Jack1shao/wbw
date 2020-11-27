@@ -394,19 +394,26 @@ class zqfromdb:
 		#['idnm' 'bcgs' 'cz3' 'cz1' 'cz0' 'jz3' 'jz1' 'jz0' .... 'chf' 'jhf' 'ck3' 'ck1' 'ck0' 'jk3' 'jk1' 'jk0']
 		if ouzhi.empty:return empty_df
 		columns=ouzhi.columns.values
-		#print(columns)
-		bcgs_li=['Bet365','Expekt','威廉希尔','Oddset','Iceland','Sweden']
+		#print(columns)['Bet365','威廉希尔','Oddset','Iceland','Sweden']
+		bcgs_li=['Bet365','威廉希尔','Oddset','Iceland']
 		bc1='Bet365'
-		col_365=['idnm','bcgs','cz3','cz1','cz0']  #---
+		col_365=['idnm','bcgs','cz3','cz1','cz0','jz3','jz1','jz0']  #---
 		df=ouzhi[ouzhi.bcgs==bc1][col_365]
 		if df.empty:return empty_df	
 
 		oz_365=df.values.tolist()[0]			 	#----
 
 		#计算凯利差 减赔付率
-		df1=ouzhi[['idnm', 'bcgs','chf', 'jhf', 'ck3', 'ck1' ,'ck0']]
-		columns_gz=['idnm', 'bcgs','chf', 'jhfc', 'ck3c', 'ck1c' ,'ck0c']#用于构造
+		df1=ouzhi[['idnm', 'bcgs','chf', 'jhf', 'jk3', 'jk1' ,'jk0','jz3','jz1','jz0']]
+		#columns_gz=['idnm', 'bcgs','chf', 'jhfc', 'c3', 'c1' ,'c0','jz3','jz1','jz0']#用于构造
+		
+		df1['c3']=df1['jk3']-df1['jhf']/100
+		df1['c1']=df1['jk1']-df1['jhf']/100
+		df1['c0']=df1['jk0']-df1['jhf']/100
+		df1['jhfc']=df1['jhf']-df1['chf']
+		columns_gz=df1.columns.values.tolist()
 
+		print(columns_gz)
 		for bcc in bcgs_li:
 
 			df=df1[df1.bcgs==bcc]
@@ -417,12 +424,10 @@ class zqfromdb:
 			else:
 				li1=df.values.tolist()[0]
 				
-				jhfc=(li1[3]-li1[2])/li1[2]
-				ck3c=(li1[4]*100-li1[2])/li1[2]
-				ck1c=(li1[5]*100-li1[2])/li1[2]
-				ck0c=(li1[6]*100-li1[2])/li1[2]
-				
-				li2=[li1[2],jhfc,ck3c,ck1c,ck0c]#
+				#print(li1[0:2])
+				li2=[li1[i] for i in range(2,len(li1))]
+				#print(li2)	
+				#li2=[li1[2],jhfc,ck3c,ck1c,ck0c]#
 
 			col_365.extend(columns2)
 			oz_365.extend(li2)
@@ -559,7 +564,8 @@ def save_tofiles_by_df(df,files1,mode):
 
 def scaisj():
 	h=zqfromdb()
-	sql="select idnm,cp,jp from yapan where jp='半球' and ypgs='Bet365' "
+	#sql="select idnm,cp,jp from yapan where jp='半球' and ypgs='Bet365' "
+	sql="select idnm,cp,jp from yapan where  ypgs='Bet365' "
 	li=(savedateClass().select(sql))
 	df=DataFrame(li,columns=['idnm','cp','jp'])
 	#print(df)
@@ -579,27 +585,29 @@ def scaisj():
 def test():
 	h=zqfromdb()
 	kk=getzqClass(0)
-	idnm=780898
+	idnm=664731
 	#df=h.from_db_bifa(idnm)
 	#print(df)
 	#csv取数
 	#h.ai_sj(h.from_csv_scb(idnm),h.from_csv_ouzhi(idnm),h.from_csv_yapan(idnm),h.from_csv_bifa(idnm),h.from_csv_bifatd(idnm))
 	#数据库取数
 	df=h.ai_sj(h.from_db_scb(idnm),h.from_db_ouzhi(idnm),h.from_db_yapan(idnm),h.from_db_bifa(idnm),h.from_db_bifatd(idnm))
-	print(df)
+	#print(df)
+	lll=df.values.tolist()
+	[print(i) for i in lll]
 	return 0
 
 #主程序入口		
 def main():
 	cl=cl_save(0)
 	#1保存完场数据 #完场数据写入数据 库
-	cl.to_db()
+	#cl.to_db()
 
 	#2保存未完场数据
 	#cl.to_csv()
 
 	#3生成ai数据
-	#scaisj()
+	scaisj()
 
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()
