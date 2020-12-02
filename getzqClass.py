@@ -290,10 +290,13 @@ class cl_save(getzqClass):
 		id_df=df[df['zt']=='完']
 		id_li=id_df.idnm.values.tolist()
 
+		ii_li=[]
+		[ii_li.append(l) for l in id_li if l not in ii_li]#去重
+
 		#1\获取数据库中批量比赛id
 
 		#根据已知比赛场次寻找已在数据裤的场次
-		list_idnm=self.getbsid_bylist(id_li)
+		list_idnm=self.getbsid_bylist(ii_li)
 		if list_idnm==0:return 0
 		#二维转一维
 		li_id=[]
@@ -301,7 +304,7 @@ class cl_save(getzqClass):
 			for x in li:
 				li_id.append(x)
 		#2\数据库中没有的比赛id列表===z
-		z=[id1 for id1 in id_li if id1 not in li_id]
+		z=[id1 for id1 in ii_li if id1 not in li_id]
 		#
 		#df_notin=df[~df.idnm.isin(li_id)]
 		#print(df_notin)
@@ -601,13 +604,13 @@ def test():
 def main():
 	cl=cl_save(0)
 	#1保存完场数据 #完场数据写入数据 库
-	#cl.to_db()
+	cl.to_db()
 
 	#2保存未完场数据
 	#cl.to_csv()
 
 	#3生成ai数据
-	scaisj()
+	#scaisj()
 
 	#cl.from_csv_ouzhi()
 	#df=cl.qingli_lb()

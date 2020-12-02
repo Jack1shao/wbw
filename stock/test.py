@@ -15,7 +15,7 @@ from stockmd import Hf_kl
 from stockmd2 import jiekou
 #from stockmd2 import cciorder
 import os
-
+import tensorflow as tf
 
 kk=gu_save('')
 
