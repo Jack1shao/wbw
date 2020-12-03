@@ -558,7 +558,7 @@ def save_tofiles_by_df(df,files1,mode):
 	#files1=gu_jiekou_fuzhu().get_csvname(code)
 	if df.empty:return 0
 	if mode=='a' and os.path.exists(files1):
-		df.to_csv(files1,mode='a',header=False)
+		df.to_csv(files1,mode='a',header=False,encoding='utf-8')
 		print('- 增量存入csv')
 	else :
 		df.to_csv(files1)
