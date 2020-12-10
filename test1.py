@@ -1,5 +1,6 @@
 #test
-#
+#	"python_interpreter":"D:/Anaconda3/envs/tensorflow/python.exe",
+
 
 #
 #from getjsbf import getjsbfClass

@@ -200,7 +200,7 @@ class getzqClass(object):
 		df1=df[df.bcgs=='Bet365']
 		print(idnm,df1.jp.values)
 		return 	df1
-	#取网页数据返回Dataframe
+	#取网页数据返回Dataframe #df,z,sjtd_df
 	def get_bifa_df(self,idnm):
 		k=htmlsoup(idnm)
 		columns_list=['idnm', 'xh', 'xm', 'pl', 'gl', 'bd', 'bf', 'cjj', 'cjl', 'zjyk', 'bfzs', 'lrzs', 'ykzs']

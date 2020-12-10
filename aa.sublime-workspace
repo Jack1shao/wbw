@@ -1,0 +1,1272 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"py",
+				"python"
+			],
+			[
+				"ii",
+				"ii_li"
+			],
+			[
+				"li",
+				"li1"
+			],
+			[
+				"id",
+				"idnm"
+			],
+			[
+				"sql",
+				"sql2"
+			],
+			[
+				"s",
+				"sql"
+			],
+			[
+				"sq",
+				"sql2"
+			],
+			[
+				"if",
+				"ifmain\tif __name__ == '__main__'"
+			],
+			[
+				"is",
+				"isin"
+			],
+			[
+				"da",
+				"DataFrame"
+			],
+			[
+				"sc",
+				"scb_li"
+			],
+			[
+				"to",
+				"tolist"
+			],
+			[
+				"fro",
+				"from_csv_ouzhi"
+			],
+			[
+				"to_",
+				"to_csv"
+			],
+			[
+				"fit",
+				"fit_transform"
+			],
+			[
+				"x_",
+				"x_2"
+			],
+			[
+				"aitd",
+				"ai_td_yc"
+			],
+			[
+				"zqfen",
+				"zqfenxi"
+			],
+			[
+				"fi",
+				"files1"
+			],
+			[
+				"p",
+				"print"
+			],
+			[
+				"dfmx",
+				"df_mx3"
+			],
+			[
+				"df_mx",
+				"df_mx3"
+			],
+			[
+				"re",
+				"return"
+			],
+			[
+				"df_m",
+				"df_mx3"
+			],
+			[
+				"he",
+				"head"
+			],
+			[
+				"file",
+				"files1"
+			],
+			[
+				"pa",
+				"path"
+			],
+			[
+				"get",
+				"get_allcode"
+			],
+			[
+				"df_f",
+				"df_qfq"
+			],
+			[
+				"clo",
+				"close_bz"
+			],
+			[
+				"cls",
+				"close1"
+			],
+			[
+				"co",
+				"columns"
+			],
+			[
+				"yz",
+				"yzzh"
+			],
+			[
+				"dd",
+				"dd_row"
+			],
+			[
+				"dat",
+				"date1"
+			],
+			[
+				"ma",
+				"max"
+			],
+			[
+				"ba",
+				"basc"
+			],
+			[
+				"bas",
+				"basc_file"
+			],
+			[
+				"va",
+				"values"
+			],
+			[
+				"cod",
+				"code1"
+			],
+			[
+				"code",
+				"code1"
+			],
+			[
+				"df",
+				"df_fqyz"
+			],
+			[
+				"sav",
+				"save_tofiles_by_df"
+			],
+			[
+				"fq",
+				"fqyz_li"
+			],
+			[
+				"cl",
+				"close_bz"
+			],
+			[
+				"v",
+				"values"
+			],
+			[
+				"get_b",
+				"get_base_from_api"
+			],
+			[
+				"vol",
+				"volume"
+			],
+			[
+				"CO",
+				"code1"
+			],
+			[
+				"str",
+				"str_pcci"
+			],
+			[
+				"pr",
+				"print"
+			],
+			[
+				"fo",
+				"format"
+			],
+			[
+				"tj",
+				"tjlb"
+			],
+			[
+				"el",
+				"else"
+			],
+			[
+				"pcci",
+				"p_cci"
+			],
+			[
+				"ad",
+				"adxr"
+			],
+			[
+				"d_",
+				"d_adx"
+			],
+			[
+				"gj",
+				"gj_start"
+			],
+			[
+				"hi",
+				"hig"
+			],
+			[
+				"index",
+				"index_1"
+			],
+			[
+				"tot",
+				"total"
+			],
+			[
+				"macd",
+				"macd3"
+			],
+			[
+				"bz",
+				"bz0"
+			],
+			[
+				"qr",
+				"qrfj"
+			],
+			[
+				"pd",
+				"PDI"
+			],
+			[
+				"adx",
+				"ADX"
+			],
+			[
+				"ind",
+				"index_1"
+			],
+			[
+				"vo",
+				"vol_li"
+			],
+			[
+				"in",
+				"index_1"
+			],
+			[
+				"inde",
+				"index_1"
+			],
+			[
+				"up",
+				"up_len"
+			],
+			[
+				"dd2",
+				"dd2_li"
+			],
+			[
+				"dmib",
+				"dmi_block"
+			],
+			[
+				"lo",
+				"low1"
+			],
+			[
+				"cl_",
+				"cl_1_rsmd"
+			],
+			[
+				"las",
+				"block_last"
+			],
+			[
+				"e",
+				"else"
+			],
+			[
+				"ddz",
+				"ddzj_chongding"
+			],
+			[
+				"cci",
+				"cci1"
+			],
+			[
+				"lis",
+				"list_bloc"
+			],
+			[
+				"cciq",
+				"cciqrfj"
+			],
+			[
+				"cciqr",
+				"cciqrfj"
+			],
+			[
+				"k",
+				"ktype"
+			],
+			[
+				"mi",
+				"mid_li"
+			],
+			[
+				"bol",
+				"boll3"
+			],
+			[
+				"j",
+				"jiekou"
+			],
+			[
+				"st_",
+				"st_list"
+			],
+			[
+				"r",
+				"row"
+			],
+			[
+				"mac",
+				"macdorder"
+			],
+			[
+				"__",
+				"__doc__"
+			],
+			[
+				"stock",
+				"stock"
+			],
+			[
+				"stoc",
+				"stockzb"
+			],
+			[
+				"ge",
+				"get_stock_basics"
+			],
+			[
+				"de",
+				"def\tFunction"
+			],
+			[
+				"getbas",
+				"get_base_from_api"
+			],
+			[
+				"st",
+				"Stock"
+			],
+			[
+				"c",
+				"code"
+			],
+			[
+				"getkfro",
+				"get_k_from_csv"
+			],
+			[
+				"w",
+				"w_kl"
+			],
+			[
+				"shou",
+				"shou_all_cci_d"
+			],
+			[
+				"qs",
+				"qsqy"
+			],
+			[
+				"cci_an",
+				"cci_ana_qrfj"
+			],
+			[
+				"ke",
+				"ktype1"
+			],
+			[
+				"cn",
+				"cn41"
+			],
+			[
+				"q",
+				"cci_ana_qrfj"
+			],
+			[
+				"dw",
+				"dw_li2"
+			],
+			[
+				"low",
+				"low_li"
+			],
+			[
+				"db",
+				"d_bc"
+			],
+			[
+				"wx",
+				"wx_li"
+			],
+			[
+				"bc",
+				"bcgs"
+			],
+			[
+				"i",
+				"i"
+			],
+			[
+				"b",
+				"bc"
+			],
+			[
+				"gt",
+				"get_k_from_api"
+			],
+			[
+				"gu_",
+				"gu_zb"
+			],
+			[
+				"pl",
+				"plt"
+			],
+			[
+				"en",
+				"engine"
+			],
+			[
+				"sto",
+				"stock_to_db"
+			],
+			[
+				"_",
+				"__get_day_all"
+			],
+			[
+				"now",
+				"now"
+			],
+			[
+				"u",
+				"up_li2"
+			],
+			[
+				"lx",
+				"lxzj_li"
+			],
+			[
+				"cci_a",
+				"cci_ana_dd"
+			],
+			[
+				"cc",
+				"cci1"
+			],
+			[
+				"ins",
+				"insert_none_bs"
+			],
+			[
+				"id_ou",
+				"id_out"
+			],
+			[
+				"list",
+				"list_gz103"
+			],
+			[
+				"获取",
+				"获取比赛段的数据"
+			],
+			[
+				"cou",
+				"count_sg"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "geckodriver.log",
+			"settings":
+			{
+				"buffer_size": 182990,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "",
+			"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Python.sublime-settings",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/D/ppp.py",
+			"settings":
+			{
+				"buffer_size": 12,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+			"settings":
+			{
+				"buffer_size": 21802,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test1.py",
+			"settings":
+			{
+				"buffer_size": 922,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "testaa.py",
+			"settings":
+			{
+				"buffer_size": 982,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "getzqClass.py",
+			"settings":
+			{
+				"buffer_size": 15520,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "getjsbf.py",
+			"settings":
+			{
+				"buffer_size": 10729,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "zqconfig_bslb.csv",
+			"settings":
+			{
+				"buffer_size": 3439,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "aa.sublime-project",
+			"settings":
+			{
+				"buffer_size": 280,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+			"settings":
+			{
+				"buffer_size": 205,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: install package",
+				"Package Control: Install Package"
+			],
+			[
+				"package control:in",
+				"Package Control: Install Package"
+			],
+			[
+				"install package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/py/wbw"
+	],
+	"file_history":
+	[
+		"/D/py/wbw/testaa.py",
+		"/D/py/wbw/fengxibygz.py",
+		"/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Python.sublime-settings",
+		"/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/D/py/wbw/zqconfig_bslb.csv",
+		"/D/py/wbw/geckodriver.log",
+		"/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/D/py/wbw/getjsbf.py",
+		"/D/py/wbw/test2.py",
+		"/D/Anaconda3/lib/site-packages/selenium/webdriver/common/service.py",
+		"/d/Anaconda3/lib/site-packages/pandas/core/indexing.py",
+		"/D/py/wbw/ai_zq.py",
+		"/D/py/wbw/getzqClass.py",
+		"/D/py/wbw/ai/jcs_sjsl.py",
+		"/D/py/wbw/stock/test.py",
+		"/d/Anaconda3/lib/site-packages/tensorflow/python/__init__.py",
+		"/D/py/wbw/stock/stockmd2.py",
+		"/D/py/wbw/zqfenxi.py",
+		"/D/py/wbw/buqisjClass.py",
+		"/D/py/wbw/htmlsoupClass.py",
+		"/D/py/wbw/loggerclass.log",
+		"/D/py/wbw/savedateClass.py",
+		"/D/py/wbw/zqconfig.csv",
+		"/D/py/wbw/stock/gu_save2.py",
+		"/D/py/wbw/ai/fl_jcs.py",
+		"/D/py/wbw/ai/operClass.py",
+		"/D/py/wbw/ai/testai.py",
+		"/d/Anaconda3/lib/site-packages/pandas/core/generic.py",
+		"/D/py/wbw/stock/gu_save.py",
+		"/d/Anaconda3/lib/site-packages/tushare/pro/data_pro.py",
+		"/D/py/wbw/stock/aiyb10.txt",
+		"/D/py/wbw/stock/aiyb2.txt",
+		"/D/py/wbw/stock/aiyb1.txt",
+		"/D/py/wbw/stock/order.csv",
+		"/D/py/wbw/stock/cd.txt",
+		"/D/py/wbw/stock/celvjihe.py",
+		"/D/py/wbw/stock/stockmd.py",
+		"/D/py/wbw/stock/bakanddraw.py",
+		"/D/py/wbw/stock/old/getandanalysis_stock.py",
+		"/D/py/wbw/stock/sv_dmd1.csv",
+		"/D/py/wbw/stock/bs1.txt",
+		"/D/py/wbw/stock/bs3.txt",
+		"/C/Users/shaojk/Desktop/stockmd2.py",
+		"/C/Users/shaojk/Application Data/XMind/workspace-cathy/.temp-attachments/attachments/stockmd.py",
+		"/D/py/wbw/stock/gu_draw.py",
+		"/D/py/wbw/stock/gu_draw2.py",
+		"/D/py/wbw/stock/bo3.txt",
+		"/D/py/wbw/stock/cciorder.py",
+		"/D/py/wbw/stock/gu_shou.py",
+		"/D/py/wbw/stock/operClass.py",
+		"/D/py/wbw/stock/gu_zb.py",
+		"/D/py/wbw/stock/shou_bc9.txt",
+		"/D/py/wbw/stock/a.py",
+		"/D/py/wbw/stock/M_Decorator.py",
+		"/D/py/wbw/stock/M_celv.py",
+		"/D/py/wbw/stock/M_guangcz.py",
+		"/D/py/wbw/stock/M_command.py",
+		"/D/py/wbw/stock/shou_d3_cci.txt",
+		"/D/py/wbw/stock/shou_m2.txt",
+		"/D/py/wbw/stock/shou_d3.txt",
+		"/D/py/wbw/stock/shou_d1.txt",
+		"/D/py/wbw/stock/gu_save.bat",
+		"/D/py/wbw/stock/temp.txt",
+		"/d/Anaconda3/lib/site-packages/pandas/core/series.py",
+		"/D/py/wbw/stock/old/gu_shou20200509.py",
+		"/D/py/wbw/stock/shou2.csv",
+		"/D/py/wbw/stock/shou_w.csv",
+		"/D/py/wbw/stock/getstockClass.py",
+		"/D/py/wbw/stock/beginstock.py",
+		"/D/py/wbw/stock/savestockClass.py",
+		"/D/py/wbw/stock/stock_save.py",
+		"/D/py/wbw/stock/analysis_stockClass3.py",
+		"/d/Anaconda3/lib/urllib/request.py",
+		"/D/360极速浏览器下载/aokePaChong0917.py",
+		"/D/py/wbw/mysql_cmd.py",
+		"/D/py/wbw/stock/analysis_stockClass2.py",
+		"/D/py/wbw/stock/gupiaoClass.py",
+		"/D/py/wbw/stock/fenxiClass.py",
+		"/D/py/wbw/stock/获取股票历史.py",
+		"/D/py/wbw/stock/getandanalysis_stock.py",
+		"/D/py/wbw/stock/stock_basic_list.csv",
+		"/D/py/wbw/fenxi2.py",
+		"/D/py/wbw/stock/ths_macd.py",
+		"/D/py/wbw/stock/analysis_stockClass.py",
+		"/D/py/wbw/test1.py",
+		"/D/py/wbw/fengxi_sous.py",
+		"/D/py/wbw/zqmain.py",
+		"/D/py/wbw/stock/ths_boll.py",
+		"/D/py/wbw/yhq_idnm_list.csv",
+		"/D/py/wbw/gitcommm.txt",
+		"/D/py/wbw/zqfenxi_gz.py",
+		"/D/Anaconda3/Lib/csv.py",
+		"/D/py/wbw/test.py",
+		"/D/py/wbw/zqconfig_mxk.csv",
+		"/D/py/wbw/bifa.csv",
+		"/D/py/wbw/ghostdriver.log",
+		"/D/py/wbw/zqconfigClass.py",
+		"/D/py/wbw/gethtmlClass.py",
+		"/D/py/wbw/sjfenxi.py",
+		"/D/py/wbw/tooth_excle.py",
+		"/D/py/open_excle.py",
+		"/D/py/wbw/fenxi.py",
+		"/D/py/wbw/tooth_day.pytest.py",
+		"/D/py/wbw/zqconfig_dmdzb.csv",
+		"/D/py/wbw/11.csv",
+		"/D/py/wbw/zq.bat",
+		"/D/py/wbw/stock/需求.txt",
+		"/D/py/wbw/mysqlCleare.sql",
+		"/D/py/wbw/gupiaoClass.py",
+		"/D/py/wbw/fenxiClass.py",
+		"/D/py/wbw/selenium_Firefox.py",
+		"/D/py/wbw/readexcle.py",
+		"/d/Anaconda3/lib/site-packages/talib/__init__.py",
+		"/D/py/wbw/stock/_func.pxi",
+		"/D/py/wbw/stock/analysis_stock.py",
+		"/D/py/wbw/stock/analysis_stock4.py",
+		"/C/Users/shaojk/AppData/Local/Programs/Python/Python35/lib/site-packages/tushare/stock/trading.py",
+		"/D/py/wbw/excle_cmd.py",
+		"/D/py/老/open_excle.py",
+		"/D/py/py/get500w1.py",
+		"/D/py/wbw/loggerClass.py",
+		"/D/py/wbw/get500wjs.py",
+		"/D/py/wbw/SQL_CREATE500WTABLE.SQL",
+		"/D/py/wbw/git命令.txt",
+		"/D/py/wbw/yapan.sql",
+		"/D/py/wbw/scb.sql",
+		"/D/py/wbw/wbw_ouzhi.sql",
+		"/C/Users/shaojk/AppData/Local/Programs/Python/Python35/lib/site-packages/bs4/element.py"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			". ",
+			"_ ",
+			"' ",
+			"_ ",
+			"aiyb2",
+			"&gt",
+			"&gt;",
+			"\t\t\n",
+			"date lost",
+			"sheet",
+			"sheetname",
+			"\t\t\n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			".",
+			"_",
+			"'",
+			"_",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 7,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "geckodriver.log",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 182990,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Python.sublime-settings",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/D/ppp.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12,
+								12
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21802,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3286,
+								3286
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2604.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "test1.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 922,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								360,
+								360
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 84.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "testaa.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 982,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								901,
+								901
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 439.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "getzqClass.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15520,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								195,
+								156
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 840.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "getjsbf.py",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 10729,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								570,
+								588
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 10920.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "zqconfig_bslb.csv",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3439,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "aa.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 280,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								34,
+								34
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/C/Users/shaojk/AppData/Roaming/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 205,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								29,
+								29
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 37.0
+	},
+	"input":
+	{
+		"height": 49.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 279.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "aa.sublime-project",
+	"replace":
+	{
+		"height": 70.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 298.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
