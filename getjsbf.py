@@ -3,6 +3,7 @@ from htmlsoupClass import htmlsoup
 #from sjfenxi import sjfenxClass
 from bs4 import BeautifulSoup
 from loggerClass import logger
+import datetime
 import re
 from zqconfigClass import zqconfigClass
 from tooth_day import tooth_dayClass
@@ -200,10 +201,10 @@ class getjsbfClass(object):
 
 		wcbs_li=df.values.tolist()
 		#1添加新完场数据
-		
+		rq_now = datetime.datetime.now().strftime('%Y%m%d')
 		for r in ywc_li:
 			if int(r[3]) in lb_li:continue
-			wcbs_li.append([r[3],'完',r[0],r[1],r[2],'00-00','00:00'])
+			wcbs_li.append([r[3],'完',r[0],r[1],r[2],rq_now,'00:00'])
 			
 		dc_li.extend(zc_li)
 	
